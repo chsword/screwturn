@@ -16,6 +16,6 @@
 		<st:PageSelector ID="pageSelector" runat="server" PageSize="<%# PageSize %>" OnSelectedPageChanged="pageSelector_SelectedPageChanged" />
 	</div>
    
-	<anthem:Panel ID="pnlPageList" runat="server" EnableViewState="False" AutoUpdateAfterCallBack="True" meta:resourcekey="pnlPageListResource1" UpdateAfterCallBack="True" />
+	<asp:Panel ID="pnlPageList" runat="server" EnableViewState="False" meta:resourcekey="pnlPageListResource1" />
 
 </asp:Content>

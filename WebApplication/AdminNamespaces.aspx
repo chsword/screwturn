@@ -9,11 +9,11 @@
 <asp:Content ID="ctnNamespaces" ContentPlaceHolderID="cphAdmin" runat="server">
 	<h2 class="sectiontitle"><asp:Literal ID="lblNamespaces" runat="server" Text="Namespaces" EnableViewState="False" meta:resourcekey="lblNamespacesResource1" /></h2>
 	
-	<anthem:Panel ID="pnlList" runat="server" AutoUpdateAfterCallBack="True" meta:resourcekey="pnlListResource1" UpdateAfterCallBack="True">
-		<anthem:Button ID="btnNewNamespace" runat="server" Text="New Namespace" ToolTip="Create a new Namespace" CssClass="rightaligned" OnClick="btnNewNamespace_Click" meta:resourcekey="btnNewNamespaceResource1" />
+	<asp:Panel ID="pnlList" runat="server"  meta:resourcekey="pnlListResource1" >
+		<asp:Button ID="btnNewNamespace" runat="server" Text="New Namespace" ToolTip="Create a new Namespace" CssClass="rightaligned" OnClick="btnNewNamespace_Click" meta:resourcekey="btnNewNamespaceResource1" />
 		
 		<div id="NamespacesListContainerDiv">
-			<anthem:Repeater ID="rptNamespaces" runat="server" OnDataBinding="rptNamespaces_DataBinding" OnItemCommand="rptNamespaces_ItemCommand">
+			<asp:Repeater ID="rptNamespaces" runat="server" OnDataBinding="rptNamespaces_DataBinding" OnItemCommand="rptNamespaces_ItemCommand">
 				<HeaderTemplate>
 					<table cellpadding="0" cellspacing="0" class="generic">
 						<thead>
@@ -38,9 +38,9 @@
 						<td><%# Eval("Theme") %></td>
 						<td><%# Eval("Provider") %></td>
 						<td>
-							<anthem:LinkButton ID="btnSelect" runat="server" Text="Select" ToolTip="Select this Namespace for editing" CommandName="Select" CommandArgument='<%# Eval("Name") %>' meta:resourcekey="btnSelectResource1" />
+							<asp:LinkButton ID="btnSelect" runat="server" Text="Select" ToolTip="Select this Namespace for editing" CommandName="Select" CommandArgument='<%# Eval("Name") %>' meta:resourcekey="btnSelectResource1" />
 							&bull;
-							<anthem:LinkButton ID="btnPerms" runat="server" Visible='<%# (bool)Eval("CanSetPermissions") %>' Text="Permissions" ToolTip="Manage permissions for this Namespace" CommandName="Perms" CommandArgument='<%# Eval("Name") %>' meta:resourcekey="btnPermsResource1" />
+							<asp:LinkButton ID="btnPerms" runat="server" Visible='<%# (bool)Eval("CanSetPermissions") %>' Text="Permissions" ToolTip="Manage permissions for this Namespace" CommandName="Perms" CommandArgument='<%# Eval("Name") %>' meta:resourcekey="btnPermsResource1" />
 						</td>
 					</tr>
 				</ItemTemplate>
@@ -53,9 +53,9 @@
 						<td><%# Eval("Theme") %></td>
 						<td><%# Eval("Provider") %></td>
 						<td>
-							<anthem:LinkButton ID="btnSelect" runat="server" Text="Select" ToolTip="Select this Namespace for editing" CommandName="Select" CommandArgument='<%# Eval("Name") %>' meta:resourcekey="btnSelectResource2" />
+							<asp:LinkButton ID="btnSelect" runat="server" Text="Select" ToolTip="Select this Namespace for editing" CommandName="Select" CommandArgument='<%# Eval("Name") %>' meta:resourcekey="btnSelectResource2" />
 							&bull;
-							<anthem:LinkButton ID="btnPerms" runat="server" Visible='<%# (bool)Eval("CanSetPermissions") %>' Text="Permissions" ToolTip="Manage permissions for this Namespace" CommandName="Perms" CommandArgument='<%# Eval("Name") %>' meta:resourcekey="btnPermsResource2" />
+							<asp:LinkButton ID="btnPerms" runat="server" Visible='<%# (bool)Eval("CanSetPermissions") %>' Text="Permissions" ToolTip="Manage permissions for this Namespace" CommandName="Perms" CommandArgument='<%# Eval("Name") %>' meta:resourcekey="btnPermsResource2" />
 						</td>
 					</tr>
 				</AlternatingItemTemplate>
@@ -63,12 +63,12 @@
 					</tbody>
 					</table>
 				</FooterTemplate>
-			</anthem:Repeater>
+			</asp:Repeater>
 		</div>
-	</anthem:Panel>
+	</asp:Panel>
 	
-	<anthem:Panel ID="pnlEditNamespace" runat="server" AutoUpdateAfterCallBack="True" Visible="False" 
-		meta:resourcekey="pnlEditNamespaceResource1" UpdateAfterCallBack="True">
+	<asp:Panel ID="pnlEditNamespace" runat="server"  Visible="False" 
+		meta:resourcekey="pnlEditNamespaceResource1" >
 		<div id="EditNamespaceDiv">
 			<h2 class="separator"><asp:Literal ID="lblEditTitle" runat="server" Text="Namespace Details" EnableViewState="False" meta:resourcekey="lblEditTitleResource1" /></h2>
 		
@@ -99,24 +99,24 @@
 					CssClass="button" Visible="False" OnClick="btnSave_Click" ValidationGroup="namespace" meta:resourcekey="btnSaveResource1" />
 				<asp:Button ID="btnCreate" runat="server" Text="Create Namespace" ToolTip="Save the new Namespace"
 					CssClass="button" OnClick="btnCreate_Click" ValidationGroup="namespace" meta:resourcekey="btnCreateResource1" />
-				<anthem:Button ID="btnDelete" runat="server" Text="Delete" ToolTip="Delete the Namespace"
+				<asp:Button ID="btnDelete" runat="server" Text="Delete" ToolTip="Delete the Namespace"
 					CssClass="button" Visible="False" OnClick="btnDelete_Click" CausesValidation="False"
-					ValidationGroup="namespace" PreCallBackFunction="RequestConfirm" meta:resourcekey="btnDeleteResource1" />
+					ValidationGroup="namespace"  meta:resourcekey="btnDeleteResource1" />
 				<asp:Button ID="btnCancel" runat="server" Text="Cancel" ToolTip="Cancel and return to the Namespace list"
 					CssClass="button" OnClick="btnCancel_Click" CausesValidation="False" ValidationGroup="namespace" meta:resourcekey="btnCancelResource1" />
 					
-				<anthem:Label ID="lblResult" runat="server" AutoUpdateAfterCallBack="True" meta:resourcekey="lblResultResource1" UpdateAfterCallBack="True" />
+				<asp:Label ID="lblResult" runat="server"  meta:resourcekey="lblResultResource1"  />
 				
 				<br /><br />
-				<anthem:Panel ID="pnlDelete" runat="server" Visible="False" 
-					AutoUpdateAfterCallBack="True" CssClass="warning" meta:resourcekey="pnlDeleteResource1" UpdateAfterCallBack="True">
+				<asp:Panel ID="pnlDelete" runat="server" Visible="False" 
+					 CssClass="warning" meta:resourcekey="pnlDeleteResource1" >
 					<asp:Literal ID="lblConfirmDeletion" runat="server" EnableViewState="False"
 						Text="Are you sure you want to premanently delete the selected Namespace? Doing so, all the data contained in it will be lost." 
 						meta:resourcekey="lblConfirmDeletionResource1" /><br /><br />
-					<anthem:Button ID="btnConfirmDeletion" runat="server" 
-						Text="Confirm Namespace Deletion" PreCallBackFunction="RequestConfirm"
+					<asp:Button ID="btnConfirmDeletion" runat="server" 
+						Text="Confirm Namespace Deletion" 
 						OnClick="btnConfirmDeletion_Click" meta:resourcekey="btnConfirmDeletionResource1" />
-				</anthem:Panel>
+				</asp:Panel>
 			</div>
 			
 			<h3 class="separator"><asp:Literal ID="lblRename" runat="server" Text="Rename this Namespace" EnableViewState="False" meta:resourcekey="lblRenameResource1" /></h3>
@@ -126,8 +126,8 @@
 			<br /><br />
 			
 			<asp:Literal ID="lblNewName" runat="server" Text="New Name" EnableViewState="False" meta:resourcekey="lblNewNameResource1" /><br />
-			<anthem:TextBox ID="txtNewName" runat="server" ValidationGroup="rename" meta:resourcekey="txtNewNameResource1" />
-			<anthem:Button ID="btnRename" runat="server" Text="Rename" PreCallBackFunction="RequestConfirm" OnClick="btnRename_Click" 
+			<asp:TextBox ID="txtNewName" runat="server" ValidationGroup="rename" meta:resourcekey="txtNewNameResource1" />
+			<asp:Button ID="btnRename" runat="server" Text="Rename"  OnClick="btnRename_Click" 
 				ValidationGroup="rename" meta:resourcekey="btnRenameResource1" />
 			<asp:RequiredFieldValidator ID="rfvNewName" runat="server" Display="Dynamic" CssClass="resulterror"
 				ControlToValidate="txtNewName" ErrorMessage="New Name is required" ValidationGroup="rename" meta:resourcekey="rfvNewNameResource1" />
@@ -138,12 +138,12 @@
 				CssClass="resulterror" ControlToValidate="txtName" Display="Dynamic" ValidationGroup="rename"
 				OnServerValidate="cvNewName2_ServerValidate" meta:resourcekey="cvNewName2Resource1" /><br />
 			
-			<anthem:Label ID="lblRenameResult" runat="server" AutoUpdateAfterCallBack="True" meta:resourcekey="lblRenameResultResource1" UpdateAfterCallBack="True" />
+			<asp:Label ID="lblRenameResult" runat="server"  meta:resourcekey="lblRenameResultResource1"  />
 		</div>
-	</anthem:Panel>
+	</asp:Panel>
 	
-	<anthem:Panel ID="pnlPermissions" runat="server" AutoUpdateAfterCallBack="True" 
-		Visible="False" meta:resourcekey="pnlPermissionsResource1" UpdateAfterCallBack="True">
+	<asp:Panel ID="pnlPermissions" runat="server"  
+		Visible="False" meta:resourcekey="pnlPermissionsResource1" >
 	
 		<h2 class="separator">
 			<asp:Literal ID="lblNamespacePermissions" runat="server" Text="Namespace Permissions" EnableViewState="False" meta:resourcekey="lblNamespacePermissionsResource1" />
@@ -162,7 +162,7 @@
 				<br />
 				<ul>
 					<li>
-						<anthem:LinkButton ID="btnPublic" runat="server" Text="Public" ToolTip="Use this Template" PreCallBackFunction="RequestConfirm" 
+						<asp:LinkButton ID="btnPublic" runat="server" Text="Public" ToolTip="Use this Template"  
 							OnClick="btnPublic_Click" meta:resourcekey="btnPublicResource1" /><br />
 						<small>
 							<asp:Literal ID="lblPublicInfo" runat="server" Text="Anyone, including anonymous users, can <b>edit</b> pages, registered users can also <b>create</b> pages and <b>manage</b> categories." 
@@ -170,8 +170,8 @@
 						</small>
 					</li>
 					<li>
-						<anthem:LinkButton ID="btnNormal" runat="server" Text="Normal" 
-							ToolTip="Use this Template" PreCallBackFunction="RequestConfirm" 
+						<asp:LinkButton ID="btnNormal" runat="server" Text="Normal" 
+							ToolTip="Use this Template"  
 							OnClick="btnNormal_Click" meta:resourcekey="btnNormalResource1" /><br />
 						<small>
 							<asp:Literal ID="lblNormalInfo" runat="server" 
@@ -180,7 +180,7 @@
 						</small>
 					</li>
 					<li>
-						<anthem:LinkButton ID="btnPrivate" runat="server" Text="Private" ToolTip="Use this Template" PreCallBackFunction="RequestConfirm" 
+						<asp:LinkButton ID="btnPrivate" runat="server" Text="Private" ToolTip="Use this Template"  
 							OnClick="btnPrivate_Click" meta:resourcekey="btnPrivateResource1" /><br />
 							<small>
 								<asp:Literal ID="lblPrivateInfo" runat="server" 
@@ -204,9 +204,9 @@
 			<asp:Button ID="btnBack" runat="server" Text="Back" ToolTip="Back to the Namespace list" OnClick="btnBack_Click" meta:resourcekey="btnBackResource1" />
 		</div>
 	
-	</anthem:Panel>
+	</asp:Panel>
 	
-	<anthem:HiddenField ID="txtCurrentNamespace" runat="server" AutoUpdateAfterCallBack="True" UpdateAfterCallBack="True" />
+	<asp:HiddenField ID="txtCurrentNamespace" runat="server"   />
 	
 	<div style="clear: both;"></div>
 

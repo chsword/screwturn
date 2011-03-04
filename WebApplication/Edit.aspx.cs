@@ -354,8 +354,6 @@ namespace ScrewTurn.Wiki {
 			pnlPageName.Visible = true;
 			pnlManualName.Visible = false;
 			txtName.Text = GenerateAutoName(txtTitle.Text);
-			pnlManualName.UpdateAfterCallBack = true;
-			pnlPageName.UpdateAfterCallBack = true;
 		}
 
 		/// <summary>
@@ -517,8 +515,6 @@ namespace ScrewTurn.Wiki {
 				if(!rfvTitle.IsValid || !rfvName.IsValid || !cvName1.IsValid || !cvName2.IsValid) {
 					pnlPageName.Visible = true;
 					pnlManualName.Visible = false;
-					pnlPageName.UpdateAfterCallBack = true;
-					pnlManualName.UpdateAfterCallBack = true;
 				}
 
 				return;

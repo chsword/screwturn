@@ -55,15 +55,15 @@
 		<asp:Label ID="lblEmailResult" runat="server" />
 	</div>
 	
-    <p>
-        <asp:Literal ID="lblSystemStatusContent" runat="server" meta:resourcekey="lblSystemStatusContentResource1" />
-        <br /><br />
-        <asp:Button ID="btnClearCache" runat="server" Text="Clear Cache" OnClick="btnClearCache_Click" ToolTip="Clears the Cache" meta:resourcekey="btnClearCacheResource1" />
-    </p>
-    <br /><br />
-    
-    <h2 class="separator"><asp:Literal ID="lblMissingPages" runat="server" Text="Missing Pages" EnableViewState="False" meta:resourcekey="lblMissingPagesResource1" /></h2>
-    <asp:Repeater ID="rptPages" runat="server" OnDataBinding="rptPages_DataBinding">
+	<p>
+		<asp:Literal ID="lblSystemStatusContent" runat="server" meta:resourcekey="lblSystemStatusContentResource1" />
+		<br /><br />
+		<asp:Button ID="btnClearCache" runat="server" Text="Clear Cache" OnClick="btnClearCache_Click" ToolTip="Clears the Cache" meta:resourcekey="btnClearCacheResource1" />
+	</p>
+	<br /><br />
+	
+	<h2 class="separator"><asp:Literal ID="lblMissingPages" runat="server" Text="Missing Pages" EnableViewState="False" meta:resourcekey="lblMissingPagesResource1" /></h2>
+	<asp:Repeater ID="rptPages" runat="server" OnDataBinding="rptPages_DataBinding">
 		<HeaderTemplate>
 			<table class="generic" cellpadding="0" cellspacing="0">
 				<thead>
@@ -93,37 +93,37 @@
 			</tbody>
 			</table>
 		</FooterTemplate>
-    </asp:Repeater>
-    <br /><br />
-    
-    <h2 class="separator"><asp:Literal ID="lblOrphanPages" runat="server" Text="Orphan Pages" EnableViewState="false" meta:resourcekey="lblOrphanPagesResource1" /></h2>
-    <asp:Literal ID="lblOrphanPagesInfoPre" runat="server" Text="There seem to be " EnableViewState="false" meta:resourcekey="lblOrphanPagesInfoPreResource1" />
-    <b><anthem:Label ID="lblOrphanPagesCount" runat="server" Text="0" AutoUpdateAfterCallBack="true" /></b>
-    <asp:Literal ID="lblOrphanPagesInfoPost" runat="server" Text=" orphan pages in the wiki" EnableViewState="false" meta:resourcekey="lblOrphanPagesInfoPostResource1" />
-    <small>(<asp:HyperLink ID="lnkPages" runat="server" Text="see Pages" ToolTip="Go to the Pages administration tab" NavigateUrl="~/AdminPages.aspx" meta:resourcekey="lnkPagesResource1" />)</small>.
-    <br />
-    <small><asp:Literal ID="lblOrphanPagesInfo" runat="server" Text="<b>Note</b>: a page is considered an <i>orphan</i> when it has no incoming links from other pages."
+	</asp:Repeater>
+	<br /><br />
+	
+	<h2 class="separator"><asp:Literal ID="lblOrphanPages" runat="server" Text="Orphan Pages" EnableViewState="false" meta:resourcekey="lblOrphanPagesResource1" /></h2>
+	<asp:Literal ID="lblOrphanPagesInfoPre" runat="server" Text="There seem to be " EnableViewState="false" meta:resourcekey="lblOrphanPagesInfoPreResource1" />
+	<b><asp:Label ID="lblOrphanPagesCount" runat="server" Text="0" /></b>
+	<asp:Literal ID="lblOrphanPagesInfoPost" runat="server" Text=" orphan pages in the wiki" EnableViewState="false" meta:resourcekey="lblOrphanPagesInfoPostResource1" />
+	<small>(<asp:HyperLink ID="lnkPages" runat="server" Text="see Pages" ToolTip="Go to the Pages administration tab" NavigateUrl="~/AdminPages.aspx" meta:resourcekey="lnkPagesResource1" />)</small>.
+	<br />
+	<small><asp:Literal ID="lblOrphanPagesInfo" runat="server" Text="<b>Note</b>: a page is considered an <i>orphan</i> when it has no incoming links from other pages."
 		EnableViewState="false" meta:resourcekey="lblOrphanPagesInfoResource1" /></small>
-    <br /><br />
-    
-    <anthem:Button ID="btnRebuildPageLinks" runat="server" Text="Rebuild Page Links" ToolTip="Rebuild the links structure"
-		PreCallBackFunction="PreLinksRebuild" PostCallBackFunction="PostLinksRebuild" meta:resourcekey="btnRebuildPageLinksResource1"
+	<br /><br />
+	
+	<asp:Button ID="btnRebuildPageLinks" runat="server" Text="Rebuild Page Links" ToolTip="Rebuild the links structure"
+		meta:resourcekey="btnRebuildPageLinksResource1"
 		OnClick="btnRebuildPageLinks_Click" />
-    <span id="OrphansProgressSpan" style="display: none;">
+	<span id="OrphansProgressSpan" style="display: none;">
 		<img src="Images/Wait.gif" alt="Rebuilding..." />
 		<img src="Images/Wait.gif" alt="Rebuilding..." />
 		<img src="Images/Wait.gif" alt="Rebuilding..." />
-    </span>
-    <br /><br />
-    
-    <small><asp:Literal ID="lblRebuildPageLinksInfo" runat="server" meta:resourcekey="lblRebuildPageLinksInfoResource1"
+	</span>
+	<br /><br />
+	
+	<small><asp:Literal ID="lblRebuildPageLinksInfo" runat="server" meta:resourcekey="lblRebuildPageLinksInfoResource1"
 		Text="<b>Warning</b>: rebuilding page links might take some time. Please do not close this screen while the links are being rebuilt." 
 		EnableViewState="False" /></small>
 	<br /><br />
-    
-    <h2 class="separator"><asp:Literal ID="lblIndexStatus" runat="server" Text="Search Index Status" EnableViewState="False" meta:resourcekey="lblIndexStatusResource1" /></h2>
-    <anthem:Repeater ID="rptIndex" runat="server" OnDataBinding="rptIndex_DataBinding" OnItemCommand="rptIndex_ItemCommand" 
-		AutoUpdateAfterCallBack="True">
+	
+	<h2 class="separator"><asp:Literal ID="lblIndexStatus" runat="server" Text="Search Index Status" EnableViewState="False" meta:resourcekey="lblIndexStatusResource1" /></h2>
+	<asp:Repeater ID="rptIndex" runat="server" OnDataBinding="rptIndex_DataBinding" OnItemCommand="rptIndex_ItemCommand" 
+		>
 		<HeaderTemplate>
 			<table class="generic" cellpadding="0" cellspacing="0">
 				<thead>
@@ -147,8 +147,8 @@
 				<td><%# Eval("Occurrences") %></td>
 				<td><%# Eval("Size") %></td>
 				<td><%# ((bool)Eval("IsOK") ? ScrewTurn.Wiki.Properties.Messages.OK : "<span class=\"resulterror\">" + ScrewTurn.Wiki.Properties.Messages.Corrupted + "</span>")%></td>
-				<td><anthem:LinkButton ID="btnRebuild" runat="server" Text="Rebuild" ToolTip="Rebuild this index" CommandName="Rebuild" CommandArgument='<%# Eval("ProviderType") %>'
-					PreCallBackFunction="PreIndexRebuild" PostCallBackFunction="PostIndexRebuild" meta:resourcekey="btnRebuildResource1" /></td>
+				<td><asp:LinkButton ID="btnRebuild" runat="server" Text="Rebuild" ToolTip="Rebuild this index" CommandName="Rebuild" CommandArgument='<%# Eval("ProviderType") %>'
+					meta:resourcekey="btnRebuildResource1" /></td>
 			</tr>
 		</ItemTemplate>
 		<AlternatingItemTemplate>
@@ -159,37 +159,37 @@
 				<td><%# Eval("Occurrences") %></td>
 				<td><%# Eval("Size") %></td>
 				<td><%# ((bool)Eval("IsOK") ? ScrewTurn.Wiki.Properties.Messages.OK : "<span class=\"resulterror\">" + ScrewTurn.Wiki.Properties.Messages.Corrupted + "</span>")%></td>
-				<td><anthem:LinkButton ID="btnRebuild" runat="server" Text="Rebuild" ToolTip="Rebuild this index" CommandName="Rebuild" CommandArgument='<%# Eval("ProviderType") %>'
-					PreCallBackFunction="PreIndexRebuild" PostCallBackFunction="PostIndexRebuild" meta:resourcekey="btnRebuildResource2" /></td>
+				<td><asp:LinkButton ID="btnRebuild" runat="server" Text="Rebuild" ToolTip="Rebuild this index" CommandName="Rebuild" CommandArgument='<%# Eval("ProviderType") %>'
+					meta:resourcekey="btnRebuildResource2" /></td>
 			</tr>
 		</AlternatingItemTemplate>
 		<FooterTemplate>
 			</tbody>
 			</table>
 		</FooterTemplate>
-    </anthem:Repeater>
-    <br />
-    <span id="ProgressSpan" style="display: none;">
+	</asp:Repeater>
+	<br />
+	<span id="ProgressSpan" style="display: none;">
 		<img src="Images/Wait.gif" alt="Rebuilding..." />
 		<img src="Images/Wait.gif" alt="Rebuilding..." />
 		<img src="Images/Wait.gif" alt="Rebuilding..." />
-    </span>
-    <small>
+	</span>
+	<small>
 		<asp:Literal ID="lblRebuildIndexInfo" runat="server" 
 			Text="<b>Warning</b>: rebuilding a search index might take some time. Please do not close this screen while the index is being rebuilt. After the index is rebuilt, it is recommended to restart the application." 
 			EnableViewState="False" meta:resourcekey="lblRebuildIndexInfoResource1" />
 	</small>
-    <br /><br /><br />
-    
-    <h2 class="separator"><asp:Literal ID="lblAppShutdown" runat="server" Text="Web Application Shutdown" meta:resourcekey="lblAppShutdownResource1" /></h2>
-    <asp:Literal ID="lblAppShutdownInfo" runat="server" 
+	<br /><br /><br />
+	
+	<h2 class="separator"><asp:Literal ID="lblAppShutdown" runat="server" Text="Web Application Shutdown" meta:resourcekey="lblAppShutdownResource1" /></h2>
+	<asp:Literal ID="lblAppShutdownInfo" runat="server" 
 		Text="You can force a shutdown-and-restart cycle of the Web Application. You will be asked to confirm the restart twice, then the Web Application will restart at the first subsequent request.&lt;br /&gt;&lt;b&gt;Warning&lt;/b&gt;: all the open sessions will be lost, and users may experience errors.&lt;br /&gt;&lt;b&gt;Note&lt;/b&gt;: the restart will affect only this Web Application." 
 		meta:resourcekey="lblAppShutdownInfoResource1" />
-    <br /><br />
-    <div id="ShutdownDiv" class="warning">
-        <asp:Button ID="btnShutdownConfirm" runat="server" Text="Shutdown Application" OnClientClick="javascript:return RequestConfirm();"
+	<br /><br />
+	<div id="ShutdownDiv" class="warning">
+		<asp:Button ID="btnShutdownConfirm" runat="server" Text="Shutdown Application" OnClientClick="javascript:return RequestConfirm();"
 			OnClick="btnShutdownConfirm_Click" meta:resourcekey="btnShutdownConfirmResource2" />
-    </div>
-    
-    <div style="clear: both;"></div>
+	</div>
+	
+	<div style="clear: both;"></div>
 </asp:Content>
