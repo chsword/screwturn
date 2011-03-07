@@ -30,13 +30,16 @@ namespace ScrewTurn.Wiki {
 		private static readonly Regex BoldRegex = new Regex(@"'''.+?'''", RegexOptions.Compiled | RegexOptions.Singleline);
 		private static readonly Regex ItalicRegex = new Regex(@"''.+?''", RegexOptions.Compiled | RegexOptions.Singleline);
 		private static readonly Regex BoldItalicRegex = new Regex(@"'''''.+?'''''", RegexOptions.Compiled | RegexOptions.Singleline);
+		private static readonly Regex ApexRegex = new Regex(@"\&lt;sup\&gt(.+?)\&lt;/sup\&gt;", RegexOptions.Compiled | RegexOptions.Singleline);
+		private static readonly Regex SubscribeRegex = new Regex(@"\&lt;sub\&gt(.+?)\&lt;/sub\&gt;",RegexOptions.Compiled | RegexOptions.Singleline);
 		private static readonly Regex UnderlinedRegex = new Regex(@"__.+?__", RegexOptions.Compiled | RegexOptions.Singleline);
 		private static readonly Regex StrikedRegex = new Regex(@"(?<!(\<\!|\&lt;))(\-\-(?!\>).+?\-\-)(?!(\>|\&gt;))", RegexOptions.Compiled | RegexOptions.Singleline);
 		private static readonly Regex CodeRegex = new Regex(@"\{\{.+?\}\}", RegexOptions.Compiled | RegexOptions.Singleline);
 		private static readonly Regex PreRegex = new Regex(@"\{\{\{\{.+?\}\}\}\}", RegexOptions.Compiled | RegexOptions.Singleline);
 		private static readonly Regex BoxRegex = new Regex(@"\(\(\(.+?\)\)\)", RegexOptions.Compiled | RegexOptions.Singleline);
 		private static readonly Regex ExtendedUpRegex = new Regex(@"\{up((\:|\().+?)?\}", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-		private static readonly Regex SpecialTagRegex = new Regex(@"\{(wikititle|wikiversion|mainurl|rsspage|themepath|clear|br|top|searchbox|pagecount|pagecount\(\*\)|categories|cloud|orphans|wanted|namespacelist)\}", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+		private static readonly Regex SpecialTagRegex = new Regex(@"\{(wikititle|wikiversion|mainurl|rsspage|themepath|clear|top|searchbox|pagecount|pagecount\(\*\)|categories|cloud|orphans|wanted|namespacelist)\}", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+		private static readonly Regex SpecialTagBRRegex = new Regex(@"\{(br)\}", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);		
 		private static readonly Regex Phase3SpecialTagRegex = new Regex(@"\{(username|pagename|loginlogout|namespace|namespacedropdown|incoming|outgoing)\}", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 		private static readonly Regex RecentChangesRegex = new Regex(@"\{recentchanges(\(\*\))?\}", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 		private static readonly Regex ListRegex = new Regex(@"(?<=(\n|^))((\*|\#)+(\ )?.+?\n)+((?=\n)|\z)", RegexOptions.Compiled | RegexOptions.Singleline); // Singleline to matche list elements on multiple lines
@@ -213,16 +216,14 @@ namespace ScrewTurn.Wiki {
 
 			// Snippets and tables processing was here
 
-			if(!bareBones) {
-				match = IndentRegex.Match(sb.ToString());
-				while(match.Success) {
-					if(!IsNoWikied(match.Index, noWikiBegin, noWikiEnd, out end)) {
-						sb.Remove(match.Index, match.Length);
-						sb.Insert(match.Index, BuildIndent(match.Value) + "\n");
-					}
-					ComputeNoWiki(sb.ToString(), ref noWikiBegin, ref noWikiEnd);
-					match = IndentRegex.Match(sb.ToString(), end);
+			match = IndentRegex.Match(sb.ToString());
+			while(match.Success) {
+				if(!IsNoWikied(match.Index, noWikiBegin, noWikiEnd, out end)) {
+					sb.Remove(match.Index, match.Length);
+					sb.Insert(match.Index, BuildIndent(match.Value) + "\n");
 				}
+				ComputeNoWiki(sb.ToString(), ref noWikiBegin, ref noWikiEnd);
+				match = IndentRegex.Match(sb.ToString(), end);
 			}
 
 			// Process extended UP before standard UP
@@ -262,6 +263,22 @@ namespace ScrewTurn.Wiki {
 				match = ExtendedUpRegex.Match(sb.ToString(), end);
 			}
 
+			match = SpecialTagBRRegex.Match(sb.ToString()); // solved by introducing a new regex call SpecialTagBR
+			while(match.Success) {
+				if(!IsNoWikied(match.Index, noWikiBegin, noWikiEnd, out end)) {
+					sb.Remove(match.Index, match.Length);
+					if(!forIndexing) {
+						switch(match.Value.Substring(1, match.Value.Length - 2).ToUpperInvariant()) {
+							case "BR":
+								sb.Insert(match.Index, "<br />");
+								break;
+						}
+					}
+				}
+				ComputeNoWiki(sb.ToString(), ref noWikiBegin, ref noWikiEnd);
+				match = SpecialTagBRRegex.Match(sb.ToString(), end);
+			}
+
 			if(!bareBones) {
 				NamespaceInfo ns = DetectNamespaceInfo(current);
 				match = SpecialTagRegex.Match(sb.ToString());
@@ -292,9 +309,6 @@ namespace ScrewTurn.Wiki {
 									break;
 								case "CLEAR":
 									sb.Insert(match.Index, @"<div style=""clear: both;""></div>");
-									break;
-								case "BR":
-									sb.Insert(match.Index, "<br />");
 									break;
 								case "TOP":
 									sb.Insert(match.Index, @"<a href=""#PageTop"">" + Exchanger.ResourceExchanger.GetResource("Top") + "</a>");
@@ -591,6 +605,32 @@ namespace ScrewTurn.Wiki {
 				match = UnderlinedRegex.Match(sb.ToString(), end);
 			}
 
+			match = ApexRegex.Match(sb.ToString());
+			while(match.Success) {
+				if(!IsNoWikied(match.Index, noWikiBegin, noWikiBegin, out end)) {
+					sb.Remove(match.Index, match.Length);
+					dummy = new StringBuilder("<sup>");
+					dummy.Append(match.Value.Substring(11, match.Value.Length - 23));
+					dummy.Append("</sup>");
+					sb.Insert(match.Index, dummy.ToString());
+				}
+				ComputeNoWiki(sb.ToString(), ref noWikiBegin, ref noWikiEnd);
+				match = ApexRegex.Match(sb.ToString(), end);
+			}
+
+			match = SubscribeRegex.Match(sb.ToString());
+			while(match.Success) {
+				if(!IsNoWikied(match.Index, noWikiBegin, noWikiBegin, out end)) {
+					sb.Remove(match.Index, match.Length);
+					dummy = new StringBuilder("<sub>");
+					dummy.Append(match.Value.Substring(11, match.Value.Length - 23));
+					dummy.Append("</sub>");
+					sb.Insert(match.Index, dummy.ToString());
+				}
+				ComputeNoWiki(sb.ToString(), ref noWikiBegin, ref noWikiEnd);
+				match = SubscribeRegex.Match(sb.ToString(), end);
+			}
+
 			match = StrikedRegex.Match(sb.ToString());
 			while(match.Success) {
 				if(!IsNoWikied(match.Index, noWikiBegin, noWikiEnd, out end)) {
@@ -816,16 +856,14 @@ namespace ScrewTurn.Wiki {
 				}
 			}
 
-			if(!bareBones) {
-				match = TableRegex.Match(sb.ToString());
-				while(match.Success) {
-					if(!IsNoWikied(match.Index, noWikiBegin, noWikiEnd, out end)) {
-						sb.Remove(match.Index, match.Length);
-						sb.Insert(match.Index, BuildTable(match.Value));
-					}
-					ComputeNoWiki(sb.ToString(), ref noWikiBegin, ref noWikiEnd);
-					match = TableRegex.Match(sb.ToString(), end);
+			match = TableRegex.Match(sb.ToString());
+			while(match.Success) {
+				if(!IsNoWikied(match.Index, noWikiBegin, noWikiEnd, out end)) {
+					sb.Remove(match.Index, match.Length);
+					sb.Insert(match.Index, BuildTable(match.Value));
 				}
+				ComputeNoWiki(sb.ToString(), ref noWikiBegin, ref noWikiEnd);
+				match = TableRegex.Match(sb.ToString(), end);
 			}
 
 			// Strip out all comments
@@ -1194,19 +1232,21 @@ namespace ScrewTurn.Wiki {
 		/// <param name="sb">The <see cref="T:StringBuilder" /> containing the text to process.</param>
 		/// <param name="bareBones">A value indicating whether the formatting is being done in bare-bones mode.</param>
 		private static void ProcessLineBreaks(StringBuilder sb, bool bareBones) {
-			if(bareBones || AreSingleLineBreaksToBeProcessed()) {
+			if(AreSingleLineBreaksToBeProcessed()) {
 				// Replace new-lines only when not enclosed in <nobr> tags
-
 				Match match = NoSingleBr.Match(sb.ToString());
 				while(match.Success) {
 					sb.Remove(match.Index, match.Length);
 					sb.Insert(match.Index, match.Value.Replace("\n", SingleBrPlaceHolder));
+					//sb.Insert(match.Index, match.Value.Replace("\n", "<br />"));
+
 					match = NoSingleBr.Match(sb.ToString(), match.Index + 1);
 				}
 
 				sb.Replace("\n", "<br />");
 
 				sb.Replace(SingleBrPlaceHolder, "\n");
+				//sb.Replace(SingleBrPlaceHolder, "<br />");
 			}
 			else {
 				// Replace new-lines only when not enclosed in <nobr> tags
@@ -1215,12 +1255,14 @@ namespace ScrewTurn.Wiki {
 				while(match.Success) {
 					sb.Remove(match.Index, match.Length);
 					sb.Insert(match.Index, match.Value.Replace("\n", SingleBrPlaceHolder));
+					//sb.Insert(match.Index, match.Value.Replace("\n", "<br />"));
 					match = NoSingleBr.Match(sb.ToString(), match.Index + 1);
 				}
 
 				sb.Replace("\n\n", "<br /><br />");
 
-				sb.Replace(SingleBrPlaceHolder, "\n");
+				sb.Replace(SingleBrPlaceHolder, "\n");//Replace <br /><br /> with <br />
+
 			}
 
 			sb.Replace("<br>", "<br />");
@@ -2260,7 +2302,7 @@ namespace ScrewTurn.Wiki {
 			indent = indent.Trim();
 			while(colons < indent.Length && indent[colons] == ':') colons++;
 			indent = indent.Substring(colons).Trim();
-			return @"<div style=""margin: 0px; padding: 0px; padding-left: " + ((int)(colons * 15)).ToString() + @"px"">" + indent + "</div>";
+			return @"<div class=""indent"" style=""margin: 0px; padding: 0px; padding-left: " + ((int)(colons * 15)).ToString() + @"px"">" + indent + "</div>";
 		}
 
 		/// <summary>
