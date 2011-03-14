@@ -9,11 +9,11 @@
 <asp:Content ID="ctnGroups" ContentPlaceHolderID="cphAdmin" runat="server">
 	<h2 class="sectiontitle"><asp:Literal ID="lblGroups" runat="server" Text="User Groups" EnableViewState="False" meta:resourcekey="lblGroupsResource1" /></h2>
 	
-	<anthem:Panel ID="pnlList" runat="server" AutoUpdateAfterCallBack="True" meta:resourcekey="pnlListResource1" UpdateAfterCallBack="True">
-		<anthem:Button ID="btnNewGroup" runat="server" Text="New Group" ToolTip="Create a new User Group" OnClick="btnNewGroup_Click" CssClass="rightaligned" meta:resourcekey="btnNewGroupResource1" />
+	<asp:Panel ID="pnlList" runat="server"  meta:resourcekey="pnlListResource1" >
+		<asp:Button ID="btnNewGroup" runat="server" Text="New Group" ToolTip="Create a new User Group" OnClick="btnNewGroup_Click" CssClass="rightaligned" meta:resourcekey="btnNewGroupResource1" />
 		
 		<div id="GroupsListContainerDiv">
-			<anthem:Repeater ID="rptGroups" runat="server" OnDataBinding="rptGroups_DataBinding" OnItemCommand="rptGroups_ItemCommand">
+			<asp:Repeater ID="rptGroups" runat="server" OnDataBinding="rptGroups_DataBinding" OnItemCommand="rptGroups_ItemCommand">
 				<HeaderTemplate>
 					<table cellpadding="0" cellspacing="0" class="generic">
 						<thead>
@@ -33,7 +33,7 @@
 						<td><%# Eval("Description") %></td>
 						<td><%# Eval("Provider") %></td>
 						<td><%# Eval("Users") %></td>
-						<td><anthem:LinkButton ID="btnSelect" runat="server" Text="Select" ToolTip="Select this User Group" CommandName="Select" CommandArgument='<%# Eval("Name") %>' meta:resourcekey="btnSelectResource1" /></td>
+						<td><asp:LinkButton ID="btnSelect" runat="server" Text="Select" ToolTip="Select this User Group" CommandName="Select" CommandArgument='<%# Eval("Name") %>' meta:resourcekey="btnSelectResource1" /></td>
 					</tr>
 				</ItemTemplate>
 				<AlternatingItemTemplate>
@@ -42,18 +42,18 @@
 						<td><%# Eval("Description") %></td>
 						<td><%# Eval("Provider") %></td>
 						<td><%# Eval("Users") %></td>
-						<td><anthem:LinkButton ID="btnSelect" runat="server" Text="Select" ToolTip="Select this User Group" CommandName="Select" CommandArgument='<%# Eval("Name") %>' meta:resourcekey="btnSelectResource2" /></td>
+						<td><asp:LinkButton ID="btnSelect" runat="server" Text="Select" ToolTip="Select this User Group" CommandName="Select" CommandArgument='<%# Eval("Name") %>' meta:resourcekey="btnSelectResource2" /></td>
 					</tr>
 				</AlternatingItemTemplate>
 				<FooterTemplate>
 					</tbody>
 					</table>
 				</FooterTemplate>
-			</anthem:Repeater>
+			</asp:Repeater>
 		</div>
-	</anthem:Panel>
+	</asp:Panel>
 	
-	<anthem:Panel ID="pnlEditGroup" runat="server" AutoUpdateAfterCallBack="True" 
+	<asp:Panel ID="pnlEditGroup" runat="server"  
 		Visible="False" meta:resourcekey="pnlEditGroupResource1">
 		<div id="EditGroupDiv">
 			<h2 class="separator"><asp:Literal ID="lblEditTitle" runat="server" Text="Group Details" EnableViewState="False" meta:resourcekey="lblEditTitleResource1" /></h2>
@@ -90,21 +90,20 @@
 				<asp:Button ID="btnCreate" runat="server" Text="Create Group" ToolTip="Save the new Group"
 					CssClass="button" OnClick="btnCreate_Click" ValidationGroup="group" 
 					meta:resourcekey="btnCreateResource1" />
-				<anthem:Button ID="btnDelete" runat="server" Text="Delete" ToolTip="Delete the Group"
+				<asp:Button ID="btnDelete" runat="server" Text="Delete" ToolTip="Delete the Group"
 					CssClass="button" Visible="False" OnClick="btnDelete_Click" CausesValidation="False"
-					ValidationGroup="group" PreCallBackFunction="RequestConfirm" 
-					meta:resourcekey="btnDeleteResource1" />
+					ValidationGroup="group" meta:resourcekey="btnDeleteResource1" />
 				<asp:Button ID="btnCancel" runat="server" Text="Cancel" ToolTip="Cancel and return to the Group list"
 					CssClass="button" OnClick="btnCancel_Click" CausesValidation="False" 
 					ValidationGroup="group" meta:resourcekey="btnCancelResource1" />
 					
-				<anthem:Label ID="lblResult" runat="server" AutoUpdateAfterCallBack="True" meta:resourcekey="lblResultResource1" UpdateAfterCallBack="True" />
+				<asp:Label ID="lblResult" runat="server"  meta:resourcekey="lblResultResource1" />
 			</div>
 	
 		</div>
-	</anthem:Panel>
+	</asp:Panel>
 	
-	<anthem:HiddenField ID="txtCurrentName" runat="server" AutoUpdateAfterCallBack="True" UpdateAfterCallBack="True" />
+	<asp:HiddenField ID="txtCurrentName" runat="server"  />
 	
 	<div style="clear: both;"></div>
 

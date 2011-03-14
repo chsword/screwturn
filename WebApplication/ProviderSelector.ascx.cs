@@ -70,14 +70,6 @@ namespace ScrewTurn.Wiki {
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether the control auto posts back.
-		/// </summary>
-		public bool AutoPostBack {
-			get { return lstProviders.AutoPostBack; }
-			set { lstProviders.AutoPostBack = value; }
-		}
-
-		/// <summary>
 		/// Detectes whether a provider is included in the list.
 		/// </summary>
 		/// <param name="provider">The provider.</param>

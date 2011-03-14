@@ -15,14 +15,14 @@
         <tr>
             <td style="width: 350px;">
                 <p><asp:Literal ID="lblOperationDescription" runat="server" Text="What do you want to import?" /></p>
-                <asp:RadioButtonList ID="lstOperation" runat="server" AutoPostBack="True" OnSelectedIndexChanged="lstOperation_SelectedIndexChanged"> 
+                <asp:RadioButtonList ID="lstOperation" runat="server" OnSelectedIndexChanged="lstOperation_SelectedIndexChanged"> 
                     <asp:ListItem Value="PAGE">Import a single Page</asp:ListItem>
                     <asp:ListItem Value="WIKI">Import a whole Wiki</asp:ListItem>
                     <asp:ListItem Value="TEXT">Import a block of Text</asp:ListItem> 
                 </asp:RadioButtonList>
                 <br />
                 <p><asp:Literal ID="lblWikiDescription" runat="server" Text="What Wiki engine do you want to import from?"></asp:Literal></p>
-                <asp:RadioButtonList ID="lstWiki" runat="server" AutoPostBack="True" OnSelectedIndexChanged="lstWiki_SelectedIndexChanged" > 
+                <asp:RadioButtonList ID="lstWiki" runat="server" OnSelectedIndexChanged="lstWiki_SelectedIndexChanged" > 
                     <asp:ListItem Value="MEDIA">MediaWiki</asp:ListItem>
                     <asp:ListItem Value="FLEX">FlexWiki</asp:ListItem>
                 </asp:RadioButtonList>

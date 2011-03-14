@@ -381,7 +381,7 @@ namespace ScrewTurn.Wiki {
 		}
 
 		private void linkButton_Click(object sender, EventArgs e) {
-			Anthem.LinkButton lnk = sender as Anthem.LinkButton;
+			System.Web.UI.WebControls.LinkButton lnk = sender as System.Web.UI.WebControls.LinkButton;
 			if(lnk != null) {
 				CurrentDirectory = lnk.CommandArgument;
 
@@ -404,7 +404,7 @@ namespace ScrewTurn.Wiki {
 			// Add a LinkButton and a "/" label for each directory
 			string current = "/";
 			for(int i = 0; i < dirs.Length; i++) {
-				Anthem.LinkButton lnk = new Anthem.LinkButton();
+				System.Web.UI.WebControls.LinkButton lnk = new System.Web.UI.WebControls.LinkButton();
 				lnk.ID = "lnkDir" + i.ToString();
 				lnk.Text = dirs[i];
 				current += dirs[i] + "/";
@@ -413,7 +413,7 @@ namespace ScrewTurn.Wiki {
 				lnk.Click += new EventHandler(linkButton_Click);
 				plhDirectory.Controls.Add(lnk);
 
-				Anthem.Label lbl = new Anthem.Label();
+				System.Web.UI.WebControls.Label lbl = new System.Web.UI.WebControls.Label();
 				lbl.ID = "lblDir" + i.ToString();
 				lbl.Text = " / ";
 				plhDirectory.Controls.Add(lbl);
@@ -529,7 +529,12 @@ namespace ScrewTurn.Wiki {
 				lblNewDirectoryResult.Text = "";
 				txtNewDirectoryName.Text = txtNewDirectoryName.Text.Trim('/');
 				AuthWriter.ClearEntriesForDirectory(provider, CurrentDirectory + txtNewDirectoryName.Text + "/");
-				bool done = provider.CreateDirectory(CurrentDirectory, txtNewDirectoryName.Text);
+				bool done = false;
+				try {
+					done = provider.CreateDirectory(CurrentDirectory, txtNewDirectoryName.Text);
+				}
+				catch(ArgumentNullException) { }
+				catch(ArgumentException) { }
 				if(!done) {
 					lblNewDirectoryResult.CssClass = "resulterror";
 					lblNewDirectoryResult.Text = Properties.Messages.CannotCreateNewDirectory;

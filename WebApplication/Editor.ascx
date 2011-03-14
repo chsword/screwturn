@@ -7,143 +7,143 @@
 <!-- added for WYSIWYG -->
 <script type="text/javascript">
 <!--
-    var debug=true;
+	var debug=true;
 
-    var iframe;
-    var inWYSIWYG=false;
+	var iframe;
+	var inWYSIWYG=false;
 
-    function IsInWYSIWYG() {
-      if(inWYSIWYG) {
-        inWYSIWYG=false;
-        return true;
-      }
-      return false;
-    }
+	function IsInWYSIWYG() {
+	  if(inWYSIWYG) {
+		inWYSIWYG=false;
+		return true;
+	  }
+	  return false;
+	}
 
-    function iframe_onload() {
-      inWYSIWYG=true;
-      if (document.all) {
-		    iframe = window.frames[0];
-		    iframe.focus();
-		    var range = iframe.document.selection.createRange();
-		    range.pasteHTML(document.getElementById(VisualControl).value);
-		    range.collapse(false);
-		    range.select();
-		    iframe.document.designMode='On';
-	    } else {
-		    iframe = document.getElementById('iframe').contentWindow;
-		    iframe.document.designMode='On';
-		    iframe.document.execCommand('styleWithCSS',false,false);
-		    iframe.document.execCommand('backcolor', false, 'white');
-		    try { // This seems to throw an exception in Firefox
-		    	iframe.focus();
-		    	iframe.document.execCommand('inserthtml', false, document.getElementById(VisualControl).value);
-		    } catch(ex) { }
-	    }
-    }
+	function iframe_onload() {
+	  inWYSIWYG=true;
+	  if (document.all) {
+			iframe = window.frames[0];
+			iframe.focus();
+			var range = iframe.document.selection.createRange();
+			range.pasteHTML(document.getElementById(VisualControl).value);
+			range.collapse(false);
+			range.select();
+			iframe.document.designMode='On';
+		} else {
+			iframe = document.getElementById('iframe').contentWindow;
+			iframe.document.designMode='On';
+			iframe.document.execCommand('styleWithCSS',false,false);
+			iframe.document.execCommand('backcolor', false, 'white');
+			try { // This seems to throw an exception in Firefox
+				iframe.focus();
+				iframe.document.execCommand('inserthtml', false, document.getElementById(VisualControl).value);
+			} catch(ex) { }
+		}
+	}
 
-    function execCmd(commandID,showUI,value) {
-      iframe.focus();
-      iframe.document.execCommand(commandID,showUI,value);
-    }
+	function execCmd(commandID,showUI,value) {
+	  iframe.focus();
+	  iframe.document.execCommand(commandID,showUI,value);
+	}
 
-    function getSelectedText() {
-      if(document.all)
-        var selected=iframe.document.selection.createRange().text;
-      else
-        var selected=iframe.document.defaultView.getSelection().getRangeAt(0); 
-      return selected;
-    }
+	function getSelectedText() {
+	  if(document.all)
+		var selected=iframe.document.selection.createRange().text;
+	  else
+		var selected=iframe.document.defaultView.getSelection().getRangeAt(0); 
+	  return selected;
+	}
 
-    function insertHTML(html) {
-        if (document.all) {
-		    iframe.focus();
-		    var range = iframe.document.selection.createRange();
-		    range.pasteHTML(html);
-		    range.collapse(false);
-		    range.select();
-		    iframe.focus();
-	    } else {
+	function insertHTML(html) {
+		if (document.all) {
+			iframe.focus();
+			var range = iframe.document.selection.createRange();
+			range.pasteHTML(html);
+			range.collapse(false);
+			range.select();
+			iframe.focus();
+		} else {
 			iframe.document.execCommand('inserthtml', false, html);
-		    iframe.focus();
-	    }
-    }
+			iframe.focus();
+		}
+	}
 
-    function wrapWithTagClass(tag,clsName) {
-    	insertHTML('<' + tag + ' class=' + clsName + '>' + getSelectedText() + '</' + tag + '>');
-    }
+	function wrapWithTagClass(tag,clsName) {
+		insertHTML('<' + tag + ' class=' + clsName + '>' + getSelectedText() + '</' + tag + '>');
+	}
 
-    function wrapWithTag(tag) {
-    	insertHTML('<' + tag + '>' + getSelectedText() + '</' + tag + '>');
-    }
+	function wrapWithTag(tag) {
+		insertHTML('<' + tag + '>' + getSelectedText() + '</' + tag + '>');
+	}
 
-    function insertBreak() {
-        insertHTML('<h1 class="separator"> </h1>\n');
-    }
+	function insertBreak() {
+		insertHTML('<h1 class="separator"> </h1>\n');
+	}
 
-    function insertList(listTag) {
-    	insertHTML('<' + listTag + '><li>' + getSelectedText() + '</li></' + listTag + '>');
-    	return false;
-    }
+	function insertList(listTag) {
+		insertHTML('<' + listTag + '><li>' + getSelectedText() + '</li></' + listTag + '>');
+		return false;
+	}
 
-    function IncreaseHeight(elemName) {
-    	var elem = document.getElementById(elemName);
-    	var pos = AbsolutePosition(elem);
-    	elem.style["height"] = pos.height + 100 + "px";
+	function IncreaseHeight(elemName) {
+		var elem = document.getElementById(elemName);
+		var pos = AbsolutePosition(elem);
+		elem.style["height"] = pos.height + 100 + "px";
 
-    	__CreateCookie("ScrewTurnWikiES", elem.style["height"], 365);
-    	
-    	return false;
-    }
-    function DecreaseHeight(elemName) {
-    	var elem = document.getElementById(elemName);
-    	var pos = AbsolutePosition(elem);
-    	if(pos.height > 100) elem.style["height"] = pos.height - 100 + "px";
+		__CreateCookie("ScrewTurnWikiES", elem.style["height"], 365);
+		
+		return false;
+	}
+	function DecreaseHeight(elemName) {
+		var elem = document.getElementById(elemName);
+		var pos = AbsolutePosition(elem);
+		if(pos.height > 100) elem.style["height"] = pos.height - 100 + "px";
 
-    	__CreateCookie("ScrewTurnWikiES", elem.style["height"], 365);
-    	
-    	return false;
-    }
+		__CreateCookie("ScrewTurnWikiES", elem.style["height"], 365);
+		
+		return false;
+	}
 
-    function InitES() {
-    	var cookieValue = __ReadCookie("ScrewTurnWikiES");
-    	if(cookieValue) {
-    		var elem = document.getElementById(MarkupControl);
-    		if(elem) elem.style["height"] = cookieValue;
-    		elem = document.getElementById("iframe");
-    		if(elem) elem.style["height"] = cookieValue;
-    	}
-    }
+	function InitES() {
+		var cookieValue = __ReadCookie("ScrewTurnWikiES");
+		if(cookieValue) {
+			var elem = document.getElementById(MarkupControl);
+			if(elem) elem.style["height"] = cookieValue;
+			elem = document.getElementById("iframe");
+			if(elem) elem.style["height"] = cookieValue;
+		}
+	}
 
-    function __FocusEditorWindow() {
-    	$("#<%= txtMarkup.ClientID %>").focus();
-    	$("#iframe").focus();
-    }
+	function __FocusEditorWindow() {
+		$("#<%= txtMarkup.ClientID %>").focus();
+		$("#iframe").focus();
+	}
 // -->
 </script>
 
 <div id="TabContainerDiv">
-	<anthem:Button ID="btnWikiMarkup" runat="server" Text="WikiMarkup" OnClick="btnWikiMarkup_Click" CssClass="tabbutton" CausesValidation="false"
-		PostCallBackFunction="HideProgress" PreCallBackFunction="ShowProgress" AutoUpdateAfterCallBack="True" EnableViewState="False" meta:resourcekey="btnWikiMarkupResource3" UpdateAfterCallBack="True" />
-	<anthem:Button ID="btnVisual" runat="server" Text="Visual" OnClick="btnVisual_Click" CssClass="tabbutton" CausesValidation="false"
-		PostCallBackFunction="HideProgress" PreCallBackFunction="ShowProgress" AutoUpdateAfterCallBack="True" EnableViewState="False" meta:resourcekey="btnVisualResource3" UpdateAfterCallBack="True" />
-	<anthem:Button ID="btnPreview" runat="server" Text="Preview" OnClick="btnPreview_Click" CssClass="tabbutton" CausesValidation="false"
-		PostCallBackFunction="HideProgress" PreCallBackFunction="ShowProgress" AutoUpdateAfterCallBack="True" EnableViewState="False" meta:resourcekey="btnPreviewResource3" UpdateAfterCallBack="True" />
+	<asp:Button ID="btnWikiMarkup" runat="server" Text="WikiMarkup" OnClick="btnWikiMarkup_Click" CssClass="tabbutton" CausesValidation="false"
+		EnableViewState="False" meta:resourcekey="btnWikiMarkupResource3" />
+	<asp:Button ID="btnVisual" runat="server" Text="Visual" OnClick="btnVisual_Click" CssClass="tabbutton" CausesValidation="false"
+		EnableViewState="False" meta:resourcekey="btnVisualResource3" />
+	<asp:Button ID="btnPreview" runat="server" Text="Preview" OnClick="btnPreview_Click" CssClass="tabbutton" CausesValidation="false"
+		EnableViewState="False" meta:resourcekey="btnPreviewResource3" />
 	<span id="ProgressSpan" style="display: none;">
 		<img src="Images/Editor/Progress.gif" alt="Please wait..." style="margin-bottom: -2px;" />
 	</span>
 </div>
 
-<anthem:MultiView ID="mlvEditor" AutoUpdateAfterCallBack="True" UpdateAfterCallBack="True" runat="server">
+<asp:MultiView ID="mlvEditor" runat="server">
 
-    <anthem:View ID="viwStandard" runat="server">
-    
-        <div class="toolbar">
+	<asp:View ID="viwStandard" runat="server">
+	
+		<div class="toolbar">
 			<div class="sizebuttons">
-				<anthem:ImageButton ID="btnBiggerMarkup" runat="server" ImageUrl="~/Images/Editor/EditorBigger.png" ImageUrlDuringCallBack="~/Images/Editor/EditorBigger.png"
+				<asp:ImageButton ID="btnBiggerMarkup" runat="server" ImageUrl="~/Images/Editor/EditorBigger.png"
 					ToolTip="Increase editor size" CssClass="helperbutton" EnableViewState="False" meta:resourcekey="btnBiggerMarkupResource3"
 					OnClientClick="javascript:return IncreaseHeight(MarkupControl);" />
-				<anthem:ImageButton ID="btnSmallerMarkup" runat="server" ImageUrl="~/Images/Editor/EditorSmaller.png" ImageUrlDuringCallBack="~/Images/Editor/EditorSmaller.png"
+				<asp:ImageButton ID="btnSmallerMarkup" runat="server" ImageUrl="~/Images/Editor/EditorSmaller.png" 
 					ToolTip="Decrease editor size" CssClass="helperbutton" EnableViewState="False" meta:resourcekey="btnSmallerMarkupResource3"
 					OnClientClick="javascript:return DecreaseHeight(MarkupControl);" />
 			</div>
@@ -204,26 +204,26 @@
 			<a href="#" title="<%= ScrewTurn.Wiki.Properties.Messages.SymbolsTitle %>" id="SymbolsMenuLinkMarkup" class="toolbarbutton" onclick="javascript:return ShowSymbolsMenuMarkup(event);">
 				<img src="Images/Editor/Symbol.png" alt="<%= ScrewTurn.Wiki.Properties.Messages.Symbols %>" /></a>
 			</div>
-        </div>
-        
-        <anthem:TextBox ID="txtMarkup" runat="server" TextMode="MultiLine" Width="99%" Height="400px" style="width: 700px; min-width: 99%; max-width: 99%;" AutoUpdateAfterCallBack="True" meta:resourcekey="txtMarkupResource3" UpdateAfterCallBack="True" />
-    
-    </anthem:View>
-    
-    <anthem:View ID="viwVisual" runat="server">
-    
-        <div class="toolbar">
+		</div>
+		
+		<asp:TextBox ID="txtMarkup" runat="server" TextMode="MultiLine" Width="99%" Height="400px" style="width: 700px; min-width: 99%; max-width: 99%;" meta:resourcekey="txtMarkupResource3" />
+	
+	</asp:View>
+	
+	<asp:View ID="viwVisual" runat="server">
+	
+		<div class="toolbar">
 			<div class="sizebuttons">
-				<anthem:ImageButton ID="btnBiggerMarkupVisual" runat="server" ImageUrl="~/Images/Editor/EditorBigger.png" ImageUrlDuringCallBack="~/Images/Editor/EditorBigger.png"
+				<asp:ImageButton ID="btnBiggerMarkupVisual" runat="server" ImageUrl="~/Images/Editor/EditorBigger.png" 
 					ToolTip="Increase editor size" CssClass="helperbutton" EnableViewState="False" meta:resourcekey="btnBiggerMarkupVisualResource3"
 					OnClientClick="javascript:return IncreaseHeight('iframe');" />
-				<anthem:ImageButton ID="btnSmallerMarkupVisual" runat="server" ImageUrl="~/Images/Editor/EditorSmaller.png" ImageUrlDuringCallBack="~/Images/Editor/EditorSmaller.png"
+				<asp:ImageButton ID="btnSmallerMarkupVisual" runat="server" ImageUrl="~/Images/Editor/EditorSmaller.png" 
 					ToolTip="Decrease editor size" CssClass="helperbutton" EnableViewState="False" meta:resourcekey="btnSmallerMarkupVisualResource3"
 					OnClientClick="javascript:return DecreaseHeight('iframe');" />
 			</div>
-        
+		
 			<div id="VisualToolbarDiv">
-            <a href="#" title="<%= ScrewTurn.Wiki.Properties.Messages.BoldTitle %>" class="toolbarbutton" onclick="javascript:return execCmd('Bold',false,null);">
+			<a href="#" title="<%= ScrewTurn.Wiki.Properties.Messages.BoldTitle %>" class="toolbarbutton" onclick="javascript:return execCmd('Bold',false,null);">
 				<img src="Images/Editor/Bold.png" alt="<%= ScrewTurn.Wiki.Properties.Messages.Bold %>" /></a>
 			<a href="#" title="<%= ScrewTurn.Wiki.Properties.Messages.ItalicTitle %>" class="toolbarbutton" onclick="javascript:return execCmd('Italic',false,null);">
 				<img src="Images/Editor/Italic.png" alt="<%= ScrewTurn.Wiki.Properties.Messages.Italic %>" /></a>
@@ -231,7 +231,7 @@
 				<img src="Images/Editor/Underlined.png" alt="<%= ScrewTurn.Wiki.Properties.Messages.Underlined %>" /></a>
 			<a href="#" title="<%= ScrewTurn.Wiki.Properties.Messages.StrikedTitle %>" class="toolbarbutton" onclick="javascript:return execCmd('Strikethrough',false,null);">
 				<img src="Images/Editor/Striked.png" alt="<%= ScrewTurn.Wiki.Properties.Messages.Striked %>" /></a>
-            <a href="#" title="<%= ScrewTurn.Wiki.Properties.Messages.H1Title %>" class="toolbarbutton" onclick="javascript:return wrapWithTagClass('h1','separator');">
+			<a href="#" title="<%= ScrewTurn.Wiki.Properties.Messages.H1Title %>" class="toolbarbutton" onclick="javascript:return wrapWithTagClass('h1','separator');">
 				<img src="Images/Editor/H1.png" alt="<%= ScrewTurn.Wiki.Properties.Messages.H1 %>" /></a>
 			<a href="#" title="<%= ScrewTurn.Wiki.Properties.Messages.H2Title %>" class="toolbarbutton" onclick="javascript:return wrapWithTagClass('h2','separator');">
 				<img src="Images/Editor/H2.png" alt="<%= ScrewTurn.Wiki.Properties.Messages.H2 %>" /></a>
@@ -274,63 +274,63 @@
 			<a href="#" title="<%= ScrewTurn.Wiki.Properties.Messages.SymbolsTitle %>" id="SymbolsMenuLinkMarkup" class="toolbarbutton" onclick="javascript:return ShowSymbolsMenuMarkup(event);">
 				<img src="Images/Editor/Symbol.png" alt="<%= ScrewTurn.Wiki.Properties.Messages.Symbols %>" /></a>
 			</div>
-        </div>
-        
-        <div id="WysiwygDiv">
-            <iframe id="iframe" name="iframe" onload="javascript:return iframe_onload();" src="IframeEditor.aspx" style="width: 100%; height: 400px;" frameborder="0"></iframe>
-        </div>
-        
-        <div style="display: none;">
-			<anthem:TextBox ID="lblWYSIWYG" runat="server" TextMode="MultiLine" AutoUpdateAfterCallBack="True" meta:resourcekey="lblWYSIWYGResource1" />
 		</div>
-    </anthem:View>
-    
-    <anthem:View ID="viwPreview" runat="server">
-        
-        <div class="toolbar" style="padding-top: 8px; padding-bottom: 0px;">
+		
+		<div id="WysiwygDiv">
+			<iframe id="iframe" name="iframe" onload="javascript:return iframe_onload();" src="IframeEditor.aspx" style="width: 100%; height: 400px;" frameborder="0"></iframe>
+		</div>
+		
+		<div style="display: none;">
+			<asp:TextBox ID="lblWYSIWYG" runat="server" TextMode="MultiLine" meta:resourcekey="lblWYSIWYGResource1" />
+		</div>
+	</asp:View>
+	
+	<asp:View ID="viwPreview" runat="server">
+		
+		<div class="toolbar" style="padding-top: 8px; padding-bottom: 0px;">
 			<asp:Label ID="lblPreviewWarning" runat="server" CssClass="resulterror" EnableViewState="False"
 				Text="&lt;b&gt;Warning&lt;/b&gt;: this is only a preview. The content was not saved." meta:resourcekey="lblPreviewWarningResource3" />
-        </div>
-    
-        <div id="PreviewDiv" style="border: solid 4px #999999; padding: 8px; height: 450px; overflow: auto;">
-            <asp:Literal ID="lblPreview" runat="server" EnableViewState="False" meta:resourcekey="lblPreviewResource3" />
-        </div>
-    </anthem:View>
+		</div>
+	
+		<div id="PreviewDiv" style="border: solid 4px #999999; padding: 8px; height: 450px; overflow: auto;">
+			<asp:Literal ID="lblPreview" runat="server" EnableViewState="False" meta:resourcekey="lblPreviewResource3" />
+		</div>
+	</asp:View>
 
-</anthem:MultiView>
+</asp:MultiView>
 
 <div id="SnippetsMenuDiv" class="menucontainer" style="display: none;">
 	<asp:Label ID="lblSnippets" runat="server" EnableViewState="False" meta:resourcekey="lblSnippetsResource3" />
 </div>
 
 <div id="SpecialTagsMenuDiv" class="menucontainer" style="display: none;">
-    <asp:Literal ID="lblCustomSpecialTags" runat="server" EnableViewState="false" />
+	<asp:Literal ID="lblCustomSpecialTags" runat="server" EnableViewState="false" />
 	<a href="#" onclick="javascript:return InsertMarkup('{WIKITITLE}');" class="menulink">{WikiTitle}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{UP}');" class="menulink">{Up}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{TOP}');" class="menulink">{Top}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{TOC}');" class="menulink">{TOC}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{THEMEPATH}');" class="menulink">{ThemePath}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{RSSPAGE}');" class="menulink">{RSSPage}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{WIKIVERSION}');" class="menulink">{WikiVersion}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{MAINURL}');" class="menulink">{MainURL}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{PAGECOUNT}');" class="menulink">{PageCount}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{PAGECOUNT(*)}');" class="menulink">{PageCount(*)}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{USERNAME}');" class="menulink">{Username}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{LOGINLOGOUT}');" class="menulink">{LoginLogout}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{CLEAR}');" class="menulink">{Clear}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{CLOUD}');" class="menulink">{Cloud}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{SEARCHBOX}');" class="menulink">{SearchBox}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{PAGENAME}');" class="menulink">{PageName}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{NAMESPACE}');" class="menulink">{Namespace}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{CATEGORIES}');" class="menulink">{Categories}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{NAMESPACEDROPDOWN}');" class="menulink">{NamespaceDropDown}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{NAMESPACELIST}');" class="menulink">{NamespaceList}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{ORPHANS}');" class="menulink">{Orphans}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{WANTED}');" class="menulink">{Wanted}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{INCOMING}');" class="menulink">{Incoming}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{OUTGOING}');" class="menulink">{Outgoing}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{RECENTCHANGES}');" class="menulink">{RecentChanges}</a>
-    <a href="#" onclick="javascript:return InsertMarkup('{RECENTCHANGES(*)}');" class="menulink">{RecentChanges(*)}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{UP}');" class="menulink">{Up}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{TOP}');" class="menulink">{Top}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{TOC}');" class="menulink">{TOC}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{THEMEPATH}');" class="menulink">{ThemePath}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{RSSPAGE}');" class="menulink">{RSSPage}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{WIKIVERSION}');" class="menulink">{WikiVersion}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{MAINURL}');" class="menulink">{MainURL}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{PAGECOUNT}');" class="menulink">{PageCount}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{PAGECOUNT(*)}');" class="menulink">{PageCount(*)}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{USERNAME}');" class="menulink">{Username}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{LOGINLOGOUT}');" class="menulink">{LoginLogout}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{CLEAR}');" class="menulink">{Clear}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{CLOUD}');" class="menulink">{Cloud}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{SEARCHBOX}');" class="menulink">{SearchBox}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{PAGENAME}');" class="menulink">{PageName}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{NAMESPACE}');" class="menulink">{Namespace}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{CATEGORIES}');" class="menulink">{Categories}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{NAMESPACEDROPDOWN}');" class="menulink">{NamespaceDropDown}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{NAMESPACELIST}');" class="menulink">{NamespaceList}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{ORPHANS}');" class="menulink">{Orphans}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{WANTED}');" class="menulink">{Wanted}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{INCOMING}');" class="menulink">{Incoming}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{OUTGOING}');" class="menulink">{Outgoing}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{RECENTCHANGES}');" class="menulink">{RecentChanges}</a>
+	<a href="#" onclick="javascript:return InsertMarkup('{RECENTCHANGES(*)}');" class="menulink">{RecentChanges(*)}</a>
 </div>
 
 <div id="SymbolsMenuDiv" class="menucontainer" style="display: none;">
@@ -423,23 +423,23 @@
 
 	function AbsolutePosition(obj) {
 		var pos = null; 
-        if(obj != null) {
+		if(obj != null) {
 			pos = new Object();
-            pos.top = obj.offsetTop;
-            pos.left = obj.offsetLeft;
-            pos.width = obj.offsetWidth;
-            pos.height= obj.offsetHeight;
-            obj = obj.offsetParent;
-            while(obj != null) {
+			pos.top = obj.offsetTop;
+			pos.left = obj.offsetLeft;
+			pos.width = obj.offsetWidth;
+			pos.height= obj.offsetHeight;
+			obj = obj.offsetParent;
+			while(obj != null) {
 				pos.top += obj.offsetTop;
-                pos.left += obj.offsetLeft;
-                obj = obj.offsetParent;
-            }
-        }
-        return(pos);
-    }
-    
-    function ExtractAnchors() {
+				pos.left += obj.offsetLeft;
+				obj = obj.offsetParent;
+			}
+		}
+		return(pos);
+	}
+	
+	function ExtractAnchors() {
 		var markup = new String(document.getElementById(MarkupControl).value);
 		markup = markup.toLowerCase();
 		var idx = 0;
@@ -458,9 +458,9 @@
 		}
 		//alert(result);
 		return result;
-    }
-    
-    function ExtractAnchorsWYSIWYG() {
+	}
+	
+	function ExtractAnchorsWYSIWYG() {
 		var markup = new String(iframe.document.body.innerHTML);
 		//alert(markup);
 		markup = markup.toLowerCase();
@@ -566,40 +566,40 @@
 	function WrapSelectedMarkup(preTag, postTag) {
 		HideAllMenus();
 		var objTextArea = document.getElementById(MarkupControl);
-        if(objTextArea) {
-	        if(document.selection && document.selection.createRange) {
-		        objTextArea.focus();
-		        var objSelectedTextRange = document.selection.createRange();
-		        var strSelectedText = objSelectedTextRange.text;
-		        if(strSelectedText.substring(0, preTag.length) == preTag && strSelectedText.substring(strSelectedText.length - postTag.length, strSelectedText.length) == postTag) {
-		            objSelectedTextRange.text = strSelectedText.substring(preTag.length, strSelectedText.length - postTag.length);
-		        }
-		        else {
-		            objSelectedTextRange.text = preTag + strSelectedText + postTag;
-		        }
-	        }
-	        else {
-	        	objTextArea.focus();
-	        	var scrollPos = objTextArea.scrollTop;
-	            var selStart = objTextArea.selectionStart;
+		if(objTextArea) {
+			if(document.selection && document.selection.createRange) {
+				objTextArea.focus();
+				var objSelectedTextRange = document.selection.createRange();
+				var strSelectedText = objSelectedTextRange.text;
+				if(strSelectedText.substring(0, preTag.length) == preTag && strSelectedText.substring(strSelectedText.length - postTag.length, strSelectedText.length) == postTag) {
+					objSelectedTextRange.text = strSelectedText.substring(preTag.length, strSelectedText.length - postTag.length);
+				}
+				else {
+					objSelectedTextRange.text = preTag + strSelectedText + postTag;
+				}
+			}
+			else {
+				objTextArea.focus();
+				var scrollPos = objTextArea.scrollTop;
+				var selStart = objTextArea.selectionStart;
 				var strFirst = objTextArea.value.substring(0, objTextArea.selectionStart);
 				var strSelected = objTextArea.value.substring(objTextArea.selectionStart, objTextArea.selectionEnd);
 				var strSecond = objTextArea.value.substring(objTextArea.selectionEnd);
 				if(strSelected.substring(0, preTag.length) == preTag && strSelected.substring(strSelected.length - postTag.length, strSelected.length) == postTag) {
-				    // Remove tags
-				    strSelected = strSelected.substring(preTag.length, strSelected.length - postTag.length);
-				    objTextArea.value = strFirst + strSelected + strSecond;
-				    objTextArea.selectionStart = selStart;
-				    objTextArea.selectionEnd = selStart + strSelected.length;
+					// Remove tags
+					strSelected = strSelected.substring(preTag.length, strSelected.length - postTag.length);
+					objTextArea.value = strFirst + strSelected + strSecond;
+					objTextArea.selectionStart = selStart;
+					objTextArea.selectionEnd = selStart + strSelected.length;
 				}
 				else {
-				    objTextArea.value = strFirst + preTag + strSelected + postTag + strSecond;
-				    objTextArea.selectionStart = selStart;
-				    objTextArea.selectionEnd = selStart + preTag.length + strSelected.length + postTag.length;
+					objTextArea.value = strFirst + preTag + strSelected + postTag + strSecond;
+					objTextArea.selectionStart = selStart;
+					objTextArea.selectionEnd = selStart + preTag.length + strSelected.length + postTag.length;
 				}
 				objTextArea.scrollTop = scrollPos;
-	        }
-        }
+			}
+		}
 		return false;
 	}
 
@@ -616,17 +616,17 @@
 		}
 		
 		var objTextArea = document.getElementById(MarkupControl);
-        if(objTextArea) {
-	        if(document.selection && document.selection.createRange) {
-		        objTextArea.focus();
-		        var objSelectedTextRange = document.selection.createRange();
-		        var strSelectedText = objSelectedTextRange.text;
-		        objSelectedTextRange.text = tag + strSelectedText;
-	        }
-	        else {
-	        	objTextArea.focus();
-	        	var scrollPos = objTextArea.scrollTop;
-	            var selStart = objTextArea.selectionStart;
+		if(objTextArea) {
+			if(document.selection && document.selection.createRange) {
+				objTextArea.focus();
+				var objSelectedTextRange = document.selection.createRange();
+				var strSelectedText = objSelectedTextRange.text;
+				objSelectedTextRange.text = tag + strSelectedText;
+			}
+			else {
+				objTextArea.focus();
+				var scrollPos = objTextArea.scrollTop;
+				var selStart = objTextArea.selectionStart;
 				var strFirst = objTextArea.value.substring(0, objTextArea.selectionStart);
 				var strSecond = objTextArea.value.substring(objTextArea.selectionStart);
 				objTextArea.value = strFirst + tag + strSecond;
@@ -634,25 +634,25 @@
 				objTextArea.selectionEnd = selStart + tag.length;
 				objTextArea.scrollTop = scrollPos;
 			}
-        }
-        return false;
-    }
+		}
+		return false;
+	}
 
-    function InsertMarkupWYSIWYG(tag) {
-    	insertHTML(tag);
-    	return false;
-    }
+	function InsertMarkupWYSIWYG(tag) {
+		insertHTML(tag);
+		return false;
+	}
 
-    function HideToolbarButtons() {
-    	// This could be done easily with jQuery...
-    	var elem = document.getElementById("MarkupToolbarDiv");
-    	if(elem) elem.style["display"] = "none";
+	function HideToolbarButtons() {
+		// This could be done easily with jQuery...
+		var elem = document.getElementById("MarkupToolbarDiv");
+		if(elem) elem.style["display"] = "none";
 
-    	elem = document.getElementById("VisualToolbarDiv");
-    	if(elem) elem.style["display"] = "none";
-    }
+		elem = document.getElementById("VisualToolbarDiv");
+		if(elem) elem.style["display"] = "none";
+	}
 
-    InitES();
+	InitES();
 // -->
 </script>
 

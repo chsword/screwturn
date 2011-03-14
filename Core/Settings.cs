@@ -67,9 +67,10 @@ namespace ScrewTurn.Wiki {
 		/// </summary>
 		public static string MasterPassword {
 			get {
-				string pass = WebConfigurationManager.AppSettings["MasterPassword"];
-				if(pass == null || pass.Length == 0) throw new Exception("Configuration: MasterPassword cannot be null.");
-				return pass;
+				return GetString(Provider.GetSetting("MasterPassword"), "");
+			}
+			set {
+				Provider.SetSetting("MasterPassword", value);
 			}
 		}
 
@@ -196,20 +197,6 @@ namespace ScrewTurn.Wiki {
 				if(string.IsNullOrEmpty(dir)) throw new InvalidConfigurationException("PublicDirectory cannot be empty or null");
 				else return dir;
 			}
-		}
-
-		/// <summary>
-		/// Gets the Name of the Themes directory.
-		/// </summary>
-		public static string ThemesDirectoryName {
-			get { return "Themes"; }
-		}
-
-		/// <summary>
-		/// Gets the Themes directory.
-		/// </summary>
-		public static string ThemesDirectory {
-			get { return RootDirectory + ThemesDirectoryName + Path.DirectorySeparatorChar; }
 		}
 
 		/// <summary>
@@ -845,17 +832,6 @@ namespace ScrewTurn.Wiki {
 		}
 
 		/// <summary>
-		/// Gets the Theme Path for a namespace.
-		/// </summary>
-		/// <param name="nspace">The namespace (<c>null</c> for the root).</param>
-		/// <returns>The path of the theme.</returns>
-		public static string GetThemePath(string nspace) {
-			string theme = GetTheme(nspace);
-			if(!Directory.Exists(ThemesDirectory + theme)) return ThemesDirectoryName + "/Default/";
-			else return ThemesDirectoryName + "/" + theme + "/";
-		}
-
-		/// <summary>
 		/// Gets or sets the list of allowed file types.
 		/// </summary>
 		public static string[] AllowedFileTypes {
@@ -1016,6 +992,18 @@ namespace ScrewTurn.Wiki {
 			}
 			set {
 				Provider.SetSetting("DefaultCacheProvider", value);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the Type name of the Default Theme Provider.
+		/// </summary>
+		public static string DefaultThemeProvider {
+			get {
+				return GetString(Provider.GetSetting("DefaultThemeProvider"), typeof(ThemeStorageProvider).ToString());
+			}
+			set {
+				Provider.SetSetting("DefaultThemeProvider", value);
 			}
 		}
 

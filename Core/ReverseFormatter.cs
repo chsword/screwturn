@@ -400,9 +400,9 @@ namespace ScrewTurn.Wiki {
 										result += "[anchor|#" + attName.Value.ToString().ToLowerInvariant() + "]" + processChild(node.ChildNodes);
 										break;
 									}
-
-
 								}
+
+
 								if(isInternalLink) {
 									string[] splittedLink = link.Split('=');
 									link = "c:" + splittedLink[1];
