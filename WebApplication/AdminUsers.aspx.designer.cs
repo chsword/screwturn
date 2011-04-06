@@ -28,7 +28,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Panel pnlList;
+        protected global::System.Web.UI.WebControls.Panel pnlList;
         
         /// <summary>
         /// btnNewUser control.
@@ -37,7 +37,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Button btnNewUser;
+        protected global::System.Web.UI.WebControls.Button btnNewUser;
         
         /// <summary>
         /// lblBulkDeleteTitle control.
@@ -64,7 +64,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Button btnBulkDelete;
+        protected global::System.Web.UI.WebControls.Button btnBulkDelete;
         
         /// <summary>
         /// lblBulkDeleteResult control.
@@ -73,7 +73,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Label lblBulkDeleteResult;
+        protected global::System.Web.UI.WebControls.Label lblBulkDeleteResult;
         
         /// <summary>
         /// lblFilter control.
@@ -91,7 +91,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkActive;
+        protected global::System.Web.UI.WebControls.CheckBox chkActive;
         
         /// <summary>
         /// chkInactive control.
@@ -100,7 +100,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkInactive;
+        protected global::System.Web.UI.WebControls.CheckBox chkInactive;
         
         /// <summary>
         /// txtFilter control.
@@ -109,7 +109,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.TextBox txtFilter;
+        protected global::System.Web.UI.WebControls.TextBox txtFilter;
         
         /// <summary>
         /// btnFilter control.
@@ -118,7 +118,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.ImageButton btnFilter;
+        protected global::System.Web.UI.WebControls.ImageButton btnFilter;
         
         /// <summary>
         /// pageSelector control.
@@ -136,7 +136,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Repeater rptAccounts;
+        protected global::System.Web.UI.WebControls.Repeater rptAccounts;
         
         /// <summary>
         /// pnlEditAccount control.
@@ -145,7 +145,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Panel pnlEditAccount;
+        protected global::System.Web.UI.WebControls.Panel pnlEditAccount;
         
         /// <summary>
         /// lblEditTitle control.
@@ -433,7 +433,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Button btnDelete;
+        protected global::System.Web.UI.WebControls.Button btnDelete;
         
         /// <summary>
         /// btnCancel control.
@@ -451,7 +451,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Label lblResult;
+        protected global::System.Web.UI.WebControls.Label lblResult;
         
         /// <summary>
         /// txtCurrentUsername control.
@@ -460,6 +460,6 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.HiddenField txtCurrentUsername;
+        protected global::System.Web.UI.WebControls.HiddenField txtCurrentUsername;
     }
 }

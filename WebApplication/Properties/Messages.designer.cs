@@ -1249,6 +1249,15 @@ namespace ScrewTurn.Wiki.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not delete Theme.
+        /// </summary>
+        public static string CouldNotDeleteTheme {
+            get {
+                return ResourceManager.GetString("CouldNotDeleteTheme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not merge Categories.
         /// </summary>
         public static string CouldNotMergeCategories {
@@ -2680,6 +2689,15 @@ namespace ScrewTurn.Wiki.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loaded theme.
+        /// </summary>
+        public static string LoadedThemes {
+            get {
+                return ResourceManager.GetString("LoadedThemes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Located in.
         /// </summary>
         public static string LocatedIn {
@@ -3517,6 +3535,15 @@ namespace ScrewTurn.Wiki.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The new password is required.
+        /// </summary>
+        public static string PasswordEmpty {
+            get {
+                return ResourceManager.GetString("PasswordEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password Reset Message File.
         /// </summary>
         public static string PasswordResetMessageFile {
@@ -4305,6 +4332,24 @@ namespace ScrewTurn.Wiki.Properties {
         public static string TextareaSize {
             get {
                 return ResourceManager.GetString("TextareaSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Theme already exists.
+        /// </summary>
+        public static string ThemeAlreadyExists {
+            get {
+                return ResourceManager.GetString("ThemeAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Theme Deleted.
+        /// </summary>
+        public static string ThemeDeleted {
+            get {
+                return ResourceManager.GetString("ThemeDeleted", resourceCulture);
             }
         }
         

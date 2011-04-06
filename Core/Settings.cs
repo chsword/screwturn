@@ -67,9 +67,10 @@ namespace ScrewTurn.Wiki {
 		/// </summary>
 		public static string MasterPassword {
 			get {
-				string pass = WebConfigurationManager.AppSettings["MasterPassword"];
-				if(pass == null || pass.Length == 0) throw new Exception("Configuration: MasterPassword cannot be null.");
-				return pass;
+				return GetString(Provider.GetSetting("MasterPassword"), "");
+			}
+			set {
+				Provider.SetSetting("MasterPassword", value);
 			}
 		}
 
@@ -218,6 +219,8 @@ namespace ScrewTurn.Wiki {
 		public static string JsDirectoryName {
 			get { return "JS"; }
 		}
+
+
 
 		/// <summary>
 		/// Gets the JavaScript Directory.
@@ -830,7 +833,7 @@ namespace ScrewTurn.Wiki {
 		public static string GetTheme(string nspace) {
 			if(!string.IsNullOrEmpty(nspace)) nspace = Pages.FindNamespace(nspace).Name;
 			string propertyName = "Theme" + (!string.IsNullOrEmpty(nspace) ? "-" + nspace : "");
-			return GetString(Provider.GetSetting(propertyName), "Default");
+			return GetString(Provider.GetSetting(propertyName), "standard|Default");
 		}
 
 		/// <summary>
@@ -842,17 +845,6 @@ namespace ScrewTurn.Wiki {
 			if(!string.IsNullOrEmpty(nspace)) nspace = Pages.FindNamespace(nspace).Name;
 			string propertyName = "Theme" + (!string.IsNullOrEmpty(nspace) ? "-" + nspace : "");
 			Provider.SetSetting(propertyName, theme);
-		}
-
-		/// <summary>
-		/// Gets the Theme Path for a namespace.
-		/// </summary>
-		/// <param name="nspace">The namespace (<c>null</c> for the root).</param>
-		/// <returns>The path of the theme.</returns>
-		public static string GetThemePath(string nspace) {
-			string theme = GetTheme(nspace);
-			if(!Directory.Exists(ThemesDirectory + theme)) return ThemesDirectoryName + "/Default/";
-			else return ThemesDirectoryName + "/" + theme + "/";
 		}
 
 		/// <summary>

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Admin.master" AutoEventWireup="true" CodeBehind="AdminUsers.aspx.cs" Inherits="ScrewTurn.Wiki.AdminUsers" culture="auto" meta:resourcekey="PageResource1" uiculture="auto" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Admin.master" AutoEventWireup="True" CodeBehind="AdminUsers.aspx.cs" Inherits="ScrewTurn.Wiki.AdminUsers" culture="auto" meta:resourcekey="PageResource1" uiculture="auto" %>
 
 <%@ Register TagPrefix="st" TagName="ProviderSelector" Src="~/ProviderSelector.ascx" %>
 <%@ Register TagPrefix="st" TagName="AclActionsSelector" Src="~/AclActionsSelector.ascx" %>
@@ -27,40 +27,39 @@
 
 	<h2 class="sectiontitle"><asp:Literal ID="lblAccounts" runat="server" Text="User Accounts" EnableViewState="False" meta:resourcekey="lblAccountsResource1" /></h2>
 	
-	<anthem:Panel ID="pnlList" runat="server" AutoUpdateAfterCallBack="True" meta:resourcekey="pnlListResource1" UpdateAfterCallBack="True">
+	<asp:Panel ID="pnlList" runat="server" meta:resourcekey="pnlListResource1">
 		<div class="rightaligned">
-			<anthem:Button ID="btnNewUser" runat="server" Text="New User" ToolTip="Create a new User" OnClick="btnNewUser_Click"
+			<asp:Button ID="btnNewUser" runat="server" Text="New User" ToolTip="Create a new User" OnClick="btnNewUser_Click"
 				meta:resourcekey="btnNewUserResource1" />
 			<br /><br /><br /><br />
 			<h2 class="separator"><asp:Literal ID="lblBulkDeleteTitle" runat="server" Text="Bulk Delete" EnableViewState="false" meta:resourcekey="lblBulkDeleteTitleResource1" /></h2>
 			<asp:Literal ID="lblBulkDelete" runat="server" Text="Delete all <b>inactive</b> accounts older than <b>1 month</b>.<br />Please backup your data before proceeding."
 				EnableViewState="false" meta:resourcekey="lblBulkDeleteResource1" />
 			<br /><br />
-			<anthem:Button ID="btnBulkDelete" runat="server" Text="Delete" ToolTip="Delete old inactive accounts now" OnClick="btnBulkDelete_Click"
-				meta:resourcekey="btnBulkDeleteResource1" PreCallBackFunction="PreBulkDelete" PostCallBackFunction="PostBulkDelete" />
+			<asp:Button ID="btnBulkDelete" runat="server" Text="Delete" ToolTip="Delete old inactive accounts now" OnClick="btnBulkDelete_Click"
+				meta:resourcekey="btnBulkDeleteResource1" />
 			<span id="BulkDeleteProgressSpan" style="display: none;">
 				<img src="Images/Wait.gif" alt="Deleting..." />
 			</span>
 			<br />
-			<anthem:Label ID="lblBulkDeleteResult" runat="server" AutoUpdateAfterCallBack="true" />
+			<asp:Label ID="lblBulkDeleteResult" runat="server" />
 		</div>
 	
 		<asp:Literal ID="lblFilter" runat="server" Text="Display: " EnableViewState="False" meta:resourcekey="lblFilterResource1" />
-		<anthem:CheckBox ID="chkActive" runat="server" Text="Active Accounts" Checked="True" AutoCallBack="True" OnCheckedChanged="chkFilter_CheckedChanged" meta:resourcekey="chkActiveResource1" />
-		<anthem:CheckBox ID="chkInactive" runat="server" Text="Inactive Accounts" Checked="True" AutoCallBack="True" OnCheckedChanged="chkFilter_CheckedChanged" meta:resourcekey="chkInactiveResource1" />
+		<asp:CheckBox ID="chkActive" runat="server" Text="Active Accounts" Checked="True" OnCheckedChanged="chkFilter_CheckedChanged" meta:resourcekey="chkActiveResource1" />
+		<asp:CheckBox ID="chkInactive" runat="server" Text="Inactive Accounts" Checked="True" OnCheckedChanged="chkFilter_CheckedChanged" meta:resourcekey="chkInactiveResource1" />
 		
-		<anthem:TextBox ID="txtFilter" runat="server" CssClass="searchtextbox" ToolTip="Filter Accounts by Username" meta:resourcekey="txtFilterResource1" />
-		<anthem:ImageButton ID="btnFilter" runat="server" ToolTip="Apply Filter" ImageUrl="~/Images/Filter.png"
-			ImageUrlDuringCallBack="~/Images/Filter.png" EnableViewState="False" CssClass="imagebutton" OnClick="btnFilter_Click" 
+		<asp:TextBox ID="txtFilter" runat="server" CssClass="searchtextbox" ToolTip="Filter Accounts by Username" meta:resourcekey="txtFilterResource1" />
+		<asp:ImageButton ID="btnFilter" runat="server" ToolTip="Apply Filter" ImageUrl="~/Images/Filter.png"
+			EnableViewState="False" CssClass="imagebutton" OnClick="btnFilter_Click" 
 			meta:resourcekey="btnFilterResource1" />
 		
 		<div id="PageSelectorDiv">
-			<st:PageSelector ID="pageSelector" runat="server" PageSize='<%# PageSize %>' OnSelectedPageChanged="pageSelector_SelectedPageChanged" />
+			<st:PageSelector ID="pageSelector" runat="server" PageSize="<%# PageSize %>" OnSelectedPageChanged="pageSelector_SelectedPageChanged" ></st:PageSelector>
 		</div>
 	
 		<div id="UsersListContainerDiv">
-			<anthem:Repeater ID="rptAccounts" runat="server" AutoUpdateAfterCallBack="true"
-				OnDataBinding="rptAccounts_DataBinding" OnItemCommand="rptAccounts_ItemCommand">
+			<asp:Repeater ID="rptAccounts" runat="server" OnDataBinding="rptAccounts_DataBinding" OnItemCommand="rptAccounts_ItemCommand">
 				<HeaderTemplate>
 					<table cellpadding="0" cellspacing="0" class="generic">
 						<thead>
@@ -84,7 +83,7 @@
 						<td><%# Eval("MemberOf") %></td>
 						<td><%# Eval("RegDateTime") %></td>
 						<td><%# Eval("Provider") %></td>
-						<td><anthem:LinkButton ID="btnSelect" runat="server" Text="Select" ToolTip="Select this Account" CommandName="Select" 
+						<td><asp:LinkButton ID="btnSelect" runat="server" Text="Select" ToolTip="Select this Account" CommandName="Select" 
 								CommandArgument='<%# Eval("Username") %>' meta:resourcekey="btnSelectResource1" /></td>
 					</tr>
 				</ItemTemplate>
@@ -96,7 +95,7 @@
 						<td><%# Eval("MemberOf") %></td>
 						<td><%# Eval("RegDateTime") %></td>
 						<td><%# Eval("Provider") %></td>
-						<td><anthem:LinkButton ID="btnSelect" runat="server" Text="Select" ToolTip="Select this Account" CommandName="Select"
+						<td><asp:LinkButton ID="btnSelect" runat="server" Text="Select" ToolTip="Select this Account" CommandName="Select"
 								CommandArgument='<%# Eval("Username") %>' meta:resourcekey="btnSelectResource2" /></td>
 					</tr>
 				</AlternatingItemTemplate>
@@ -104,18 +103,18 @@
 					</tbody>
 					</table>
 				</FooterTemplate>
-			</anthem:Repeater>
+			</asp:Repeater>
 		</div>
-	</anthem:Panel>
+	</asp:Panel>
 	
-	<anthem:Panel ID="pnlEditAccount" runat="server" AutoUpdateAfterCallBack="True" Visible="False" meta:resourcekey="pnlEditAccountResource1" UpdateAfterCallBack="True">
+	<asp:Panel ID="pnlEditAccount" runat="server" Visible="False" meta:resourcekey="pnlEditAccountResource1">
 		<div id="EditAccountDiv">
 			<h2 class="separator"><asp:Literal ID="lblEditTitle" runat="server" Text="Account Details" EnableViewState="False" meta:resourcekey="lblEditTitleResource1" /></h2>
 		
 			<asp:Literal ID="lblProvider" runat="server" Text="Provider" EnableViewState="False" meta:resourcekey="lblProviderResource2" /><br />
 			<st:ProviderSelector ID="providerSelector" runat="server" ExcludeReadOnly="true" ProviderType="Users" UsersProviderIntendedUse="AccountsManagement"
-				AutoPostBack="true" OnSelectedProviderChanged="providerSelector_SelectedProviderChanged" /><br />
-				
+				OnSelectedProviderChanged="providerSelector_SelectedProviderChanged" /><br />
+			
 			<asp:Panel ID="pnlAccountDetails" runat="server" meta:resourcekey="pnlAccountDetailsResource1">
 		
 				<asp:Literal ID="lblUsername" runat="server" Text="Username" EnableViewState="False" meta:resourcekey="lblUsernameResource2" /><br />
@@ -174,18 +173,18 @@
 					CssClass="button" Visible="False" OnClick="btnSave_Click" ValidationGroup="account" meta:resourcekey="btnSaveResource1" />
 				<asp:Button ID="btnCreate" runat="server" Text="Create Account" ToolTip="Save the new Account"
 					CssClass="button" OnClick="btnCreate_Click" ValidationGroup="account" meta:resourcekey="btnCreateResource1" />
-				<anthem:Button ID="btnDelete" runat="server" Text="Delete" ToolTip="Delete the Account"
+				<asp:Button ID="btnDelete" runat="server" Text="Delete" ToolTip="Delete the Account"
 					CssClass="button" Visible="False" OnClick="btnDelete_Click" CausesValidation="False"
-					ValidationGroup="account" PreCallBackFunction="RequestConfirm" meta:resourcekey="btnDeleteResource1" />
+					ValidationGroup="account" meta:resourcekey="btnDeleteResource1" />
 				<asp:Button ID="btnCancel" runat="server" Text="Cancel" ToolTip="Cancel and return to the Account list"
 					CssClass="button" OnClick="btnCancel_Click" CausesValidation="False" ValidationGroup="account" meta:resourcekey="btnCancelResource1" />
 					
-				<anthem:Label ID="lblResult" runat="server" AutoUpdateAfterCallBack="True" meta:resourcekey="lblResultResource1" UpdateAfterCallBack="True" />
+				<asp:Label ID="lblResult" runat="server" meta:resourcekey="lblResultResource1" />
 			</div>
 		</div>
-	</anthem:Panel>
+	</asp:Panel>
 	
-	<anthem:HiddenField ID="txtCurrentUsername" runat="server" AutoUpdateAfterCallBack="True" UpdateAfterCallBack="True" />
+	<asp:HiddenField ID="txtCurrentUsername" runat="server" />
 	
 	<div style="clear: both;"></div>
 	

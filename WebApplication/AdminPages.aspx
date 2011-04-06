@@ -20,26 +20,26 @@
 
 	<h2 class="sectiontitle"><asp:Literal ID="lblPages" runat="server" Text="Wiki Pages" EnableViewState="False" meta:resourcekey="lblPagesResource1" /></h2>
 	
-	<anthem:Panel ID="pnlList" runat="server" AutoUpdateAfterCallBack="True" meta:resourcekey="pnlListResource1" UpdateAfterCallBack="True">
+	<asp:Panel ID="pnlList" runat="server" meta:resourcekey="pnlListResource1" >
 		<div class="rightaligned">
 			<asp:Button ID="btnNewPage" runat="server" Text="New Page" ToolTip="Create a new Page"
 				OnClick="btnNewPage_Click" meta:resourcekey="btnNewPageResource1" />
 			<br /><br />
-			<anthem:Button ID="btnBulkMigrate" runat="server" Text="Bulk Migrate" ToolTip="Migrate many Pages to another namespace"
-				AutoUpdateAfterCallback="true" OnClick="btnBulkMigrate_Click" meta:resourcekey="btnBulkMigrateResource1" />
+			<asp:Button ID="btnBulkMigrate" runat="server" Text="Bulk Migrate" ToolTip="Migrate many Pages to another namespace"
+				Auto OnClick="btnBulkMigrate_Click" meta:resourcekey="btnBulkMigrateResource1" />
 		</div>
 		
 		<div id="NamespaceSelectorDiv">
 			<asp:Literal ID="lblNamespace" runat="server" Text="Namespace" EnableViewState="False" meta:resourcekey="lblNamespaceResource1" /><br />
-			<anthem:DropDownList ID="lstNamespace" runat="server" AutoCallBack="True" OnSelectedIndexChanged="lstNamespace_SelectedIndexChanged" Width="150px" meta:resourcekey="lstNamespaceResource1" />
+			<asp:DropDownList ID="lstNamespace" runat="server"  OnSelectedIndexChanged="lstNamespace_SelectedIndexChanged" Width="150px" meta:resourcekey="lstNamespaceResource1" />
 		</div>
 		<div id="FilterDiv">
-			<anthem:CheckBox ID="chkOrphansOnly" runat="server" Text="Display orphan pages only" AutoCallBack="True" 
+			<asp:CheckBox ID="chkOrphansOnly" runat="server" Text="Display orphan pages only"  
 				OnCheckedChanged="btnFilter_Click" meta:resourcekey="chkOrphansOnlyResource1" />
 			&nbsp;&nbsp;&nbsp;&nbsp;
-			<anthem:TextBox ID="txtFilter" runat="server" CssClass="searchtextbox" ToolTip="Filter Pages by name" meta:resourcekey="txtFilterResource1" />
-			<anthem:ImageButton ID="btnFilter" runat="server" ToolTip="Apply Filter" ImageUrl="~/Images/Filter.png"
-				ImageUrlDuringCallBack="~/Images/Filter.png" EnableViewState="False" 
+			<asp:TextBox ID="txtFilter" runat="server" CssClass="searchtextbox" ToolTip="Filter Pages by name" meta:resourcekey="txtFilterResource1" />
+			<asp:ImageButton ID="btnFilter" runat="server" ToolTip="Apply Filter" ImageUrl="~/Images/Filter.png"
+				EnableViewState="False" 
 				CssClass="imagebutton" OnClick="btnFilter_Click" meta:resourcekey="btnFilterResource1" />
 		</div>
 		
@@ -48,7 +48,7 @@
 		</div>
 		
 		<div id="PagesListContainerDiv">
-			<anthem:Repeater ID="rptPages" runat="server"
+			<asp:Repeater ID="rptPages" runat="server"
 				OnDataBinding="rptPages_DataBinding" OnItemCommand="rptPages_ItemCommand">
 				<HeaderTemplate>
 					<table cellpadding="0" cellspacing="0" class="generic">
@@ -83,10 +83,10 @@
 						<td><%# Eval("Provider") %></td>
 						<td><a href='<%# Eval("FullName") %><%= ScrewTurn.Wiki.Settings.PageExtension %>?Edit=1' title='<%= ScrewTurn.Wiki.Properties.Messages.EditThisPage %>'><asp:Literal ID="lblEdit" runat="server" Text="Edit" EnableViewState="False" meta:resourcekey="lblEditResource1" /></a>
 							&bull;
-							<anthem:LinkButton ID="btnSelect" runat="server" Visible='<%# (bool)Eval("CanSelect") %>' Text="Select" 
+							<asp:LinkButton ID="btnSelect" runat="server" Visible='<%# (bool)Eval("CanSelect") %>' Text="Select" 
 								ToolTip="Select this Page for administration" CommandName="Select" CommandArgument='<%# Eval("FullName") %>' meta:resourcekey="btnSelectResource1" />
 							&bull;
-							<anthem:LinkButton ID="btnPermissions" runat="server" Visible='<%# (bool)Eval("CanSetPermissions") %>' Text="Permissions" 
+							<asp:LinkButton ID="btnPermissions" runat="server" Visible='<%# (bool)Eval("CanSetPermissions") %>' Text="Permissions" 
 								ToolTip="Manage Permissions for this Page" CommandName="Perms" CommandArgument='<%# Eval("FullName") %>' meta:resourcekey="btnPermissionsResource1" />
 						</td>
 					</tr>
@@ -106,10 +106,10 @@
 						<td>
 							<a href='<%# Eval("FullName") %><%= ScrewTurn.Wiki.Settings.PageExtension %>?Edit=1' title='<%= ScrewTurn.Wiki.Properties.Messages.EditThisPage %>'><asp:Literal ID="lblEdit" runat="server" Text="Edit" EnableViewState="False" meta:resourcekey="lblEditResource2" /></a>
 							&bull;
-							<anthem:LinkButton ID="btnSelect" runat="server" Visible='<%# (bool)Eval("CanSelect") %>' Text="Select" 
+							<asp:LinkButton ID="btnSelect" runat="server" Visible='<%# (bool)Eval("CanSelect") %>' Text="Select" 
 								ToolTip="Select this Page for administration" CommandName="Select" CommandArgument='<%# Eval("FullName") %>' meta:resourcekey="btnSelectResource2" />
 							&bull;
-							<anthem:LinkButton ID="btnPermissions" runat="server" Visible='<%# (bool)Eval("CanSetPermissions") %>' Text="Permissions" 
+							<asp:LinkButton ID="btnPermissions" runat="server" Visible='<%# (bool)Eval("CanSetPermissions") %>' Text="Permissions" 
 								ToolTip="Manage Permissions for this Page" CommandName="Perms" CommandArgument='<%# Eval("FullName") %>' meta:resourcekey="btnPermissionsResource2" />
 						</td>
 					</tr>
@@ -118,19 +118,19 @@
 					</tbody>
 					</table>
 				</FooterTemplate>
-			</anthem:Repeater>
+			</asp:Repeater>
 		</div>
-	</anthem:Panel>
+	</asp:Panel>
 	
-	<anthem:Panel ID="pnlEditPage" runat="server" AutoUpdateAfterCallBack="True" 
-		Visible="False" meta:resourcekey="pnlEditPageResource1" UpdateAfterCallBack="True">
+	<asp:Panel ID="pnlEditPage" runat="server" Auto 
+		Visible="False" meta:resourcekey="pnlEditPageResource1" >
 		<div id="EditPageDiv">
 			<h2 class="separator"><asp:Literal ID="lblEditTitle" runat="server" Text="Page Operations" EnableViewState="False" meta:resourcekey="lblEditTitleResource1" />
 			(<asp:Literal ID="lblCurrentPage" runat="server" meta:resourcekey="lblCurrentPageResource1" />)</h2>
 			<br />
 			
-			<anthem:Panel ID="pnlApproveRevision" runat="server" 
-				AutoUpdateAfterCallBack="True" meta:resourcekey="pnlApproveRevisionResource1">
+			<asp:Panel ID="pnlApproveRevision" runat="server" 
+				Auto meta:resourcekey="pnlApproveRevisionResource1">
 				<div class="pagefeaturecontainerapprove">
 					<h3><asp:Literal ID="lblApproveTitle" runat="server" Text="Approve/Reject Draft" EnableViewState="False" meta:resourcekey="lblApproveTitleResource1" /></h3>
 					<br />
@@ -142,120 +142,120 @@
 					<asp:HyperLink ID="lnkDiff" runat="server" Text="Diff" ToolTip="Show changes" Target="_blank" meta:resourcekey="lnkDiffResource1" /> &bull;
 					<asp:HyperLink ID="lnkEdit" runat="server" Text="Edit" ToolTip="Edit this Draft" meta:resourcekey="lnkEditResource1" />
 					<br /><br />
-					<anthem:Button ID="btnApprove" runat="server" Text="Approve" ToolTip="Approve this Revision"
-						PreCallBackFunction="RequestConfirm" OnClick="btnApprove_Click" meta:resourcekey="btnApproveResource1" />
-					<anthem:Button ID="btnReject" runat="server" Text="Reject" ToolTip="Reject this Revision"
-						PreCallBackFunction="RequestConfirm" OnClick="btnReject_Click" meta:resourcekey="btnRejectResource1" />
+					<asp:Button ID="btnApprove" runat="server" Text="Approve" ToolTip="Approve this Revision"
+						OnClick="btnApprove_Click" meta:resourcekey="btnApproveResource1" />
+					<asp:Button ID="btnReject" runat="server" Text="Reject" ToolTip="Reject this Revision"
+						OnClick="btnReject_Click" meta:resourcekey="btnRejectResource1" />
 					<br />
-					<anthem:Label ID="lblApproveResult" runat="server" AutoUpdateAfterCallBack="True" meta:resourcekey="lblApproveResultResource1" />
+					<asp:Label ID="lblApproveResult" runat="server" Auto meta:resourcekey="lblApproveResultResource1" />
 				</div>
-			</anthem:Panel>
+			</asp:Panel>
 			
-			<anthem:Panel ID="pnlRename" runat="server" AutoUpdateAfterCallBack="True" 
+			<asp:Panel ID="pnlRename" runat="server" Auto 
 				meta:resourcekey="pnlRenameResource1">
 				<div class="pagefeaturecontainer">
 					<h3><asp:Literal ID="lblRenamePageTitle" runat="server" Text="Rename Page" EnableViewState="False" meta:resourcekey="lblRenamePageTitleResource1" /></h3>
 					<br />
 					<asp:Literal ID="lblNewName" runat="server" Text="New Name" EnableViewState="False" meta:resourcekey="lblNewNameResource1" /><br />
-					<anthem:TextBox ID="txtNewName" runat="server" Width="200px" ValidationGroup="renpage" meta:resourcekey="txtNewNameResource1" /><br />
-					<anthem:CheckBox ID="chkShadowPage" runat="server" Text="Keep shadow Page" Checked="True"
+					<asp:TextBox ID="txtNewName" runat="server" Width="200px" ValidationGroup="renpage" meta:resourcekey="txtNewNameResource1" /><br />
+					<asp:CheckBox ID="chkShadowPage" runat="server" Text="Keep shadow Page" Checked="True"
 						ToolTip="Keep the old Page and set it to auto-redirect to the new Page" meta:resourcekey="chkShadowPageResource1" />
 					<br /><br />
-					<anthem:Button ID="btnRename" runat="server" Text="Rename" ToolTip="Rename the Page"
-						PreCallBackFunction="RequestConfirm" OnClick="btnRename_Click" ValidationGroup="renpage" meta:resourcekey="btnRenameResource1" />
+					<asp:Button ID="btnRename" runat="server" Text="Rename" ToolTip="Rename the Page"
+						OnClick="btnRename_Click" ValidationGroup="renpage" meta:resourcekey="btnRenameResource1" />
 					<br />
-					<anthem:RequiredFieldValidator ID="rfvNewName" runat="server" Display="Dynamic" ValidationGroup="renpage"
+					<asp:RequiredFieldValidator ID="rfvNewName" runat="server" Display="Dynamic" ValidationGroup="renpage"
 						ControlToValidate="txtNewName" CssClass="resulterror" ErrorMessage="New Name is required" meta:resourcekey="rfvNewNameResource1" />
-					<anthem:CustomValidator ID="cvNewName" runat="server" Display="Dynamic" ValidationGroup="renpage"
+					<asp:CustomValidator ID="cvNewName" runat="server" Display="Dynamic" ValidationGroup="renpage"
 						ControlToValidate="txtNewName" CssClass="resulterror" ErrorMessage="Invalid Page Name" OnServerValidate="cvNewName_ServerValidate" 
 						meta:resourcekey="cvNewNameResource1" />
-					<anthem:Label ID="lblRenameResult" runat="server" AutoUpdateAfterCallBack="True" meta:resourcekey="lblRenameResultResource1" />
+					<asp:Label ID="lblRenameResult" runat="server" Auto meta:resourcekey="lblRenameResultResource1" />
 				</div>
-			</anthem:Panel>
+			</asp:Panel>
 			
-			<anthem:Panel ID="pnlMigrate" runat="server" AutoUpdateAfterCallBack="true" meta:resourcekey="pnlMigrateResource1">
+			<asp:Panel ID="pnlMigrate" runat="server" Auto meta:resourcekey="pnlMigrateResource1">
 				<div class="pagefeaturecontainer">
 					<h3><asp:Literal ID="lblMigratePageTitle" runat="server" Text="Migrate Page" EnableViewState="false" meta:resourcekey="lblMigratePageTitleResource1" /></h3>
 					<br />
 					<asp:Literal ID="lblTargetNamespace" runat="server" Text="Target Namespace" EnableViewState="false" meta:resourcekey="lblTargetNamespaceResource1" />
 					<br />
-					<anthem:DropDownList ID="lstTargetNamespace" runat="server" Width="200px" meta:resourcekey="lstTargetNamespaceResource1" />
+					<asp:DropDownList ID="lstTargetNamespace" runat="server" Width="200px" meta:resourcekey="lstTargetNamespaceResource1" />
 					<br />
-					<anthem:CheckBox ID="chkCopyCategories" runat="server" Text="Copy Page Categories" ToolTip="Copy Page Categories to target Namespace"
-						AutoUpdateAfterCallBack="true" meta:resourcekey="chkCopyCategoriesResource1" />
+					<asp:CheckBox ID="chkCopyCategories" runat="server" Text="Copy Page Categories" ToolTip="Copy Page Categories to target Namespace"
+						Auto meta:resourcekey="chkCopyCategoriesResource1" />
 					<br /><br />
-					<anthem:Button ID="btnMigrate" runat="server" Text="Migrate" ToolTip="Migrate the Page"
-						PreCallBackFunction="RequestConfirm" OnClick="btnMigrate_Click" meta:resourcekey="btnMigrateResource1" />
-					<anthem:Label ID="lblMigrateResult" runat="server" AutoUpdateAfterCallBack="true" meta:resourcekey="lblMigrateResource1" />
+					<asp:Button ID="btnMigrate" runat="server" Text="Migrate" ToolTip="Migrate the Page"
+						OnClick="btnMigrate_Click" meta:resourcekey="btnMigrateResource1" />
+					<asp:Label ID="lblMigrateResult" runat="server" Auto meta:resourcekey="lblMigrateResource1" />
 				</div>
-			</anthem:Panel>
+			</asp:Panel>
 			
-			<anthem:Panel ID="pnlRollback" runat="server" AutoUpdateAfterCallBack="True" 
-				meta:resourcekey="pnlRollbackResource1" UpdateAfterCallBack="True">
+			<asp:Panel ID="pnlRollback" runat="server" Auto 
+				meta:resourcekey="pnlRollbackResource1" >
 				<div class="pagefeaturecontainer">
 					<h3><asp:Literal ID="lblRollbackPageTitle" runat="server" Text="Rollback Page" EnableViewState="False" meta:resourcekey="lblRollbackPageTitleResource1" /></h3>
 					<br />
 					<asp:Literal ID="lblRevision" runat="server" Text="Target Revision" EnableViewState="False" meta:resourcekey="lblRevisionResource1" /><br />
-					<anthem:DropDownList ID="lstRevision" runat="server" Width="200px" ToolTip="Available revisions, newer first" meta:resourcekey="lstRevisionResource1" />
+					<asp:DropDownList ID="lstRevision" runat="server" Width="200px" ToolTip="Available revisions, newer first" meta:resourcekey="lstRevisionResource1" />
 					<br /><br />
-					<anthem:Button ID="btnRollback" runat="server" Text="Rollback" ToolTip="Rollback the Page"
-						PreCallBackFunction="RequestConfirm" OnClick="btnRollback_Click" meta:resourcekey="btnRollbackResource1" />
+					<asp:Button ID="btnRollback" runat="server" Text="Rollback" ToolTip="Rollback the Page"
+						OnClick="btnRollback_Click" meta:resourcekey="btnRollbackResource1" />
 					<br />
-					<anthem:Label ID="lblRollbackResult" runat="server" 
-						AutoUpdateAfterCallBack="True" meta:resourcekey="lblRollbackResultResource1" />
+					<asp:Label ID="lblRollbackResult" runat="server" 
+						Auto meta:resourcekey="lblRollbackResultResource1" />
 				</div>
-			</anthem:Panel>
+			</asp:Panel>
 			
-			<anthem:Panel ID="pnlDeleteBackups" runat="server" 
-				AutoUpdateAfterCallBack="True" meta:resourcekey="pnlDeleteBackupsResource1" UpdateAfterCallBack="True">
+			<asp:Panel ID="pnlDeleteBackups" runat="server" 
+				Auto meta:resourcekey="pnlDeleteBackupsResource1" >
 				<div class="pagefeaturecontainer">
 					<h3><asp:Literal ID="lblDeleteBackupsTitle" runat="server" Text="Delete Backups" EnableViewState="False" meta:resourcekey="lblDeleteBackupsTitleResource1" /></h3>
 					<br />
-					<anthem:RadioButton ID="rdoAllBackups" runat="server" Text="Delete all Backups" GroupName="baks"
-						AutoCallBack="True" OnCheckedChanged="rdoBackup_CheckedChanged" meta:resourcekey="rdoAllBackupsResource1" /><br />
-					<anthem:RadioButton ID="rdoUpTo" runat="server" Text="Delete Backups older than and including"
-						GroupName="baks" AutoCallBack="True" OnCheckedChanged="rdoBackup_CheckedChanged" meta:resourcekey="rdoUpToResource1" /><br />
-					<anthem:DropDownList ID="lstBackup" runat="server" Width="200px" 
+					<asp:RadioButton ID="rdoAllBackups" runat="server" Text="Delete all Backups" GroupName="baks"
+						 OnCheckedChanged="rdoBackup_CheckedChanged" meta:resourcekey="rdoAllBackupsResource1" /><br />
+					<asp:RadioButton ID="rdoUpTo" runat="server" Text="Delete Backups older than and including"
+						GroupName="baks"  OnCheckedChanged="rdoBackup_CheckedChanged" meta:resourcekey="rdoUpToResource1" /><br />
+					<asp:DropDownList ID="lstBackup" runat="server" Width="200px" 
 						Enabled="False" ToolTip="Available Backups, newer first" meta:resourcekey="lstBackupResource1" />
 					<br /><br />
-					<anthem:Button ID="btnDeleteBackups" runat="server" Text="Delete" ToolTip="Delete the Page's Backups"
-						PreCallBackFunction="RequestConfirm" OnClick="btnDeleteBackups_Click" meta:resourcekey="btnDeleteBackupsResource1" />
+					<asp:Button ID="btnDeleteBackups" runat="server" Text="Delete" ToolTip="Delete the Page's Backups"
+						OnClick="btnDeleteBackups_Click" meta:resourcekey="btnDeleteBackupsResource1" />
 					<br />
-					<anthem:Label ID="lblBackupResult" runat="server" AutoUpdateAfterCallBack="True" meta:resourcekey="lblBackupResultResource1" />
+					<asp:Label ID="lblBackupResult" runat="server" Auto meta:resourcekey="lblBackupResultResource1" />
 				</div>
-			</anthem:Panel>
+			</asp:Panel>
 			
-			<anthem:Panel ID="pnlClearDiscussion" runat="server" 
-				AutoUpdateAfterCallBack="True" meta:resourcekey="pnlClearDiscussionResource1">
+			<asp:Panel ID="pnlClearDiscussion" runat="server" 
+				Auto meta:resourcekey="pnlClearDiscussionResource1">
 				<div class="pagefeaturecontainer">
 					<h3><asp:Literal ID="lblClearDiscussionTitle" runat="server" Text="Clear Page Discussion" EnableViewState="False" meta:resourcekey="lblClearDiscussionTitleResource1" /></h3>
 					<br />
-					<anthem:Button ID="btnClearDiscussion" runat="server" Text="Clear Discussion" ToolTip="Delete all Messages in the Page's Discussion"
-						PreCallBackFunction="RequestConfirm" OnClick="btnClearDiscussion_Click" meta:resourcekey="btnClearDiscussionResource1" />
+					<asp:Button ID="btnClearDiscussion" runat="server" Text="Clear Discussion" ToolTip="Delete all Messages in the Page's Discussion"
+						OnClick="btnClearDiscussion_Click" meta:resourcekey="btnClearDiscussionResource1" />
 					<br />
-					<anthem:Label ID="lblDiscussionResult" runat="server" AutoUpdateAfterCallBack="True" meta:resourcekey="lblDiscussionResultResource1" />
+					<asp:Label ID="lblDiscussionResult" runat="server" Auto meta:resourcekey="lblDiscussionResultResource1" />
 				</div>
-			</anthem:Panel>
+			</asp:Panel>
 			
-			<anthem:Panel ID="pnlDelete" runat="server" AutoUpdateAfterCallBack="True" 
-				meta:resourcekey="pnlDeleteResource1" UpdateAfterCallBack="True">
+			<asp:Panel ID="pnlDelete" runat="server" Auto 
+				meta:resourcekey="pnlDeleteResource1" >
 				<div class="pagefeaturecontainerwarning">
 					<h3><asp:Literal ID="lblDeletePage" runat="server" Text="Delete Page" EnableViewState="False" meta:resourcekey="lblDeletePageResource1" /></h3>
 					<br />
-					<anthem:Button ID="btnDeletePage" runat="server" Text="Delete Page" ToolTip="Delete this Page"
-						PreCallBackFunction="RequestConfirm" OnClick="btnDeletePage_Click" meta:resourcekey="btnDeletePageResource1" />
+					<asp:Button ID="btnDeletePage" runat="server" Text="Delete Page" ToolTip="Delete this Page"
+						OnClick="btnDeletePage_Click" meta:resourcekey="btnDeletePageResource1" />
 					<br />
-					<anthem:Label ID="lblDeleteResult" runat="server" AutoUpdateAfterCallBack="True" meta:resourcekey="lblDeleteResultResource1" />
+					<asp:Label ID="lblDeleteResult" runat="server" Auto meta:resourcekey="lblDeleteResultResource1" />
 				</div>
-			</anthem:Panel>
+			</asp:Panel>
 			
 			<div id="ButtonsDiv">
-				<anthem:Button ID="btnBack" runat="server" Text="Back" ToolTip="Back to the Page list" OnClick="btnBack_Click" CausesValidation="False" meta:resourcekey="btnBackResource1" />
+				<asp:Button ID="btnBack" runat="server" Text="Back" ToolTip="Back to the Page list" OnClick="btnBack_Click" CausesValidation="False" meta:resourcekey="btnBackResource1" />
 			</div>
 		</div>
-	</anthem:Panel>
+	</asp:Panel>
 	
-	<anthem:Panel ID="pnlPermissions" runat="server" AutoUpdateAfterCallBack="True" 
+	<asp:Panel ID="pnlPermissions" runat="server" Auto 
 		Visible="False" meta:resourcekey="pnlPermissionsResource1">
 	
 		<h2 class="separator">
@@ -271,8 +271,8 @@
 				<br />
 				<ul>
 					<li>
-						<anthem:LinkButton ID="btnPublic" runat="server" Text="Public" 
-							ToolTip="Use this Template" PreCallBackFunction="RequestConfirm" 
+						<asp:LinkButton ID="btnPublic" runat="server" Text="Public" 
+							ToolTip="Use this Template" 
 							OnClick="btnPublic_Click" meta:resourcekey="btnPublicResource1" /><br />
 						<small>
 							<asp:Literal ID="lblPublicInfo" runat="server" 
@@ -281,8 +281,8 @@
 						</small>
 					</li>
 					<li>
-						<anthem:LinkButton ID="btnAsNamespace" runat="server" Text="As Namespace" 
-							ToolTip="Use this Template" PreCallBackFunction="RequestConfirm" 
+						<asp:LinkButton ID="btnAsNamespace" runat="server" Text="As Namespace" 
+							ToolTip="Use this Template" 
 							OnClick="btnAsNamespace_Click" meta:resourcekey="btnAsNamespaceResource1" /><br />
 						<small>
 							<asp:Literal ID="lblNormalInfo" runat="server" 
@@ -291,8 +291,8 @@
 						</small>
 					</li>
 					<li>
-						<anthem:LinkButton ID="btnLocked" runat="server" Text="Locked" 
-							ToolTip="Use this Template" PreCallBackFunction="RequestConfirm" 
+						<asp:LinkButton ID="btnLocked" runat="server" Text="Locked" 
+							ToolTip="Use this Template"
 							OnClick="btnLocked_Click" meta:resourcekey="btnLockedResource1" /><br />
 							<small>
 								<asp:Literal ID="lblLockedInfo" runat="server" 
@@ -316,15 +316,15 @@
 			<asp:Button ID="btnBack2" runat="server" Text="Back" ToolTip="Back to the Page list" OnClick="btnBack_Click" meta:resourcekey="btnBack2Resource1" />
 		</div>
 	
-	</anthem:Panel>
+	</asp:Panel>
 	
-	<anthem:Panel ID="pnlBulkMigrate" runat="server" Visible="false" AutoUpdateAfterCallBack="true">
+	<asp:Panel ID="pnlBulkMigrate" runat="server" Visible="false">
 		<div id="PageBulkMigrateDiv">
 			<div id="PageSelectionDiv">			
 				<h3 class="separator"><asp:Literal ID="lblBulkStep1" runat="server" Text="1. Select Pages" EnableViewState="false" meta:resourcekey="lblBulkStep1Resource1" /></h3>
 				
 				<st:ProviderSelector ID="providerSelector" runat="server" ProviderType="Pages"
-					AutoPostBack="true" OnSelectedProviderChanged="providerSelector_SelectedProviderChanged" />
+					OnSelectedProviderChanged="providerSelector_SelectedProviderChanged" />
 				<br /><br />
 				
 				<st:PageListBuilder ID="pageListBuilder" runat="server" />
@@ -337,7 +337,7 @@
 					meta:resourcekey="lblBulkMigrateInfoResource1" />
 				<br /><br />
 				
-				<anthem:DropDownList ID="lstBulkMigrateTargetNamespace" runat="server" CssClass="dropdown" AutoUpdateAfterCallBack="true" />
+				<asp:DropDownList ID="lstBulkMigrateTargetNamespace" runat="server" CssClass="dropdown" Auto />
 			</div>
 			
 			<div id="BatchControlDiv">
@@ -349,23 +349,23 @@
 					meta:resourcekey="lblBulkMigrateInfo2Resource1" />
 				<br /><br />
 				
-				<anthem:Button ID="btnBulkMigratePages" runat="server" Text="Migrate" OnClientClick="javascript:return RequestConfirm();" OnClick="btnBulkMigratePages_Click"
-					AutoUpdateAfterCallBack="true" meta:resourcekey="btnBulkMigratePagesResource1" /><br />
-				<anthem:Label ID="lblBulkMigrateResult" runat="server" AutoUpdateAfterCallBack="true" />
+				<asp:Button ID="btnBulkMigratePages" runat="server" Text="Migrate" OnClientClick="javascript:return RequestConfirm();" OnClick="btnBulkMigratePages_Click"
+					Auto meta:resourcekey="btnBulkMigratePagesResource1" /><br />
+				<asp:Label ID="lblBulkMigrateResult" runat="server" />
 			</div>
 			
 			<div id="ButtonsDiv3">
-				<anthem:Button ID="btnBulkMigrateBack" runat="server" Text="Back" ToolTip="Back to the Page list" OnClick="btnBulkMigrateBack_Click"
+				<asp:Button ID="btnBulkMigrateBack" runat="server" Text="Back" ToolTip="Back to the Page list" OnClick="btnBulkMigrateBack_Click"
 					CausesValidation="False" meta:resourcekey="btnBulkMigrateBackResource1" />
 			</div>
 		</div>
-	</anthem:Panel>
+	</asp:Panel>
 	
 	<div id="DraftPreviewDiv" style="display: none;">
-		<anthem:Label ID="lblDraftPreview" runat="server" AutoUpdateAfterCallBack="True" meta:resourcekey="lblDraftPreviewResource1" />
+		<asp:Label ID="lblDraftPreview" runat="server" meta:resourcekey="lblDraftPreviewResource1" />
 	</div>
 	
-	<anthem:HiddenField ID="txtCurrentPage" runat="server" AutoUpdateAfterCallBack="True" />
+	<asp:HiddenField ID="txtCurrentPage" runat="server" />
 	
 	<div style="clear: both;"></div>
 
