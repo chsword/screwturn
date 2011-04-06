@@ -28,7 +28,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Panel pnlList;
+        protected global::System.Web.UI.WebControls.Panel pnlList;
         
         /// <summary>
         /// btnNewPage control.
@@ -46,7 +46,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Button btnBulkMigrate;
+        protected global::System.Web.UI.WebControls.Button btnBulkMigrate;
         
         /// <summary>
         /// lblNamespace control.
@@ -64,7 +64,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.DropDownList lstNamespace;
+        protected global::System.Web.UI.WebControls.DropDownList lstNamespace;
         
         /// <summary>
         /// chkOrphansOnly control.
@@ -73,7 +73,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkOrphansOnly;
+        protected global::System.Web.UI.WebControls.CheckBox chkOrphansOnly;
         
         /// <summary>
         /// txtFilter control.
@@ -82,7 +82,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.TextBox txtFilter;
+        protected global::System.Web.UI.WebControls.TextBox txtFilter;
         
         /// <summary>
         /// btnFilter control.
@@ -91,7 +91,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.ImageButton btnFilter;
+        protected global::System.Web.UI.WebControls.ImageButton btnFilter;
         
         /// <summary>
         /// pageSelector control.
@@ -109,7 +109,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Repeater rptPages;
+        protected global::System.Web.UI.WebControls.Repeater rptPages;
         
         /// <summary>
         /// pnlEditPage control.
@@ -118,7 +118,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Panel pnlEditPage;
+        protected global::System.Web.UI.WebControls.Panel pnlEditPage;
         
         /// <summary>
         /// lblEditTitle control.
@@ -145,7 +145,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Panel pnlApproveRevision;
+        protected global::System.Web.UI.WebControls.Panel pnlApproveRevision;
         
         /// <summary>
         /// lblApproveTitle control.
@@ -217,7 +217,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Button btnApprove;
+        protected global::System.Web.UI.WebControls.Button btnApprove;
         
         /// <summary>
         /// btnReject control.
@@ -226,7 +226,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Button btnReject;
+        protected global::System.Web.UI.WebControls.Button btnReject;
         
         /// <summary>
         /// lblApproveResult control.
@@ -235,7 +235,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Label lblApproveResult;
+        protected global::System.Web.UI.WebControls.Label lblApproveResult;
         
         /// <summary>
         /// pnlRename control.
@@ -244,7 +244,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Panel pnlRename;
+        protected global::System.Web.UI.WebControls.Panel pnlRename;
         
         /// <summary>
         /// lblRenamePageTitle control.
@@ -271,7 +271,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.TextBox txtNewName;
+        protected global::System.Web.UI.WebControls.TextBox txtNewName;
         
         /// <summary>
         /// chkShadowPage control.
@@ -280,7 +280,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkShadowPage;
+        protected global::System.Web.UI.WebControls.CheckBox chkShadowPage;
         
         /// <summary>
         /// btnRename control.
@@ -289,7 +289,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Button btnRename;
+        protected global::System.Web.UI.WebControls.Button btnRename;
         
         /// <summary>
         /// rfvNewName control.
@@ -298,7 +298,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.RequiredFieldValidator rfvNewName;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvNewName;
         
         /// <summary>
         /// cvNewName control.
@@ -307,7 +307,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CustomValidator cvNewName;
+        protected global::System.Web.UI.WebControls.CustomValidator cvNewName;
         
         /// <summary>
         /// lblRenameResult control.
@@ -316,7 +316,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Label lblRenameResult;
+        protected global::System.Web.UI.WebControls.Label lblRenameResult;
         
         /// <summary>
         /// pnlMigrate control.
@@ -325,7 +325,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Panel pnlMigrate;
+        protected global::System.Web.UI.WebControls.Panel pnlMigrate;
         
         /// <summary>
         /// lblMigratePageTitle control.
@@ -352,7 +352,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.DropDownList lstTargetNamespace;
+        protected global::System.Web.UI.WebControls.DropDownList lstTargetNamespace;
         
         /// <summary>
         /// chkCopyCategories control.
@@ -361,7 +361,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkCopyCategories;
+        protected global::System.Web.UI.WebControls.CheckBox chkCopyCategories;
         
         /// <summary>
         /// btnMigrate control.
@@ -370,7 +370,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Button btnMigrate;
+        protected global::System.Web.UI.WebControls.Button btnMigrate;
         
         /// <summary>
         /// lblMigrateResult control.
@@ -379,7 +379,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Label lblMigrateResult;
+        protected global::System.Web.UI.WebControls.Label lblMigrateResult;
         
         /// <summary>
         /// pnlRollback control.
@@ -388,7 +388,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Panel pnlRollback;
+        protected global::System.Web.UI.WebControls.Panel pnlRollback;
         
         /// <summary>
         /// lblRollbackPageTitle control.
@@ -415,7 +415,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.DropDownList lstRevision;
+        protected global::System.Web.UI.WebControls.DropDownList lstRevision;
         
         /// <summary>
         /// btnRollback control.
@@ -424,7 +424,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Button btnRollback;
+        protected global::System.Web.UI.WebControls.Button btnRollback;
         
         /// <summary>
         /// lblRollbackResult control.
@@ -433,7 +433,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Label lblRollbackResult;
+        protected global::System.Web.UI.WebControls.Label lblRollbackResult;
         
         /// <summary>
         /// pnlDeleteBackups control.
@@ -442,7 +442,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Panel pnlDeleteBackups;
+        protected global::System.Web.UI.WebControls.Panel pnlDeleteBackups;
         
         /// <summary>
         /// lblDeleteBackupsTitle control.
@@ -460,7 +460,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.RadioButton rdoAllBackups;
+        protected global::System.Web.UI.WebControls.RadioButton rdoAllBackups;
         
         /// <summary>
         /// rdoUpTo control.
@@ -469,7 +469,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.RadioButton rdoUpTo;
+        protected global::System.Web.UI.WebControls.RadioButton rdoUpTo;
         
         /// <summary>
         /// lstBackup control.
@@ -478,7 +478,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.DropDownList lstBackup;
+        protected global::System.Web.UI.WebControls.DropDownList lstBackup;
         
         /// <summary>
         /// btnDeleteBackups control.
@@ -487,7 +487,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Button btnDeleteBackups;
+        protected global::System.Web.UI.WebControls.Button btnDeleteBackups;
         
         /// <summary>
         /// lblBackupResult control.
@@ -496,7 +496,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Label lblBackupResult;
+        protected global::System.Web.UI.WebControls.Label lblBackupResult;
         
         /// <summary>
         /// pnlClearDiscussion control.
@@ -505,7 +505,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Panel pnlClearDiscussion;
+        protected global::System.Web.UI.WebControls.Panel pnlClearDiscussion;
         
         /// <summary>
         /// lblClearDiscussionTitle control.
@@ -523,7 +523,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Button btnClearDiscussion;
+        protected global::System.Web.UI.WebControls.Button btnClearDiscussion;
         
         /// <summary>
         /// lblDiscussionResult control.
@@ -532,7 +532,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Label lblDiscussionResult;
+        protected global::System.Web.UI.WebControls.Label lblDiscussionResult;
         
         /// <summary>
         /// pnlDelete control.
@@ -541,7 +541,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Panel pnlDelete;
+        protected global::System.Web.UI.WebControls.Panel pnlDelete;
         
         /// <summary>
         /// lblDeletePage control.
@@ -559,7 +559,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Button btnDeletePage;
+        protected global::System.Web.UI.WebControls.Button btnDeletePage;
         
         /// <summary>
         /// lblDeleteResult control.
@@ -568,7 +568,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Label lblDeleteResult;
+        protected global::System.Web.UI.WebControls.Label lblDeleteResult;
         
         /// <summary>
         /// btnBack control.
@@ -577,7 +577,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Button btnBack;
+        protected global::System.Web.UI.WebControls.Button btnBack;
         
         /// <summary>
         /// pnlPermissions control.
@@ -586,7 +586,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Panel pnlPermissions;
+        protected global::System.Web.UI.WebControls.Panel pnlPermissions;
         
         /// <summary>
         /// lblPagePermissions control.
@@ -622,7 +622,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.LinkButton btnPublic;
+        protected global::System.Web.UI.WebControls.LinkButton btnPublic;
         
         /// <summary>
         /// lblPublicInfo control.
@@ -640,7 +640,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.LinkButton btnAsNamespace;
+        protected global::System.Web.UI.WebControls.LinkButton btnAsNamespace;
         
         /// <summary>
         /// lblNormalInfo control.
@@ -658,7 +658,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.LinkButton btnLocked;
+        protected global::System.Web.UI.WebControls.LinkButton btnLocked;
         
         /// <summary>
         /// lblLockedInfo control.
@@ -703,7 +703,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Panel pnlBulkMigrate;
+        protected global::System.Web.UI.WebControls.Panel pnlBulkMigrate;
         
         /// <summary>
         /// lblBulkStep1 control.
@@ -757,7 +757,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.DropDownList lstBulkMigrateTargetNamespace;
+        protected global::System.Web.UI.WebControls.DropDownList lstBulkMigrateTargetNamespace;
         
         /// <summary>
         /// lblBulkStep3 control.
@@ -793,7 +793,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Button btnBulkMigratePages;
+        protected global::System.Web.UI.WebControls.Button btnBulkMigratePages;
         
         /// <summary>
         /// lblBulkMigrateResult control.
@@ -802,7 +802,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Label lblBulkMigrateResult;
+        protected global::System.Web.UI.WebControls.Label lblBulkMigrateResult;
         
         /// <summary>
         /// btnBulkMigrateBack control.
@@ -811,7 +811,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Button btnBulkMigrateBack;
+        protected global::System.Web.UI.WebControls.Button btnBulkMigrateBack;
         
         /// <summary>
         /// lblDraftPreview control.
@@ -820,7 +820,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Label lblDraftPreview;
+        protected global::System.Web.UI.WebControls.Label lblDraftPreview;
         
         /// <summary>
         /// txtCurrentPage control.
@@ -829,6 +829,6 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.HiddenField txtCurrentPage;
+        protected global::System.Web.UI.WebControls.HiddenField txtCurrentPage;
     }
 }

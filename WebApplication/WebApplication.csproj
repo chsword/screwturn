@@ -39,10 +39,6 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Anthem, Version=1.5.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Lib\Anthem.NET\Anthem.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -166,6 +162,13 @@
     <Compile Include="AdminSnippets.aspx.designer.cs">
       <DependentUpon>AdminSnippets.aspx</DependentUpon>
     </Compile>
+    <Compile Include="AdminTheme.aspx.cs">
+      <DependentUpon>AdminTheme.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminTheme.aspx.designer.cs">
+      <DependentUpon>AdminTheme.aspx</DependentUpon>
+    </Compile>
     <Compile Include="AdminUsers.aspx.cs">
       <DependentUpon>AdminUsers.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -175,6 +178,21 @@
     </Compile>
     <Compile Include="AllPages.aspx.designer.cs">
       <DependentUpon>AllPages.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CreateMasterPassword.aspx.cs">
+      <DependentUpon>CreateMasterPassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CreateMasterPassword.aspx.designer.cs">
+      <DependentUpon>CreateMasterPassword.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="IThemeProvider.cs" />
+    <Compile Include="MasterPageClean.master.cs">
+      <DependentUpon>MasterPageClean.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MasterPageClean.master.designer.cs">
+      <DependentUpon>MasterPageClean.master</DependentUpon>
     </Compile>
     <Compile Include="PageListBuilder.ascx.cs">
       <DependentUpon>PageListBuilder.ascx</DependentUpon>
@@ -625,6 +643,20 @@
     <Compile Include="Sitemap.aspx.designer.cs">
       <DependentUpon>Sitemap.aspx</DependentUpon>
     </Compile>
+    <Compile Include="ThemeSelector.ascx.cs">
+      <DependentUpon>ThemeSelector.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ThemeSelector.ascx.designer.cs">
+      <DependentUpon>ThemeSelector.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ThemesProviderSelector.ascx.cs">
+      <DependentUpon>ThemesProviderSelector.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ThemesProviderSelector.ascx.designer.cs">
+      <DependentUpon>ThemesProviderSelector.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Thumb.aspx.cs">
       <DependentUpon>Thumb.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -657,6 +689,7 @@
   <ItemGroup>
     <Content Include="AccessDenied.aspx" />
     <Content Include="Admin.aspx" />
+    <Content Include="AdminTheme.aspx" />
     <Content Include="AllPages.aspx" />
     <Content Include="App_LocalResources\AccessDenied.aspx.cs-CZ.resx">
       <SubType>Designer</SubType>
@@ -1291,6 +1324,7 @@
     <Content Include="Captcha.ascx" />
     <Content Include="Captcha.aspx" />
     <Content Include="Category.aspx" />
+    <Content Include="CreateMasterPassword.aspx" />
     <Content Include="Diff.aspx" />
     <Content Include="Error.aspx" />
     <Content Include="GetFile.aspx" />
@@ -1333,6 +1367,8 @@
     <Content Include="robots.txt" />
     <Content Include="RSS.aspx" />
     <Content Include="SessionRefresh.aspx" />
+    <Content Include="ThemeSelector.ascx" />
+    <Content Include="ThemesProviderSelector.ascx" />
     <Content Include="Themes\Admin.css" />
     <Content Include="Themes\Elegant\Icon.ico" />
     <Content Include="Themes\Elegant\Images\Attachment.png" />
@@ -1664,6 +1700,10 @@
     <Content Include="App_LocalResources\Search.aspx.ko-KR.resx" />
     <Content Include="App_LocalResources\Upload.aspx.ko-KR.resx" />
     <Content Include="App_LocalResources\User.aspx.ko-KR.resx" />
+    <Content Include="App_LocalResources\CreateMasterPassword.aspx.resx" />
+    <Content Include="App_LocalResources\MasterPageClean.master.resx" />
+    <Content Include="App_LocalResources\AdminTheme.aspx.resx" />
+    <Content Include="App_LocalResources\ThemesProviderSelector.ascx.resx" />
     <EmbeddedResource Include="Properties\Messages.af-ZA.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Messages.af-ZA.Designer.cs</LastGenOutput>
@@ -1739,6 +1779,7 @@
     <EmbeddedResource Include="Properties\Messages.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Messages.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Messages.ro-RO.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -2066,7 +2107,9 @@
     <Content Include="App_LocalResources\Admin.master.it-IT.resx" />
     <Content Include="App_LocalResources\Admin.master.nb-NO.resx" />
     <Content Include="App_LocalResources\Admin.master.nl-NL.resx" />
-    <Content Include="App_LocalResources\Admin.master.resx" />
+    <Content Include="App_LocalResources\Admin.master.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="App_LocalResources\Admin.master.ro-RO.resx" />
     <Content Include="App_LocalResources\Admin.master.ru-RU.resx" />
     <Content Include="App_LocalResources\Admin.master.sk-SK.resx" />
@@ -2566,7 +2609,9 @@
     <Content Include="Themes\Default\Scripts.js" />
     <Content Include="Themes\Editor.css" />
     <Content Include="Thumb.aspx" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AclEngine\AclEngine.csproj">
@@ -2637,7 +2682,9 @@
     <Content Include="User.aspx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Web.Release.config" />
+    <Content Include="Web.Release.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\Editor\OL.png" />
@@ -2676,7 +2723,12 @@
     <Content Include="Themes\Elegant\Images\EmailNotifOff-Discussion.png" />
     <Content Include="Themes\Elegant\Images\EmailNotifOn-Discussion.png" />
     <Content Include="Themes\Elegant\Images\RSS-Discussion.png" />
-    <Content Include="Web.SqlServer.Release.config" />
+    <Content Include="Web.SqlServer.Release.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="MasterPageClean.master" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

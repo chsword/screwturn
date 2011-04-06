@@ -29,9 +29,6 @@ namespace ScrewTurn.Wiki {
 		protected override void OnLoad(EventArgs e) {
 			base.OnLoad(e);
 
-			// Bypass compression if the current request was made by Anthem.NET
-			if(HttpContext.Current.Request["Anthem_CallBack"] != null) return;
-
 			// Request might not be initialized -> use HttpContext
 			string ua = HttpContext.Current.Request.UserAgent != null ? HttpContext.Current.Request.UserAgent.ToLowerInvariant() : "";
 			if(Settings.EnableHttpCompression && !ua.Contains("konqueror") && !ua.Contains("safari")) {

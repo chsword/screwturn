@@ -16,7 +16,7 @@ namespace ScrewTurn.Wiki {
 
 	public partial class Upload : BasePage {
 
-        protected void Page_Load(object sender, EventArgs e) {
+		protected void Page_Load(object sender, EventArgs e) {
 			Page.Title = Properties.Messages.UploadTitle + " - " + Settings.WikiTitle;
 
 			if(!Page.IsPostBack) {
@@ -29,8 +29,8 @@ namespace ScrewTurn.Wiki {
 					fileManager.TryEnterDirectory(provider, targetDir);
 				}
 			}
-        }
+		}
 
-    }
+	}
 
 }

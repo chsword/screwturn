@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ScrewTurn.Wiki.PluginFramework;
+using ScrewTurn.Wiki;
 
 namespace ScrewTurn.Wiki {
 
@@ -44,6 +45,9 @@ namespace ScrewTurn.Wiki {
 					allProviders = Collectors.PagesProviderCollector.AllProviders;
 					defaultProvider = Settings.DefaultPagesProvider;
 					break;
+				case ProviderType.Themes:
+					allProviders = Collectors.ThemeProviderCollector.AllProviders;
+					break;
 				case ProviderType.Files:
 					allProviders = Collectors.FilesProviderCollector.AllProviders;
 					defaultProvider = Settings.DefaultFilesProvider;
@@ -59,6 +63,7 @@ namespace ScrewTurn.Wiki {
 			lstProviders.Items.Clear();
 
 			int count = 0;
+			if(providerType == ProviderType.Themes) lstProviders.Items.Add(new ListItem("standard", "standard"));
 			foreach(IProviderV30 prov in allProviders) {
 				if(IsProviderIncludedInList(prov)) {
 					string typeName = prov.GetType().FullName;
@@ -67,14 +72,6 @@ namespace ScrewTurn.Wiki {
 					count++;
 				}
 			}
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether the control auto posts back.
-		/// </summary>
-		public bool AutoPostBack {
-			get { return lstProviders.AutoPostBack; }
-			set { lstProviders.AutoPostBack = value; }
 		}
 
 		/// <summary>
@@ -92,6 +89,8 @@ namespace ScrewTurn.Wiki {
 				case ProviderType.Pages:
 					return storageProvider == null || (!storageProvider.ReadOnly || storageProvider.ReadOnly && !excludeReadOnly);
 				case ProviderType.Files:
+					return storageProvider == null || (!storageProvider.ReadOnly || storageProvider.ReadOnly && !excludeReadOnly);
+				case ProviderType.Themes:
 					return storageProvider == null || (!storageProvider.ReadOnly || storageProvider.ReadOnly && !excludeReadOnly);
 				case ProviderType.Cache:
 					return true;
@@ -188,7 +187,11 @@ namespace ScrewTurn.Wiki {
 		public event EventHandler<EventArgs> SelectedProviderChanged;
 
 		protected void lstProviders_SelectedIndexChanged(object sender, EventArgs e) {
-			if(SelectedProviderChanged != null) SelectedProviderChanged(sender, e);
+			if(SelectedProviderChanged != null) {
+				Reload();
+				SelectedProviderChanged(sender, e);
+			}
+
 		}
 
 	}
@@ -212,7 +215,11 @@ namespace ScrewTurn.Wiki {
 		/// <summary>
 		/// Cache providers.
 		/// </summary>
-		Cache
+		Cache,
+		/// <summary>
+		///  Theme providers.
+		/// </summary>
+		Themes
 	}
 
 	/// <summary>
