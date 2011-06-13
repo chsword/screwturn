@@ -344,6 +344,12 @@ namespace ScrewTurn.Wiki.BackupRestore.Tests {
 
 		public event EventHandler<AclChangedEventArgs> AclChanged;
 
+		protected void OnAclChanged(AclEntry[] entries, ScrewTurn.Wiki.AclEngine.Change change) {
+			if(AclChanged != null) {
+				AclChanged(this, new AclChangedEventArgs(entries, change));
+			}
+		}
+
 		#endregion
 	}
 

@@ -9,6 +9,9 @@ using System.IO;
 
 namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 
+	/// <summary>
+	/// Implements a Files Storage Provider based on Azure Storage.
+	/// </summary>
 	public class AzureFilesStorageProvider : IFilesStorageProviderV40 {
 
 		private IHostV40 _host;
@@ -29,6 +32,7 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 		/// <summary>
 		/// Check if a blob with the given full name (ignoring case) exists.
 		/// </summary>
+		/// <param name="containerName">The blob container where to search.</param>
 		/// <param name="blobName">Full name of the blob.</param>
 		/// <returns>The name of the blob with case as saved in blob storage.</returns>
 		private string BlobExists(string containerName, string blobName) {
@@ -824,6 +828,9 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 
 		#region IStorageProviderV30 Members
 
+		/// <summary>
+		/// Gets a value specifying whether the provider is read-only, i.e. it can only provide data and not store it.
+		/// </summary>
 		public bool ReadOnly {
 			get { return false; }
 		}
@@ -845,6 +852,14 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 			get { return _wiki; }
 		}
 
+		/// <summary>
+		/// Initializes the Storage Provider.
+		/// </summary>
+		/// <param name="host">The Host of the Component.</param>
+		/// <param name="config">The Configuration data, if any.</param>
+		/// <param name="wiki">The wiki.</param>
+		/// <exception cref="ArgumentNullException">If <paramref name="host"/> or <paramref name="config"/> are <c>null</c>.</exception>
+		/// <exception cref="InvalidConfigurationException">If <paramref name="config"/> is not valid or is incorrect.</exception>
 		public void Init(IHostV40 host, string config, string wiki) {
 			if(host == null) throw new ArgumentNullException("host");
 			if(config == null) throw new ArgumentNullException("config");
@@ -883,10 +898,16 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 			TableStorage.CreateTable(config, FileRetrievalStatsTable);
 		}
 
+		/// <summary>
+		/// Gets the Information about the Provider.
+		/// </summary>
 		public ComponentInformation Information {
 			get { return new ComponentInformation("Azure Blob Storage Files Storage Provider", "Threeplicate Srl", "", "", ""); }
 		}
 
+		/// <summary>
+		/// Gets a brief summary of the configuration string format, in HTML. Returns <c>null</c> if no configuration is needed.
+		/// </summary>
 		public string ConfigHelpHtml {
 			get { return ""; }
 		}
@@ -895,6 +916,9 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+		/// </summary>
 		public void Dispose() {
 			// Nothing todo
 		}

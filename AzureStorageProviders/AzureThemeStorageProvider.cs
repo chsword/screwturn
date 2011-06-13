@@ -217,10 +217,16 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 			// Nothing todo
 		}
 
+		/// <summary>
+		/// Gets the Information about the Provider.
+		/// </summary>
 		public ComponentInformation Information {
 			get { return new ComponentInformation("Azure Blob Storage Theme Storage Provider", "Threeplicate Srl", _host.GetGlobalSettingValue(GlobalSettingName.WikiVersion), "", ""); }
 		}
 
+		/// <summary>
+		/// Gets a brief summary of the configuration string format, in HTML. Returns <c>null</c> if no configuration is needed.
+		/// </summary>
 		public string ConfigHelpHtml {
 			get { return ""; }
 		}
@@ -229,6 +235,9 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+		/// </summary>
 		public void Dispose() {
 			// Nothing todo
 		}

@@ -7,6 +7,9 @@ using ScrewTurn.Wiki.SearchEngine;
 
 namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 
+	/// <summary>
+	/// Implements a Azure TableStorage search engine index.
+	/// </summary>
 	public class AzureIndex :IIndex {
 		
 		private IIndexConnector connector;
@@ -29,6 +32,9 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 
 		#region IIndex Members
 
+		/// <summary>
+		/// Gets or sets the stop words to be used while indexing new content.
+		/// </summary>
 		public string[] StopWords {
 			get {
 				lock(this) {
@@ -75,6 +81,10 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 			}
 		}
 
+		/// <summary>
+		/// Completely clears the index (stop words are not affected).
+		/// </summary>
+		/// <param name="state">A state object that is passed to the IndexStorer SaveDate/DeleteData function.</param>
 		public void Clear(object state) {
 			connector.ClearIndex();
 		}
@@ -162,7 +172,6 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:SqlWordFetcher" /> class.
 		/// </summary>
-		/// <param name="connection">An open database connection.</param>
 		/// <param name="implementation">The method implementation.</param>
 		public AzureWordFetcher(TryFindWord implementation) {
 			if(implementation == null) throw new ArgumentNullException("implementation");

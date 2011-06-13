@@ -980,7 +980,6 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 		/// <summary>
 		/// Clears the index.
 		/// </summary>
-		/// <param name="state">A state object passed from the index.</param>
 		private void ClearIndex() {
 			IList<IndexWordMappingEntity> indexWordMappingEntities = GetIndexWordMappingEntities(_wiki);
 
@@ -998,6 +997,9 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 			_context.SaveChangesStandard();
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether the search engine index is corrupted and needs to be rebuilt.
+		/// </summary>
 		public bool IsIndexCorrupted {
 			get { return false; }
 		}
@@ -1006,7 +1008,6 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 		/// Indexes a page.
 		/// </summary>
 		/// <param name="content">The page content.</param>
-		/// <param name="transaction">The current transaction.</param>
 		/// <returns>The number of indexed words, including duplicates.</returns>
 		private int IndexPage(PageContent content) {
 			try {
@@ -1037,7 +1038,6 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 		/// Removes a page from the search engine index.
 		/// </summary>
 		/// <param name="content">The content of the page to remove.</param>
-		/// <param name="transaction">The current transaction.</param>
 		private void UnindexPage(PageContent content) {
 			string documentName = PageDocument.GetDocumentName(content.PageInfo);
 
@@ -1051,7 +1051,6 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 		/// </summary>
 		/// <param name="page">The page.</param>
 		/// <param name="root">The root message.</param>
-		/// <param name="transaction">The current transaction.</param>
 		private void IndexMessageTree(PageInfo page, Message root) {
 			IndexMessage(page, root.ID, root.Subject, root.DateTime, root.Body);
 			foreach(Message reply in root.Replies) {
@@ -1067,7 +1066,6 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 		/// <param name="subject">The subject.</param>
 		/// <param name="dateTime">The date/time.</param>
 		/// <param name="body">The body.</param>
-		/// <param name="transaction">The current transaction.</param>
 		/// <returns>The number of indexed words, including duplicates.</returns>
 		private int IndexMessage(PageInfo page, int id, string subject, DateTime dateTime, string body) {
 			try {
@@ -1105,7 +1103,6 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 		/// <param name="subject">The subject.</param>
 		/// <param name="dateTime">The date/time.</param>
 		/// <param name="body">The body.</param>
-		/// <param name="transaction">The current transaction.</param>
 		/// <returns>The number of indexed words, including duplicates.</returns>
 		private void UnindexMessage(PageInfo page, int id, string subject, DateTime dateTime, string body) {
 			// Trim "RE:" to avoid polluting the search engine index
@@ -1123,7 +1120,6 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 		/// </summary>
 		/// <param name="page">The page.</param>
 		/// <param name="root">The tree root.</param>
-		/// <param name="transaction">The current transaction.</param>
 		private void UnindexMessageTree(PageInfo page, Message root) {
 			UnindexMessage(page, root.ID, root.Subject, root.DateTime, root.Body);
 			foreach(Message reply in root.Replies) {
@@ -2661,6 +2657,9 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 
 		#region IStorageProviderV30 Members
 
+		/// <summary>
+		/// Gets a value specifying whether the provider is read-only, i.e. it can only provide data and not store it.
+		/// </summary>
 		public bool ReadOnly {
 			get { return false; }
 		}
@@ -2786,6 +2785,9 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+		/// </summary>
 		public void Dispose() {
 			// Nothing todo
 		}

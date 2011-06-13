@@ -8,6 +8,9 @@ using Microsoft.WindowsAzure.StorageClient;
 
 namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 
+	/// <summary>
+	/// Implements a Users Storage Provider using Azure Table Storage.
+	/// </summary>
 	public class AzureUsersStorageProvider : IUsersStorageProviderV40 {
 
 		private IHostV40 _host;

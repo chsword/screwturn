@@ -20,10 +20,10 @@ namespace ScrewTurn.Wiki.BackupRestore {
 		/// <summary>
 		/// Backups the specified settings provider.
 		/// </summary>
-		/// <param name="settingsProvider">The settings provider.</param>
+		/// <param name="settingsStorageProvider">The source settings provider.</param>
 		/// <param name="knownNamespaces">The currently known page namespaces.</param>
 		/// <param name="knownPlugins">The currently known plugins.</param>		
-		/// <returns>The backup file.</returns>
+		/// <returns>The json backup file.</returns>
 		public static byte[] BackupSettingsStorageProvider(ISettingsStorageProviderV40 settingsStorageProvider, string[] knownNamespaces, string[] knownPlugins) {
 			SettingsBackup settingsBackup = new SettingsBackup();
 
@@ -85,10 +85,10 @@ namespace ScrewTurn.Wiki.BackupRestore {
 		}
 
 		/// <summary>
-		/// Restores the settings provider.
+		/// Restores the settings from a json file.
 		/// </summary>
-		/// <param name="backupFile">The backup file.</param>
-		/// <param name="settingsStorageProvider">The settings storage provider.</param>
+		/// <param name="backupFile">The json backup file.</param>
+		/// <param name="settingsStorageProvider">The destination settings storage provider.</param>
 		/// <returns><c>true</c> if the restore is succesful <c>false</c> otherwise.</returns>
 		public static bool RestoreSettingsStorageProvider(byte[] backupFile, ISettingsStorageProviderV40 settingsStorageProvider) {
 			JavaScriptSerializer javascriptSerializer = new JavaScriptSerializer();
@@ -142,7 +142,7 @@ namespace ScrewTurn.Wiki.BackupRestore {
 		/// Backups the specified global settings storage provider.
 		/// </summary>
 		/// <param name="globalSettingsStorageProvider">The global settings storage provider.</param>
-		/// <returns>The backup file.</returns>
+		/// <returns>The zip backup file.</returns>
 		public static byte[] BackupGlobalSettingsStorageProvider(IGlobalSettingsStorageProviderV40 globalSettingsStorageProvider) {
 			GlobalSettingsBackup globalSettingsBackup = new GlobalSettingsBackup();
 
@@ -171,6 +171,12 @@ namespace ScrewTurn.Wiki.BackupRestore {
 			return buffer;
 		}
 
+		/// <summary>
+		/// Restores the global settings from a zip backup file.
+		/// </summary>
+		/// <param name="backupFile">The jason backup file.</param>
+		/// <param name="globalSettingsStorageProvider">The destination global settings storage provider.</param>
+		/// <returns><c>true</c> if the restore is succesfull, <c>false</c> otherwise.</returns>
 		public static bool RestoreGlobalSettingsStorageProvider(byte[] backupFile, IGlobalSettingsStorageProviderV40 globalSettingsStorageProvider) {
 			using(ZipFile globalSettingsBackupZipFile = ZipFile.Read(backupFile)) {
 				foreach(ZipEntry zipEntry in globalSettingsBackupZipFile) {

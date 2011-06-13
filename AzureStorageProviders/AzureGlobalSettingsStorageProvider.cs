@@ -8,6 +8,9 @@ using Microsoft.WindowsAzure.StorageClient;
 
 namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 
+	/// <summary>
+	/// Implements an Azure Table Storage global settings storage provider.
+	/// </summary>
 	public class AzureGlobalSettingsStorageProvider :IGlobalSettingsStorageProviderV40 {
 
 		private IHostV40 _host;
@@ -365,6 +368,9 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 			_context.SaveChangesStandard();
 		}
 
+		/// <summary>
+		/// Gets the current size of the Log, in KB.
+		/// </summary>
 		public int LogSize {
 			get {
 				var query = (from e in _context.CreateQuery<LogEntity>(LogsTable).AsTableServiceQuery()
@@ -447,10 +453,16 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 			containerRef.CreateIfNotExist();
 		}
 
+		/// <summary>
+		/// Gets the Information about the Provider.
+		/// </summary>
 		public ComponentInformation Information {
 			get { return new ComponentInformation("AzureTableStorage Global Settings Provider", "Threeplicate Srl", "0.1", "", ""); }
 		}
 
+		/// <summary>
+		/// Gets a brief summary of the configuration string format, in HTML. Returns <c>null</c> if no configuration is needed.
+		/// </summary>
 		public string ConfigHelpHtml {
 			get { return ""; }
 		}
@@ -459,6 +471,9 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+		/// </summary>
 		public void Dispose() {
 			// Nothing todo
 		}

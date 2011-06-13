@@ -11,7 +11,7 @@ using ScrewTurn.Wiki.AclEngine;
 namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 
 	/// <summary>
-	/// Implements a Azure Table Storage settings storage provider.
+	/// Implements an Azure Table Storage settings storage provider.
 	/// </summary>
 	public class AzureSettingsStorageProvider : ISettingsStorageProviderV40 {
 
