@@ -613,12 +613,13 @@ namespace ScrewTurn.Wiki.Plugins.SqlCommon {
 		/// Extracts the name of the wiki from the given host.
 		/// </summary>
 		/// <param name="host">The host.</param>
-		/// <returns>The name of the wiki</returns>
+		/// <returns>The name of the wiki.</returns>
+		/// <exception cref="WikiNotFoundException">If no wiki is found corresponding to the given host.</exception>
 		public string ExtractWikiName(string host) {
 			foreach(PluginFramework.Wiki wiki in GetWikiList()) {
 				if(wiki.Hosts.Contains(host)) return wiki.WikiName;
 			}
-			throw new Exception("The given host: " + host + " does not correspond to any wiki.");
+			throw new WikiNotFoundException("The given host: " + host + " does not correspond to any wiki.");
 		}
 
 		#endregion

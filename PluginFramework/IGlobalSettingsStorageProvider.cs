@@ -47,7 +47,8 @@ namespace ScrewTurn.Wiki.PluginFramework {
 		/// Extracts the name of the wiki from the given host.
 		/// </summary>
 		/// <param name="host">The host.</param>
-		/// <returns>The name of the wiki</returns>
+		/// <returns>The name of the wiki.</returns>
+		/// <exception cref="WikiNotFoundException">If no wiki is found corresponding to the given host.</exception>
 		string ExtractWikiName(string host);
 
 		/// <summary>
@@ -217,5 +218,37 @@ namespace ScrewTurn.Wiki.PluginFramework {
 		/// Logging is completely disabled.
 		/// </summary>
 		DisableLog = 0
+	}
+
+	/// <summary>
+	/// Represents errors that occur while stracting wiki name from a given host name.
+	/// </summary>
+	public class WikiNotFoundException : Exception {
+
+		/// <summary>
+		/// Initializes a new instance of the <b>WikiNotFoundException</b> class.
+		/// </summary>
+		public WikiNotFoundException() : base() { }
+
+		/// <summary>
+		/// Initializes a new instance of the <b>WikiNotFoundException</b> class.
+		/// </summary>
+		/// <param name="message">The error message.</param>
+		public WikiNotFoundException(string message) : base(message) { }
+
+		/// <summary>
+		/// Initializes a new instance of the <b>WikiNotFoundException</b> class.
+		/// </summary>
+		/// <param name="message">The error message.</param>
+		/// <param name="innerException">The inner Exception.</param>
+		public WikiNotFoundException(string message, Exception innerException) : base(message, innerException) { }
+
+		/// <summary>
+		/// Initializes a new instance of the <b>WikiNotFoundException</b> class.
+		/// </summary>
+		/// <param name="info">The serialization info.</param>
+		/// <param name="context">The streaming context.</param>
+		public WikiNotFoundException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+
 	}
 }

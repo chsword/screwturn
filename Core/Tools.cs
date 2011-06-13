@@ -471,7 +471,12 @@ namespace ScrewTurn.Wiki {
 		/// </summary>
 		/// <returns>The name of the wiki, or null.</returns>
 		public static string DetectCurrentWiki() {
-			return GlobalSettings.Provider.ExtractWikiName(HttpContext.Current.Request.Url.Host);
+			try {
+				return GlobalSettings.Provider.ExtractWikiName(HttpContext.Current.Request.Url.Host);
+			}
+			catch(WikiNotFoundException) {
+				return "root";
+			}
 		}
 
 		/// <summary>
