@@ -13,6 +13,7 @@
 		</Endpoints>
 		<ConfigurationSettings>
 			<Setting name="ConnectionString" />
+			<Setting name="Wikis" />
 		</ConfigurationSettings>
 	</WebRole>
 </ServiceDefinition>

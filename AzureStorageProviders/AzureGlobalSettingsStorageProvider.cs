@@ -3,8 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ScrewTurn.Wiki.PluginFramework;
+using Microsoft.WindowsAzure.ServiceRuntime;
 using Microsoft.WindowsAzure.StorageClient;
+using ScrewTurn.Wiki.PluginFramework;
 
 namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 
@@ -116,7 +117,25 @@ namespace ScrewTurn.Wiki.Plugins.AzureStorage {
 		}
 
 		private IList<PluginFramework.Wiki> GetWikiList() {
-			return (List<PluginFramework.Wiki>)System.Web.Configuration.WebConfigurationManager.GetWebApplicationSection("wikiList");
+			string config = RoleEnvironment.GetConfigurationSettingValue("Wikis");
+			if(string.IsNullOrEmpty(config)) throw new InvalidConfigurationException("Wikis not specified in service configuration");
+
+			string[] wikis = config.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+			if(wikis.Length == 0) throw new InvalidConfigurationException("Wikis not specified in service configuration");
+
+			char[] sep = new[] { '=' };
+
+			List<PluginFramework.Wiki> result = new List<PluginFramework.Wiki>();
+			foreach(string line in wikis) {
+				string[] fields = line.Split(sep, StringSplitOptions.RemoveEmptyEntries);
+				if(fields.Length == 0) continue;
+
+				PluginFramework.Wiki wiki = new PluginFramework.Wiki(fields[0], fields.Length > 1 ? fields[1].Split(';').ToList() : new List<string>());
+
+				result.Add(wiki);
+			}
+
+			return result;
 		}
 
 		/// <summary>

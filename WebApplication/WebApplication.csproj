@@ -40,6 +40,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.WindowsAzure.ServiceRuntime, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -193,6 +194,7 @@
     <Compile Include="AdminGlobalHome.aspx.designer.cs">
       <DependentUpon>AdminGlobalHome.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Code\WebRole.cs" />
     <Compile Include="CreateMasterPassword.aspx.cs">
       <DependentUpon>CreateMasterPassword.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
