@@ -14,6 +14,7 @@
 		
 		<Artifacts Include=".\Artifacts\" />
 		<WebAppOutput Include=".\Artifacts\WebApplication\" />
+		<WebAppOutput_PublicDirectory Include=".\Artifacts\WebApplication\public\" />
 		<WebAppOutput_SqlServer Include=".\Artifacts\WebApplication-SqlServer\" />
 		<PluginsOutput Include=".\Artifacts\Plugins\" />
 		<TestsOutput Include=".\Artifacts\Tests\" />
@@ -40,6 +41,7 @@
 			<Output ItemName="BuiltWebApp" TaskParameter="Include" />
 		</CreateItem>
 		<Copy SourceFiles="@(BuiltWebApp)" DestinationFolder=".\Artifacts\WebApplication\%(RecursiveDir)" />
+		<MakeDir Directories="@(WebAppOutput_PublicDirectory)" />
 		
 		<!-- Web Application, SQL Server -->
 		<Copy SourceFiles="@(BuiltWebApp)" DestinationFolder=".\Artifacts\WebApplication-SqlServer\%(RecursiveDir)" />
