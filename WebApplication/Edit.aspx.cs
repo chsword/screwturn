@@ -93,8 +93,14 @@ namespace ScrewTurn.Wiki {
 			}
 
 			// Load requested page, if any
-			if(Request["Page"] != null) {
-				string name = Request["Page"];
+			if(Request["Page"] != null || Page.IsPostBack) {
+				string name = null;
+				if(Request["Page"] != null) {
+					name = Request["Page"];
+				}
+				else {
+					name = txtName.Text;
+				}
 
 				currentPage = Pages.FindPage(name);
 
