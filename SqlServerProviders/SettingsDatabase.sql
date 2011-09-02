@@ -1,28 +1,22 @@
 ﻿
 create table [Setting] (
+	[Wiki] varchar(100) not null,
 	[Name] varchar(100) not null,
 	[Value] nvarchar(4000) not null,
-	constraint [PK_Setting] primary key clustered ([Name])
-)
-
-create table [Log] (
-	[Id] int not null identity,
-	[DateTime] datetime not null,
-	[EntryType] char not null,
-	[User] nvarchar(100) not null,
-	[Message] nvarchar(4000) not null,
-	constraint [PK_Log] primary key clustered ([Id])
+	constraint [PK_Setting] primary key clustered ([Wiki], [Name])
 )
 
 create table [MetaDataItem] (
+	[Wiki] varchar(100) not null,
 	[Name] varchar(100) not null,
 	[Tag] nvarchar(100) not null,
 	[Data] nvarchar(4000) not null,
-	constraint [PK_MetaDataItem] primary key clustered ([Name], [Tag])
+	constraint [PK_MetaDataItem] primary key clustered ([Wiki], [Name], [Tag])
 )
 
 create table [RecentChange] (
 	[Id] int not null identity,
+	[Wiki] varchar(100) not null,
 	[Page] nvarchar(200) not null,
 	[Title] nvarchar(200) not null,
 	[MessageSubject] nvarchar(200),
@@ -33,31 +27,28 @@ create table [RecentChange] (
 	constraint [PK_RecentChange] primary key clustered ([Id])
 )
 
-create table [PluginAssembly] (
-	[Name] varchar(100) not null,
-	[Assembly] varbinary(max) not null,
-	constraint [PK_PluginAssembly] primary key clustered ([Name])
-)
-
 create table [PluginStatus] (
+	[Wiki] varchar(100) not null,
 	[Name] varchar(150) not null,
 	[Enabled] bit not null,
 	[Configuration] nvarchar(4000) not null,
-	constraint [PK_PluginStatus] primary key clustered ([Name])
+	constraint [PK_PluginStatus] primary key clustered ([Wiki], [Name])
 )
 
 create table [OutgoingLink] (
+	[Wiki] varchar(100) not null,
 	[Source] nvarchar(100) not null,
 	[Destination] nvarchar(100) not null,
-	constraint [PK_OutgoingLink] primary key clustered ([Source], [Destination])
+	constraint [PK_OutgoingLink] primary key clustered ([Wiki], [Source], [Destination])
 )
 
 create table [AclEntry] (
+	[Wiki] varchar(100) not null,
 	[Resource] nvarchar(200) not null,
 	[Action] varchar(50) not null,
 	[Subject] nvarchar(100) not null,
 	[Value] char not null,
-	constraint [PK_AclEntry] primary key clustered ([Resource], [Action], [Subject])
+	constraint [PK_AclEntry] primary key clustered ([Wiki], [Resource], [Action], [Subject])
 )
 
 if (select count(*) from sys.tables where [Name] = 'Version') = 0

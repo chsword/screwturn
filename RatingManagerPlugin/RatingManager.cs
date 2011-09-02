@@ -12,19 +12,24 @@ namespace ScrewTurn.Wiki.Plugins.RatingManagerPlugin {
 	/// <summary>
 	/// A plugin for assigning a rating to pages.
 	/// </summary>
-	public class RatingManager : IFormatterProviderV30 {
+	public class RatingManager : IFormatterProviderV40 {
 
-		const string defaultDirectoryName = "/__RatingManagerPlugin/";
+		const string _defaultDirectoryName = "/__RatingManagerPlugin/";
 		const string cssFileName = "RatingManagerPluginCss.css";
 		const string jsFileName = "RatingManagerPluginJs.js";
 		const string starImageFileName = "RatingManagerPluginStarImage.gif";
 		const string ratingFileName = "RatingManagerPluginRatingFile.dat";
 
-		private IHostV30 _host;
+		private IHostV40 _host;
+		private string _wiki;
 		private bool _enableLogging = true;
-        private static readonly ComponentInformation Info = new ComponentInformation("Rating Manager Plugin", "Threeplicate Srl", "3.0.3.555", "http://www.screwturn.eu", "http://www.screwturn.eu/Version/PluginPack/RatingManager2.txt");
+		private static readonly ComponentInformation Info = new ComponentInformation("Rating Manager Plugin", "Threeplicate Srl", "4.0.1.71", "http://www.screwturn.eu", "http://www.screwturn.eu/Version4.0/PluginPack/RatingManager.txt");
 
 		private bool foundRatings = false;
+
+		private string DefaultDirectoryName() {
+			return Path.Combine(_wiki, _defaultDirectoryName);
+		}
 
 		private static readonly Regex VotesRegex = new Regex(@"{rating(\|(.+?))?}",
 			RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
@@ -79,15 +84,15 @@ namespace ScrewTurn.Wiki.Plugins.RatingManagerPlugin {
 			try {
 				if(context.Context == FormattingContext.PageContent && context.Page != null) {
 					if(context.HttpContext.Request["vote"] != null) {
-						AddRating(context.Page.FullName, int.Parse(context.HttpContext.Request["vote"]));
-						System.Web.HttpCookie cookie = new System.Web.HttpCookie("RatingManagerPlugin_" + context.Page.FullName, context.HttpContext.Request["vote"]);
+						AddRating(context.Page, int.Parse(context.HttpContext.Request["vote"]));
+						System.Web.HttpCookie cookie = new System.Web.HttpCookie("RatingManagerPlugin_" + context.Page, context.HttpContext.Request["vote"]);
 						cookie.Expires = DateTime.Now.AddYears(10);
 						context.HttpContext.Response.Cookies.Add(cookie);
 						return "";
 					}
 				}
 				if(context.Page != null) {
-					ComputeRating(context, buffer, context.Page.FullName);
+					ComputeRating(context, buffer, context.Page);
 				}
 				else {
 					return raw;
@@ -97,8 +102,8 @@ namespace ScrewTurn.Wiki.Plugins.RatingManagerPlugin {
 				LogWarning(string.Format("Exception occurred: {0}", ex.StackTrace));
 			}
 			if(foundRatings) {
-				buffer.Append(@"<script type=""text/javascript"" src=""GetFile.aspx?file=" + defaultDirectoryName + jsFileName + @"""></script>");
-				buffer.Append(@"<link rel=""StyleSheet"" href=""GetFile.aspx?file=" + defaultDirectoryName + cssFileName + @""" type=""text/css"" />");
+				buffer.Append(@"<script type=""text/javascript"" src=""GetFile.aspx?file=" + DefaultDirectoryName() + jsFileName + @"""></script>");
+				buffer.Append(@"<link rel=""StyleSheet"" href=""GetFile.aspx?file=" + DefaultDirectoryName() + cssFileName + @""" type=""text/css"" />");
 				buffer.Append(@"<script type=""text/javascript""> <!--
 function GenerateStaticStars(rate, cssClass) {
 var string = '';
@@ -200,13 +205,13 @@ $('#serialStar" + numRatings + @"').rating({showCancel: false, startValue: " + a
 		private float GetCurrentAverage(string fullPageName) {
 			float average = 0;
 			try {
-				IFilesStorageProviderV30 filesStorageProvider = GetDefaultFilesStorageProvider();
+				IFilesStorageProviderV40 filesStorageProvider = GetDefaultFilesStorageProvider();
 
 				MemoryStream stream = new MemoryStream();
 				string fileContent = "";
 
-				if(FileExists(filesStorageProvider, defaultDirectoryName, ratingFileName)) {
-					filesStorageProvider.RetrieveFile(defaultDirectoryName + ratingFileName, stream, true);
+				if(FileExists(filesStorageProvider, DefaultDirectoryName(), ratingFileName)) {
+					filesStorageProvider.RetrieveFile(DefaultDirectoryName() + ratingFileName, stream);
 					stream.Seek(0, SeekOrigin.Begin);
 					fileContent = Encoding.UTF8.GetString(stream.ToArray());
 				}
@@ -229,12 +234,12 @@ $('#serialStar" + numRatings + @"').rating({showCancel: false, startValue: " + a
 
 
 		private void AddRating(string fullPageName, int rate) {
-			IFilesStorageProviderV30 filesStorageProvider = GetDefaultFilesStorageProvider();
+			IFilesStorageProviderV40 filesStorageProvider = GetDefaultFilesStorageProvider();
 
 			MemoryStream stream = new MemoryStream();
 
-			if(FileExists(filesStorageProvider, defaultDirectoryName, ratingFileName)) {
-				filesStorageProvider.RetrieveFile(defaultDirectoryName + ratingFileName, stream, true);
+			if(FileExists(filesStorageProvider, DefaultDirectoryName(), ratingFileName)) {
+				filesStorageProvider.RetrieveFile(DefaultDirectoryName() + ratingFileName, stream);
 				stream.Seek(0, SeekOrigin.Begin);
 			}
 			string fileContent = Encoding.UTF8.GetString(stream.ToArray());
@@ -265,7 +270,7 @@ $('#serialStar" + numRatings + @"').rating({showCancel: false, startValue: " + a
 
 			stream = new MemoryStream(Encoding.UTF8.GetBytes(sb.ToString()));
 
-			filesStorageProvider.StoreFile(defaultDirectoryName + ratingFileName, stream, true);
+			filesStorageProvider.StoreFile(DefaultDirectoryName() + ratingFileName, stream, true);
 
 			//statisticsPage.Provider.ModifyPage(statisticsPage, statisticsPageContent.Title, statisticsPageContent.User, DateTime.Now, statisticsPageContent.Comment, sb.ToString(), statisticsPageContent.Keywords, statisticsPageContent.Description, SaveMode.Normal);
 		}
@@ -308,7 +313,7 @@ $('#serialStar" + numRatings + @"').rating({showCancel: false, startValue: " + a
 		/// <param name="message">The message.</param>
 		private void LogWarning(string message) {
 			if(_enableLogging) {
-				_host.LogEntry(message, LogEntryType.Warning, null, this);
+				_host.LogEntry(message, LogEntryType.Warning, null, this, _wiki);
 			}
 		}
 
@@ -323,58 +328,68 @@ $('#serialStar" + numRatings + @"').rating({showCancel: false, startValue: " + a
 		}
 
 		/// <summary>
+		/// Gets the wiki that has been used to initialize the current instance of the provider.
+		/// </summary>
+		public string CurrentWiki {
+			get { return _wiki; }
+		}
+
+		/// <summary>
 		/// Initializes the Storage Provider.
 		/// </summary>
 		/// <param name="host">The Host of the Component.</param>
 		/// <param name="config">The Configuration data, if any.</param>
+		/// <param name="wiki">The wiki.</param>
 		/// <exception cref="ArgumentNullException">If <paramref name="host"/> or <paramref name="config"/> are <c>null</c>.</exception>
 		/// <exception cref="InvalidConfigurationException">If <paramref name="config"/> is not valid or is incorrect.</exception>
-		public void Init(IHostV30 host, string config) {
-			_host = host;
+		public void Init(IHostV40 host, string config, string wiki) {
+			if(host == null) throw new ArgumentNullException("host");
+			if(config == null) throw new ArgumentNullException("config");
 
-			if(config != null) {
-				string[] configEntries = config.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
-				for(int i = 0; i < configEntries.Length; i++) {
-					string[] configEntryDetails = configEntries[i].Split(new string[] { "=" }, 2, StringSplitOptions.None);
-					switch(configEntryDetails[0].ToLowerInvariant()) {
-						case "logoptions":
-							if(configEntryDetails[1] == "nolog") {
-								_enableLogging = false;
-							}
-							else {
-								LogWarning(@"Unknown value in ""logOptions"" configuration string: " + configEntries[i] + "Supported values are: nolog.");
-							}
-							break;
-						default:
-							LogWarning("Unknown value in configuration string: " + configEntries[i]);
-							break;
-					}
+			_host = host;
+			_wiki = wiki;
+
+			IFilesStorageProviderV40 filesStorageProvider = GetDefaultFilesStorageProvider();
+
+			if(!DirectoryExists(filesStorageProvider, DefaultDirectoryName())) {
+				filesStorageProvider.CreateDirectory("/", DefaultDirectoryName().Trim('/'));
+			}
+			if(!FileExists(filesStorageProvider, DefaultDirectoryName(), cssFileName)) {
+				filesStorageProvider.StoreFile(DefaultDirectoryName() + cssFileName, Assembly.GetExecutingAssembly().GetManifestResourceStream("ScrewTurn.Wiki.Plugins.RatingManagerPlugin.Resources.jquery.rating.css"), true);
+			}
+			if(!FileExists(filesStorageProvider, DefaultDirectoryName(), jsFileName)) {
+				filesStorageProvider.StoreFile(DefaultDirectoryName() + jsFileName, Assembly.GetExecutingAssembly().GetManifestResourceStream("ScrewTurn.Wiki.Plugins.RatingManagerPlugin.Resources.jquery.rating.pack.js"), true);
+			}
+			if(!FileExists(filesStorageProvider, DefaultDirectoryName(), starImageFileName)) {
+				filesStorageProvider.StoreFile(DefaultDirectoryName() + starImageFileName, Assembly.GetExecutingAssembly().GetManifestResourceStream("ScrewTurn.Wiki.Plugins.RatingManagerPlugin.Resources.star.gif"), true);
+			}
+
+			string[] configEntries = config.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
+			for(int i = 0; i < configEntries.Length; i++) {
+				string[] configEntryDetails = configEntries[i].Split(new string[] { "=" }, 2, StringSplitOptions.None);
+				switch(configEntryDetails[0].ToLowerInvariant()) {
+					case "logoptions":
+						if(configEntryDetails[1] == "nolog") {
+							_enableLogging = false;
+						}
+						else {
+							LogWarning(@"Unknown value in ""logOptions"" configuration string: " + configEntries[i] + "Supported values are: nolog.");
+						}
+						break;
+					default:
+						LogWarning("Unknown value in configuration string: " + configEntries[i]);
+						break;
 				}
 			}
-
-			IFilesStorageProviderV30 filesStorageProvider = GetDefaultFilesStorageProvider();
-
-			if(!DirectoryExists(filesStorageProvider, defaultDirectoryName)) {
-				filesStorageProvider.CreateDirectory("/", defaultDirectoryName.Trim('/'));
-			}
-			if(!FileExists(filesStorageProvider, defaultDirectoryName, cssFileName)) {
-				filesStorageProvider.StoreFile(defaultDirectoryName + cssFileName, Assembly.GetExecutingAssembly().GetManifestResourceStream("ScrewTurn.Wiki.Plugins.RatingManagerPlugin.Resources.jquery.rating.css"), true);
-			}
-			if(!FileExists(filesStorageProvider, defaultDirectoryName, jsFileName)) {
-				filesStorageProvider.StoreFile(defaultDirectoryName + jsFileName, Assembly.GetExecutingAssembly().GetManifestResourceStream("ScrewTurn.Wiki.Plugins.RatingManagerPlugin.Resources.jquery.rating.pack.js"), true);
-			}
-			if(!FileExists(filesStorageProvider, defaultDirectoryName, starImageFileName)) {
-				filesStorageProvider.StoreFile(defaultDirectoryName + starImageFileName, Assembly.GetExecutingAssembly().GetManifestResourceStream("ScrewTurn.Wiki.Plugins.RatingManagerPlugin.Resources.star.gif"), true);
-			}
 		}
 
 
-		private IFilesStorageProviderV30 GetDefaultFilesStorageProvider() {
-			string defaultFilesStorageProviderName = _host.GetSettingValue(SettingName.DefaultFilesStorageProvider);
-			return _host.GetFilesStorageProviders(true).First(p => p.GetType().FullName == defaultFilesStorageProviderName);
+		private IFilesStorageProviderV40 GetDefaultFilesStorageProvider() {
+			string defaultFilesStorageProviderName = _host.GetGlobalSettingValue(GlobalSettingName.DefaultFilesStorageProvider);
+			return _host.GetFilesStorageProviders(_wiki).First(p => p.GetType().FullName == defaultFilesStorageProviderName);
 		}
 
-		private bool DirectoryExists(IFilesStorageProviderV30 filesStorageProvider, string directoryName) {
+		private bool DirectoryExists(IFilesStorageProviderV40 filesStorageProvider, string directoryName) {
 			string[] directoryList = filesStorageProvider.ListDirectories("/");
 			foreach(string dir in directoryList) {
 				if(dir == directoryName) return true;
@@ -382,7 +397,7 @@ $('#serialStar" + numRatings + @"').rating({showCancel: false, startValue: " + a
 			return false;
 		}
 
-		private bool FileExists(IFilesStorageProviderV30 filesStorageProvider, string directory, string fileName) {
+		private bool FileExists(IFilesStorageProviderV40 filesStorageProvider, string directory, string fileName) {
 			string[] filesList = filesStorageProvider.ListFiles(directory);
 			foreach(string file in filesList) {
 				if(file == directory + fileName) return true;
@@ -390,11 +405,20 @@ $('#serialStar" + numRatings + @"').rating({showCancel: false, startValue: " + a
 			return false;
 		}
 
+
 		/// <summary>
-		/// Method invoked on shutdown.
+		/// Sets up the Storage Provider.
 		/// </summary>
-		/// <remarks>This method might not be invoked in some cases.</remarks>
-		public void Shutdown() {
+		/// <param name="host">The Host of the Component.</param>
+		/// <param name="config">The Configuration data, if any.</param>
+		/// <exception cref="ArgumentNullException">If <paramref name="host"/> or <paramref name="config"/> are <c>null</c>.</exception>
+		/// <exception cref="InvalidConfigurationException">If <paramref name="config"/> is not valid or is incorrect.</exception>
+		public void SetUp(IHostV40 host, string config) {
+			if(host == null) throw new ArgumentNullException("host");
+			if(config == null) throw new ArgumentNullException("config");
+		}
+
+		void IDisposable.Dispose() {
 			// Nothing to do
 		}
 

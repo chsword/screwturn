@@ -23,27 +23,31 @@ namespace ScrewTurn.Wiki {
 		private MemoryStream resultMemStream = null;
 		private string file = "";
 		private string page = "";
-		private IFilesStorageProviderV30 provider = null;
+		private IFilesStorageProviderV40 provider = null;
+		private string currentWiki = null;
 
 		protected void Page_Load(object sender, EventArgs e) {
+			currentWiki = DetectWiki();
+
 			SetProvider();
 			SetInputData();
 
 			string currentUser = SessionFacade.GetCurrentUsername();
-			string[] currentGroups = SessionFacade.GetCurrentGroupNames();
+			string[] currentGroups = SessionFacade.GetCurrentGroupNames(currentWiki);
 			string dir = Tools.GetDirectoryName(file);
 
 			// Verify permissions
-			bool canUpload = AuthChecker.CheckActionForDirectory(provider, dir,
+			AuthChecker authChecker = new AuthChecker(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
+			bool canUpload = authChecker.CheckActionForDirectory(provider, dir,
 				Actions.ForDirectories.UploadFiles, currentUser, currentGroups);
-			bool canDeleteFiles = AuthChecker.CheckActionForDirectory(provider, dir,
+			bool canDeleteFiles = authChecker.CheckActionForDirectory(provider, dir,
 				Actions.ForDirectories.DeleteFiles, currentUser, currentGroups);
 
 			if(!canUpload || !canDeleteFiles) UrlTools.Redirect("AccessDenied.aspx");
 
 			// Inject the proper stylesheet in page head
 			Literal l = new Literal();
-			l.Text = Tools.GetIncludes(DetectNamespace());
+			l.Text = Tools.GetIncludes(currentWiki, DetectNamespace());
 			Page.Header.Controls.Add(l);
 
 			ResizeImage();
@@ -52,9 +56,9 @@ namespace ScrewTurn.Wiki {
 		private void SetProvider() {
 			string p = Request["Provider"];
 			if(string.IsNullOrEmpty(p)) {
-				p = Settings.DefaultFilesProvider;
+				p = GlobalSettings.DefaultFilesProvider;
 			}
-			provider = Collectors.FilesProviderCollector.GetProvider(p);
+			provider = Collectors.CollectorsBox.FilesProviderCollector.GetProvider(p, currentWiki);
 		}
 
 		private void SetInputData() {
@@ -84,21 +88,21 @@ namespace ScrewTurn.Wiki {
 
 			// Load from provider
 			if(string.IsNullOrEmpty(page)) {
-				if(!provider.RetrieveFile(file, ms, false)) {
+				if(!provider.RetrieveFile(file, ms)) {
 					Response.StatusCode = 404;
 					Response.Write("File not found.");
 					return;
 				}
 			}
 			else {
-				PageInfo info = Pages.FindPage(page);
-				if(info == null) {
+				PageContent pageContent = Pages.FindPage(currentWiki, page);
+				if(pageContent == null) {
 					Response.StatusCode = 404;
 					Response.WriteFile("Page not found.");
 					return;
 				}
 
-				if(!provider.RetrievePageAttachment(info, file, ms, false)) {
+				if(!provider.RetrievePageAttachment(pageContent.FullName, file, ms)) {
 					Response.StatusCode = 404;
 					Response.WriteFile("File not found.");
 					return;
@@ -343,7 +347,7 @@ namespace ScrewTurn.Wiki {
 				done = provider.StoreFile(path + targetName, resultMemStream, overwrite);
 			}
 			else {
-				done = provider.StorePageAttachment(Pages.FindPage(page), targetName, resultMemStream, overwrite);
+				done = provider.StorePageAttachment(page, targetName, resultMemStream, overwrite);
 			}
 
 			if(done) {

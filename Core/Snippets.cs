@@ -15,12 +15,13 @@ namespace ScrewTurn.Wiki {
 		/// <summary>
 		/// Gets the complete list of the Snippets.
 		/// </summary>
+		/// <param name="wiki">The wiki.</param>
 		/// <returns>The snippets, sorted by name.</returns>
-		public static List<Snippet> GetSnippets() {
+		public static List<Snippet> GetSnippets(string wiki) {
 			List<Snippet> allSnippets = new List<Snippet>(50);
 
 			// Retrieve all snippets from Pages Provider
-			foreach(IPagesStorageProviderV30 provider in Collectors.PagesProviderCollector.AllProviders) {
+			foreach(IPagesStorageProviderV40 provider in Collectors.CollectorsBox.PagesProviderCollector.GetAllProviders(wiki)) {
 				allSnippets.AddRange(provider.GetSnippets());
 			}
 
@@ -32,10 +33,11 @@ namespace ScrewTurn.Wiki {
 		/// <summary>
 		/// Finds a Snippet.
 		/// </summary>
+		/// <param name="wiki">The wiki.</param>
 		/// <param name="name">The Name of the Snippet to find.</param>
 		/// <returns>The Snippet or null if it is not found.</returns>
-		public static Snippet Find(string name) {
-			List<Snippet> allSnippets = GetSnippets();
+		public static Snippet Find(string wiki, string name) {
+			List<Snippet> allSnippets = GetSnippets(wiki);
 
 			int result = allSnippets.BinarySearch(new Snippet(name, "", null), new SnippetNameComparer());
 
@@ -46,23 +48,22 @@ namespace ScrewTurn.Wiki {
 		/// <summary>
 		/// Creates a new Snippet.
 		/// </summary>
+		/// <param name="wiki">The wiki.</param>
 		/// <param name="name">The name of the Snippet.</param>
 		/// <param name="content">The content of the Snippet.</param>
 		/// <param name="provider">The Provider to use to store the Snippet (<c>null</c> for the default provider).</param>
 		/// <returns>True if the Snippets has been addedd successfully.</returns>
-		public static bool AddSnippet(string name, string content, IPagesStorageProviderV30 provider) {
-			if(Find(name) != null) return false;
+		public static bool AddSnippet(string wiki, string name, string content, IPagesStorageProviderV40 provider) {
+			if(Find(wiki, name) != null) return false;
 
-			if(provider == null) provider = Collectors.PagesProviderCollector.GetProvider(Settings.DefaultPagesProvider);
+			if(provider == null) provider = Collectors.CollectorsBox.PagesProviderCollector.GetProvider(GlobalSettings.DefaultPagesProvider, wiki);
 
 			Snippet newSnippet = provider.AddSnippet(name, content);
 
 			if(newSnippet != null) {
-				Log.LogEntry("Snippet " + name + " created", EntryType.General, Log.SystemUsername);
-				Content.ClearPseudoCache();
-				Content.InvalidateAllPages();
+				Log.LogEntry("Snippet " + name + " created", EntryType.General, Log.SystemUsername, wiki);
 			}
-			else Log.LogEntry("Creation failed for Snippet " + name, EntryType.Error, Log.SystemUsername);
+			else Log.LogEntry("Creation failed for Snippet " + name, EntryType.Error, Log.SystemUsername, wiki);
 
 			return newSnippet != null;
 		}
@@ -76,11 +77,9 @@ namespace ScrewTurn.Wiki {
 			bool done = snippet.Provider.RemoveSnippet(snippet.Name);
 
 			if(done) {
-				Log.LogEntry("Snippet " + snippet.Name + " deleted", EntryType.General, Log.SystemUsername);
-				Content.ClearPseudoCache();
-				Content.InvalidateAllPages();
+				Log.LogEntry("Snippet " + snippet.Name + " deleted", EntryType.General, Log.SystemUsername, snippet.Provider.CurrentWiki);
 			}
-			else Log.LogEntry("Deletion failed for Snippet " + snippet.Name, EntryType.Error, Log.SystemUsername);
+			else Log.LogEntry("Deletion failed for Snippet " + snippet.Name, EntryType.Error, Log.SystemUsername, snippet.Provider.CurrentWiki);
 
 			return done;
 		}
@@ -95,11 +94,9 @@ namespace ScrewTurn.Wiki {
 			Snippet newSnippet = snippet.Provider.ModifySnippet(snippet.Name, content);
 
 			if(newSnippet != null) {
-				Log.LogEntry("Snippet " + snippet.Name + " updated", EntryType.General, Log.SystemUsername);
-				Content.ClearPseudoCache();
-				Content.InvalidateAllPages();
+				Log.LogEntry("Snippet " + snippet.Name + " updated", EntryType.General, Log.SystemUsername, snippet.Provider.CurrentWiki);
 			}
-			else Log.LogEntry("Modification failed for Snippet " + snippet.Name, EntryType.Error, Log.SystemUsername);
+			else Log.LogEntry("Modification failed for Snippet " + snippet.Name, EntryType.Error, Log.SystemUsername, snippet.Provider.CurrentWiki);
 
 			return newSnippet != null;
 		}

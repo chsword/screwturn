@@ -20,72 +20,69 @@ namespace ScrewTurn.Wiki {
 	public static class Tools {
 
 		/// <summary>
-		/// Gets all the included files for the HTML Head, such as CSS, JavaScript and Icon pluginAssemblies, for a namespace.
+		/// Gets all the included files for the HTML Head, such as CSS, JavaScript and Icon pluginAssemblies, for a wiki and namespace.
 		/// </summary>
+		/// <param name="wiki">The wiki.</param>
 		/// <param name="nspace">The namespace (<c>null</c> for the root).</param>
 		/// <returns>The includes.</returns>
-		public static string GetIncludes(string nspace) {
-			string themePath = Settings.GetThemePath(nspace);
-
+		public static string GetIncludes(string wiki, string nspace) {
 			StringBuilder result = new StringBuilder(300);
-
+			string nameTheme = Settings.GetTheme(wiki, nspace);
 			result.Append(GetJavaScriptIncludes());
-
-			string themeDir = Settings.ThemesDirectory + Settings.GetTheme(nspace);
-			if(!Directory.Exists(themeDir)) themeDir = Settings.ThemesDirectory + "Default";
-
-			string[] css = Directory.GetFiles(themeDir, "*.css");
+			List<string> cssList = Themes.ListThemeFiles(wiki, nameTheme, ".css");
 			string firstChunk;
-			for(int i = 0; i < css.Length; i++) {
-				if(Path.GetFileName(css[i]).IndexOf("_") != -1) {
-					firstChunk = Path.GetFileName(css[i]).Substring(0, Path.GetFileName(css[i]).IndexOf("_")).ToLowerInvariant();
-					if(firstChunk.Equals("screen") || firstChunk.Equals("print") || firstChunk.Equals("all") ||
-						firstChunk.Equals("aural") || firstChunk.Equals("braille") || firstChunk.Equals("embossed") ||
-						firstChunk.Equals("handheld") || firstChunk.Equals("projection") || firstChunk.Equals("tty") || firstChunk.Equals("tv")) {
-						result.Append(@"<link rel=""stylesheet"" media=""" + firstChunk + @""" href=""" + themePath + Path.GetFileName(css[i]) + @""" type=""text/css"" />" + "\n");
+			if(cssList != null) {
+				foreach(string cssFile in cssList) {
+					if(Path.GetFileName(cssFile).IndexOf("_") != -1) {
+						firstChunk = Path.GetFileName(cssFile).Substring(0, Path.GetFileName(cssFile).IndexOf("_")).ToLowerInvariant();
+						if(firstChunk.Equals("screen") || firstChunk.Equals("print") || firstChunk.Equals("all") ||
+							firstChunk.Equals("aural") || firstChunk.Equals("braille") || firstChunk.Equals("embossed") ||
+							firstChunk.Equals("handheld") || firstChunk.Equals("projection") || firstChunk.Equals("tty") || firstChunk.Equals("tv")) {
+							result.Append(@"<link rel=""stylesheet"" media=""" + firstChunk + @""" href=""" + cssFile + @""" type=""text/css"" />" + "\n");
+						}
+						else {
+							result.Append(@"<link rel=""stylesheet"" href=""" + cssFile + @""" type=""text/css"" />" + "\n");
+						}
 					}
 					else {
-						result.Append(@"<link rel=""stylesheet"" href=""" + themePath + Path.GetFileName(css[i]) + @""" type=""text/css"" />" + "\n");
+						result.Append(@"<link rel=""stylesheet"" href=""" + cssFile + @""" type=""text/css"" />" + "\n");
 					}
 				}
-				else {
-					result.Append(@"<link rel=""stylesheet"" href=""" + themePath + Path.GetFileName(css[i]) + @""" type=""text/css"" />" + "\n");
-				}
 			}
-
-			string customEditorCss = Path.Combine(themeDir, "Editor.css");
-			if(File.Exists(customEditorCss)) result.AppendFormat(@"<link rel=""stylesheet"" href=""{0}Editor.css"" type=""text/css"" />" + "\n", themePath);
+			List<string> customEditorCss = Themes.ListThemeFiles(wiki, nameTheme, "Editor.css");
+			if (customEditorCss!= null && customEditorCss.Count>0) result.AppendFormat(@"<link rel=""stylesheet"" href=""{0}"" type=""text/css"" />" + "\n", customEditorCss[0]);
 			else result.Append(@"<link rel=""stylesheet"" href=""Themes/Editor.css"" type=""text/css"" />" + "\n");
-
 			// OpenSearch
-			result.AppendFormat(@"<link rel=""search"" href=""Search.aspx?OpenSearch=1"" type=""application/opensearchdescription+xml"" title=""{1}"" />",
-				Settings.MainUrl, Settings.WikiTitle + " - Search");
+			result.AppendFormat(@"<link rel=""search"" href=""Search.aspx?OpenSearch=1"" type=""application/opensearchdescription+xml"" title=""{0}"" />", Settings.GetWikiTitle(wiki) + " - Search");
 
-			string[] js = Directory.GetFiles(themeDir, "*.js");
-			for(int i = 0; i < js.Length; i++) {
-				result.Append(@"<script src=""" + themePath + Path.GetFileName(js[i]) + @""" type=""text/javascript""></script>" + "\n");
-			}
-
-			string[] icons = Directory.GetFiles(themeDir, "Icon.*");
-			if(icons.Length > 0) {
-				result.Append(@"<link rel=""shortcut icon"" href=""" + themePath + Path.GetFileName(icons[0]) + @""" type=""");
-				switch(Path.GetExtension(icons[0]).ToLowerInvariant()) {
-					case ".ico":
-						result.Append("image/x-icon");
-						break;
-					case ".gif":
-						result.Append("image/gif");
-						break;
-					case ".png":
-						result.Append("image/png");
-						break;
+			List<string> jsFiles = Themes.ListThemeFiles(wiki, nameTheme, ".js");
+			if(jsFiles != null) {
+				foreach(string jsFile in jsFiles) {
+					result.Append(@"<script src=""" + jsFile + @""" type=""text/javascript""></script>" + "\n");
 				}
-				result.Append(@""" />" + "\n");
 			}
+			List<string> iconsList = Themes.ListThemeFiles(wiki, nameTheme, "Icon.");
+			if(iconsList != null) {
+				string[] icons = iconsList.ToArray();
 
+				if(icons.Length > 0) {
+					result.Append(@"<link rel=""shortcut icon"" href=""" + icons[0] + @""" type=""");
+					switch(icons[0].Substring(icons[0].LastIndexOf('.')).ToLowerInvariant()) {
+						case ".ico":
+							result.Append("image/x-icon");
+							break;
+						case ".gif":
+							result.Append("image/gif");
+							break;
+						case ".png":
+							result.Append("image/png");
+							break;
+					}
+					result.Append(@""" />" + "\n");
+				}
+			}
 			// Include HTML Head
-			result.Append(Settings.Provider.GetMetaDataItem(MetaDataItem.HtmlHead, nspace));
-
+			result.Append(Settings.GetProvider(wiki).GetMetaDataItem(MetaDataItem.HtmlHead, nspace));
 			return result.ToString();
 		}
 
@@ -96,8 +93,8 @@ namespace ScrewTurn.Wiki {
 		public static string GetJavaScriptIncludes() {
 			StringBuilder buffer = new StringBuilder(100);
 
-			foreach(string js in Directory.GetFiles(Settings.JsDirectory, "*.js")) {
-				buffer.Append(@"<script type=""text/javascript"" src=""" + Settings.JsDirectoryName + "/" + Path.GetFileName(js) + @"""></script>" + "\n");
+			foreach(string js in Directory.GetFiles(GlobalSettings.JsDirectory, "*.js")) {
+				buffer.Append(@"<script type=""text/javascript"" src=""" + GlobalSettings.JsDirectoryName + "/" + Path.GetFileName(js) + @"""></script>" + "\n");
 			}
 
 			return buffer.ToString();
@@ -167,23 +164,7 @@ namespace ScrewTurn.Wiki {
 			}
 			return result;
 		}
-
-		/// <summary>
-		/// Gets the available Themes.
-		/// </summary>
-		public static string[] AvailableThemes {
-			get {
-				string[] dirs = Directory.GetDirectories(Settings.ThemesDirectory);
-				string[] res = new string[dirs.Length];
-				for(int i = 0; i < dirs.Length; i++) {
-					//if(dirs[i].EndsWith("\\")) dirs[i] = dirs[i].Substring(0, dirs[i].Length - 1);
-					dirs[i] = dirs[i].TrimEnd(Path.DirectorySeparatorChar);
-					res[i] = dirs[i].Substring(dirs[i].LastIndexOf(Path.DirectorySeparatorChar) + 1);
-				}
-				return res;
-			}
-		}
-
+		
 		/// <summary>
 		/// Gets the available Cultures.
 		/// </summary>
@@ -198,7 +179,7 @@ namespace ScrewTurn.Wiki {
 				// That's why I'm specifically going for the App_GlobalResources.resources.dlls.
 
 				// So, get all of the App_GlobalResources.resources.dll pluginAssemblies from bin and recurse subdirectories
-				string[] dllFiles = Directory.GetFiles(Path.Combine(Settings.RootDirectory, "bin"), "ScrewTurn.Wiki.resources.dll", SearchOption.AllDirectories);
+				string[] dllFiles = Directory.GetFiles(Path.Combine(GlobalSettings.RootDirectory, "bin"), "ScrewTurn.Wiki.resources.dll", SearchOption.AllDirectories);
 				// List to collect constructed culture names
 				List<string> cultureNames = new List<string>();
 
@@ -237,7 +218,7 @@ namespace ScrewTurn.Wiki {
 						cultureNames.Add(sb.ToString());
 					}
 					catch(Exception ex) {
-						Log.LogEntry("Error parsing culture info from " + s + Environment.NewLine + ex.Message, EntryType.Error, Log.SystemUsername);
+						Log.LogEntry("Error parsing culture info from " + s + Environment.NewLine + ex.Message, EntryType.Error, Log.SystemUsername, null);
 					}
 				}
 
@@ -277,7 +258,7 @@ namespace ScrewTurn.Wiki {
 		/// <param name="dateTime">The date/time.</param>
 		/// <returns>The secured Hash of the Username.</returns>
 		public static string ComputeSecurityHash(string username, string email, DateTime dateTime) {
-			return Hash.ComputeSecurityHash(username, email, dateTime, Settings.MasterPassword);
+			return Hash.ComputeSecurityHash(username, email, dateTime, GlobalSettings.GetMasterPassword());
 		}
 
 		/// <summary>
@@ -365,7 +346,7 @@ namespace ScrewTurn.Wiki {
 			// Make sure the host is replaced only once
 			string originalUrl = url.ToString();
 			string originalHost = url.GetComponents(UriComponents.HostAndPort, UriFormat.Unescaped);
-			Uri mainUrl = Settings.GetMainUrl();
+			Uri mainUrl = Settings.GetMainUrlOrDefault(DetectCurrentWiki());
 			string newHost = mainUrl.GetComponents(UriComponents.HostAndPort, UriFormat.Unescaped);
 
 			originalHost = CleanupPort(originalUrl, originalHost);
@@ -393,7 +374,7 @@ namespace ScrewTurn.Wiki {
 		public static string UrlEncode(string input) {
 			if(HttpContext.Current != null && HttpContext.Current.Server != null) return HttpContext.Current.Server.UrlEncode(input).Replace("+", "%20");
 			else {
-				Log.LogEntry("HttpContext.Current or HttpContext.Current.Server were null (Tools.UrlEncode)", EntryType.Warning, Log.SystemUsername);
+				Log.LogEntry("HttpContext.Current or HttpContext.Current.Server were null (Tools.UrlEncode)", EntryType.Warning, Log.SystemUsername, null);
 				return input;
 			}
 		}
@@ -432,20 +413,21 @@ namespace ScrewTurn.Wiki {
 		}
 
 		/// <summary>
-		/// Detects the correct <see cref="T:PageInfo" /> object associated to the current page using the <b>Page</b> and <b>NS</b> parameters in the query string.
+		/// Detects the correct <see cref="T:PageInfo"/> object associated to the current page using the <b>Page</b>, <b>NS</b> and <b>Wiki</b> parameters in the query string.
 		/// </summary>
 		/// <param name="loadDefault"><c>true</c> to load the default page of the specified namespace when <b>Page</b> is not specified, <c>false</c> otherwise.</param>
-		/// <returns>If <b>Page</b> is specified and exists, the correct <see cref="T:PageInfo" />, otherwise <c>null</c> if <b>loadDefault</b> is <c>false</c>,
-		/// or the <see cref="T:PageInfo" /> object representing the default page of the specified namespace if <b>loadDefault</b> is <c>true</c>.</returns>
-		public static PageInfo DetectCurrentPageInfo(bool loadDefault) {
+		/// <returns>If <b>Page</b> is specified and exists, the correct <see cref="T:PageInfo"/>, otherwise <c>null</c> if <b>loadDefault</b> is <c>false</c>,
+		/// or the <see cref="T:PageInfo"/> object representing the default page of the specified namespace if <b>loadDefault</b> is <c>true</c>.</returns>
+		public static string DetectCurrentPage(bool loadDefault) {
+			string wiki = DetectCurrentWiki();
 			string nspace = HttpContext.Current.Request["NS"];
-			NamespaceInfo nsinfo = nspace != null ? Pages.FindNamespace(nspace) : null;
+			NamespaceInfo nsinfo = nspace != null ? Pages.FindNamespace(wiki, nspace) : null;
 
 			string page = HttpContext.Current.Request["Page"];
 			if(string.IsNullOrEmpty(page)) {
 				if(loadDefault) {
-					if(nsinfo == null) page = Settings.DefaultPage;
-					else page = nsinfo.DefaultPage != null ? nsinfo.DefaultPage.FullName : "";
+					if(nsinfo == null) page = Settings.GetDefaultPage(wiki);
+					else page = nsinfo.DefaultPageFullName != null ? nsinfo.DefaultPageFullName : "";
 				}
 				else return null;
 			}
@@ -456,7 +438,7 @@ namespace ScrewTurn.Wiki {
 
 			fullName = fullName.Trim('.');
 
-			return Pages.FindPage(fullName);
+			return fullName;
 		}
 
 		/// <summary>
@@ -477,11 +459,21 @@ namespace ScrewTurn.Wiki {
 		/// <summary>
 		/// Detects the correct <see cref="T:NamespaceInfo" /> object associated to the current namespace using the <b>NS</b> parameter in the query string.
 		/// </summary>
+		/// <param name="wiki">The wiki.</param>
+		/// <returns>The correct <see cref="T:NamespaceInfo" /> object, or <c>null</c>.</returns>
+		public static NamespaceInfo DetectCurrentNamespaceInfo(string wiki) {
+			string nspace = HttpContext.Current.Request["NS"];
+			NamespaceInfo nsinfo = nspace != null ? Pages.FindNamespace(wiki, nspace) : null;
+			return nsinfo;
+		}
+
+		/// <summary>
+		/// Detects the correct <see cref="T:NamespaceInfo" /> object associated to the current namespace using the <b>NS</b> parameter in the query string.
+		/// </summary>
 		/// <returns>The correct <see cref="T:NamespaceInfo" /> object, or <c>null</c>.</returns>
 		public static NamespaceInfo DetectCurrentNamespaceInfo() {
-			string nspace = HttpContext.Current.Request["NS"];
-			NamespaceInfo nsinfo = nspace != null ? Pages.FindNamespace(nspace) : null;
-			return nsinfo;
+			string wiki = DetectCurrentWiki();
+			return DetectCurrentNamespaceInfo(wiki);
 		}
 
 		/// <summary>
@@ -490,6 +482,19 @@ namespace ScrewTurn.Wiki {
 		/// <returns>The name of the namespace, or an empty string.</returns>
 		public static string DetectCurrentNamespace() {
 			return HttpContext.Current.Request["NS"] != null ? HttpContext.Current.Request["NS"] : "";
+		}
+
+		/// <summary>
+		/// Detects the name of the current wiki using the <b>Wiki</b> parameter in the query string.
+		/// </summary>
+		/// <returns>The name of the wiki, or null.</returns>
+		public static string DetectCurrentWiki() {
+			try {
+				return GlobalSettings.Provider.ExtractWikiName(HttpContext.Current.Request.Url.Host);
+			}
+			catch(WikiNotFoundException) {
+				return "root";
+			}
 		}
 
 		/// <summary>

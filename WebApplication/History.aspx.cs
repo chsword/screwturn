@@ -18,30 +18,32 @@ namespace ScrewTurn.Wiki {
 
 	public partial class History : BasePage {
 
-        private PageInfo page;
-        private PageContent content;
+		private PageContent page;
+		private string currentWiki = null;
 		private bool canRollback;
 
-        protected void Page_Load(object sender, EventArgs e) {
-			Page.Title = Properties.Messages.HistoryTitle + " - " + Settings.WikiTitle;
+		protected void Page_Load(object sender, EventArgs e) {
+			currentWiki = DetectWiki();
 
-			page = Pages.FindPage(Request["Page"]);
+			Page.Title = Properties.Messages.HistoryTitle + " - " + Settings.GetWikiTitle(currentWiki);
 
-            if(page != null) {
-				canRollback = AuthChecker.CheckActionForPage(page, Actions.ForPages.ManagePage,
-					SessionFacade.GetCurrentUsername(), SessionFacade.GetCurrentGroupNames());
+			page = Pages.FindPage(currentWiki, Request["Page"]);
 
-                content = Content.GetPageContent(page, true);
-				lblTitle.Text = Properties.Messages.PageHistory + ": " + FormattingPipeline.PrepareTitle(content.Title, false, FormattingContext.PageContent, page);
+			if(page != null) {
+				AuthChecker authChecker = new AuthChecker(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
+				canRollback = authChecker.CheckActionForPage(page.FullName, Actions.ForPages.ManagePage,
+					SessionFacade.GetCurrentUsername(), SessionFacade.GetCurrentGroupNames(currentWiki));
 
-				bool canView = AuthChecker.CheckActionForPage(page, Actions.ForPages.ReadPage,
-					SessionFacade.GetCurrentUsername(), SessionFacade.GetCurrentGroupNames());
+				lblTitle.Text = Properties.Messages.PageHistory + ": " + FormattingPipeline.PrepareTitle(currentWiki, page.Title, false, FormattingContext.PageContent, page.FullName);
+
+				bool canView = authChecker.CheckActionForPage(page.FullName, Actions.ForPages.ReadPage,
+					SessionFacade.GetCurrentUsername(), SessionFacade.GetCurrentGroupNames(currentWiki));
 				if(!canView) UrlTools.Redirect("AccessDenied.aspx");
-            }
-            else {
-                lblTitle.Text = Properties.Messages.PageNotFound;
+			}
+			else {
+				lblTitle.Text = Properties.Messages.PageNotFound;
 				return;
-            }
+			}
 
 			if(!Page.IsPostBack && page != null) {
 				List<int> revisions = Pages.GetBackups(page);
@@ -64,13 +66,13 @@ namespace ScrewTurn.Wiki {
 			}
 
 			PrintHistory();
-        }
+		}
 
 		/// <summary>
 		/// Prints the history.
 		/// </summary>
-        public void PrintHistory() {
-            if(page == null) return;
+		public void PrintHistory() {
+			if(page == null) return;
 
 			StringBuilder sb = new StringBuilder();
 
@@ -81,7 +83,7 @@ namespace ScrewTurn.Wiki {
 
 				List<RevisionRow> result = new List<RevisionRow>(revisions.Count + 1);
 
-				result.Add(new RevisionRow(-1, Content.GetPageContent(page, false), false));
+				result.Add(new RevisionRow(-1, page, false));
 
 				foreach(int rev in revisions) {
 					PageContent content = Pages.GetBackupContent(page, rev);
@@ -94,11 +96,11 @@ namespace ScrewTurn.Wiki {
 			}
 			else {
 				int rev = -1;
-				if(!int.TryParse(Request["Revision"], out rev)) UrlTools.Redirect(page.FullName + Settings.PageExtension);
+				if(!int.TryParse(Request["Revision"], out rev)) UrlTools.Redirect(page.FullName + GlobalSettings.PageExtension);
 				
 				List<int> backups = Pages.GetBackups(page);
 				if(!backups.Contains(rev)) {
-					UrlTools.Redirect(page.FullName + Settings.PageExtension);
+					UrlTools.Redirect(page.FullName + GlobalSettings.PageExtension);
 					return;
 				}
 				PageContent revision = Pages.GetBackupContent(page, rev);
@@ -106,7 +108,7 @@ namespace ScrewTurn.Wiki {
 				sb.Append(@"<p style=""text-align: center;""><b>");
 				if(rev > 0) {
 					sb.Append(@"<a href=""");
-					UrlTools.BuildUrl(sb, "History.aspx?Page=", Tools.UrlEncode(page.FullName),
+					UrlTools.BuildUrl(currentWiki, sb, "History.aspx?Page=", Tools.UrlEncode(page.FullName),
 						"&amp;Revision=", Tools.GetVersionString((int)(rev - 1)));
 
 					sb.Append(@""">&laquo; ");
@@ -119,14 +121,14 @@ namespace ScrewTurn.Wiki {
 				}
 
 				sb.Append(@" - <a href=""");
-				UrlTools.BuildUrl(sb, "History.aspx?Page=", Tools.UrlEncode(page.FullName));
+				UrlTools.BuildUrl(currentWiki, sb, "History.aspx?Page=", Tools.UrlEncode(page.FullName));
 				sb.Append(@""">");
 				sb.Append(Properties.Messages.BackToHistory);
 				sb.Append("</a> - ");
 
 				if(rev < backups.Count - 1) {
 					sb.Append(@"<a href=""");
-					UrlTools.BuildUrl(sb, "History.aspx?Page=", Tools.UrlEncode(page.FullName),
+					UrlTools.BuildUrl(currentWiki, sb, "History.aspx?Page=", Tools.UrlEncode(page.FullName),
 						"&amp;Revision=", Tools.GetVersionString((int)(rev + 1)));
 
 					sb.Append(@""">");
@@ -135,7 +137,7 @@ namespace ScrewTurn.Wiki {
 				}
 				else {
 					sb.Append(@"<a href=""");
-					UrlTools.BuildUrl(sb, Tools.UrlEncode(page.FullName), Settings.PageExtension);
+					UrlTools.BuildUrl(currentWiki, sb, Tools.UrlEncode(page.FullName), GlobalSettings.PageExtension);
 					sb.Append(@""">");
 					sb.Append(Properties.Messages.CurrentRevision);
 					sb.Append("</a>");
@@ -145,22 +147,22 @@ namespace ScrewTurn.Wiki {
 				sb.Append(@"<h3 class=""separator"">");
 				sb.Append(Properties.Messages.PageRevision);
 				sb.Append(": ");
-				sb.Append(Preferences.AlignWithTimezone(revision.LastModified).ToString(Settings.DateTimeFormat));
+				sb.Append(Preferences.AlignWithTimezone(currentWiki, revision.LastModified).ToString(Settings.GetDateTimeFormat(currentWiki)));
 				sb.Append("</h3><br />");
 
-				sb.Append(FormattingPipeline.FormatWithPhase3(FormattingPipeline.FormatWithPhase1And2(revision.Content,
-					false, FormattingContext.PageContent, page).Replace(Formatter.EditSectionPlaceHolder, ""), FormattingContext.PageContent, page));
+				sb.Append(FormattingPipeline.FormatWithPhase3(currentWiki, FormattingPipeline.FormatWithPhase1And2(currentWiki, revision.Content,
+					false, FormattingContext.PageContent, page.FullName).Replace(Formatter.EditSectionPlaceHolder, ""), FormattingContext.PageContent, page.FullName));
 			}
 
 			lblHistory.Text = sb.ToString();
-        }
+		}
 
 		protected void rptHistory_ItemCommand(object sender, CommandEventArgs e) {
 			if(e.CommandName == "Rollback") {
 				if(!canRollback) return;
 				int rev = int.Parse(e.CommandArgument as string);
 
-				Log.LogEntry("Page rollback requested for " + page.FullName + " to rev. " + rev.ToString(), EntryType.General, SessionFacade.GetCurrentUsername());
+				Log.LogEntry("Page rollback requested for " + page.FullName + " to rev. " + rev.ToString(), EntryType.General, SessionFacade.GetCurrentUsername(), currentWiki);
 				Pages.Rollback(page, rev);
 
 				PrintHistory();
@@ -168,7 +170,7 @@ namespace ScrewTurn.Wiki {
 		}
 
 		protected void btnCompare_Click(object sender, EventArgs e) {
-			UrlTools.Redirect(UrlTools.BuildUrl("Diff.aspx?Page=", Tools.UrlEncode(page.FullName), "&Rev1=", lstRev1.SelectedValue,
+			UrlTools.Redirect(UrlTools.BuildUrl(currentWiki, "Diff.aspx?Page=", Tools.UrlEncode(page.FullName), "&Rev1=", lstRev1.SelectedValue,
 				"&Rev2=", lstRev2.SelectedValue));
 		}
 
@@ -179,7 +181,7 @@ namespace ScrewTurn.Wiki {
 	/// </summary>
 	public class RevisionRow {
 
-		private string page, revision, title, savedOn, savedBy, comment;
+		private string wiki, page, revision, title, savedOn, savedBy, comment;
 		private bool canRollback;
 
 		/// <summary>
@@ -189,14 +191,24 @@ namespace ScrewTurn.Wiki {
 		/// <param name="content">The original page content.</param>
 		/// <param name="canRollback">A value indicating whether the current user can rollback the page.</param>
 		public RevisionRow(int revision, PageContent content, bool canRollback) {
-			this.page = content.PageInfo.FullName;
+			string currentWiki = Tools.DetectCurrentWiki();
+
+			this.wiki = currentWiki;
+			this.page = content.FullName;
 			if(revision == -1) this.revision = Properties.Messages.Current;
 			else this.revision = revision.ToString();
-			title = FormattingPipeline.PrepareTitle(content.Title, false, FormattingContext.PageContent, content.PageInfo);
-			savedOn = Preferences.AlignWithTimezone(content.LastModified).ToString(Settings.DateTimeFormat);
-			savedBy = Users.UserLink(content.User);
+			title = FormattingPipeline.PrepareTitle(currentWiki, content.Title, false, FormattingContext.PageContent, content.FullName);
+			savedOn = Preferences.AlignWithTimezone(currentWiki, content.LastModified).ToString(Settings.GetDateTimeFormat(currentWiki));
+			savedBy = Users.UserLink(currentWiki, content.User);
 			comment = content.Comment;
 			this.canRollback = canRollback;
+		}
+
+		/// <summary>
+		/// Gets the current wiki.
+		/// </summary>
+		public string Wiki {
+			get { return wiki; }
 		}
 
 		/// <summary>

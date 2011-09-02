@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ScrewTurn.Wiki.PluginFramework;
+using ScrewTurn.Wiki;
 
 namespace ScrewTurn.Wiki {
 
@@ -14,7 +15,11 @@ namespace ScrewTurn.Wiki {
 		private bool excludeReadOnly = false;
 		private UsersProviderIntendedUse usersProviderIntendedUse = UsersProviderIntendedUse.AccountsManagement;
 
+		private string currentWiki = null;
+
 		protected void Page_Load(object sender, EventArgs e) {
+			currentWiki = Tools.DetectCurrentWiki();
+			
 			object t = ViewState["ProviderType"];
 			if(t != null) providerType = (ProviderType)t;
 
@@ -33,24 +38,23 @@ namespace ScrewTurn.Wiki {
 		/// Reloads the providers list.
 		/// </summary>
 		public void Reload() {
-			IProviderV30[] allProviders = null;
+			IProviderV40[] allProviders = null;
 			string defaultProvider = null;
 			switch(providerType) {
 				case ProviderType.Users:
-					allProviders = Collectors.UsersProviderCollector.AllProviders;
-					defaultProvider = Settings.DefaultUsersProvider;
+					allProviders = Collectors.CollectorsBox.UsersProviderCollector.GetAllProviders(currentWiki);
+					defaultProvider = GlobalSettings.DefaultUsersProvider;
 					break;
 				case ProviderType.Pages:
-					allProviders = Collectors.PagesProviderCollector.AllProviders;
-					defaultProvider = Settings.DefaultPagesProvider;
+					allProviders = Collectors.CollectorsBox.PagesProviderCollector.GetAllProviders(currentWiki);
+					defaultProvider = GlobalSettings.DefaultPagesProvider;
+					break;
+				case ProviderType.Themes:
+					allProviders = Collectors.CollectorsBox.ThemesProviderCollector.GetAllProviders(currentWiki);
 					break;
 				case ProviderType.Files:
-					allProviders = Collectors.FilesProviderCollector.AllProviders;
-					defaultProvider = Settings.DefaultFilesProvider;
-					break;
-				case ProviderType.Cache:
-					allProviders = Collectors.CacheProviderCollector.AllProviders;
-					defaultProvider = Settings.DefaultCacheProvider;
+					allProviders = Collectors.CollectorsBox.FilesProviderCollector.GetAllProviders(currentWiki);
+					defaultProvider = GlobalSettings.DefaultFilesProvider;
 					break;
 				default:
 					throw new NotSupportedException();
@@ -59,7 +63,8 @@ namespace ScrewTurn.Wiki {
 			lstProviders.Items.Clear();
 
 			int count = 0;
-			foreach(IProviderV30 prov in allProviders) {
+			if(providerType == ProviderType.Themes) lstProviders.Items.Add(new ListItem("standard", "standard"));
+			foreach(IProviderV40 prov in allProviders) {
 				if(IsProviderIncludedInList(prov)) {
 					string typeName = prov.GetType().FullName;
 					lstProviders.Items.Add(new ListItem(prov.Information.Name, typeName));
@@ -70,21 +75,13 @@ namespace ScrewTurn.Wiki {
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether the control auto posts back.
-		/// </summary>
-		public bool AutoPostBack {
-			get { return lstProviders.AutoPostBack; }
-			set { lstProviders.AutoPostBack = value; }
-		}
-
-		/// <summary>
 		/// Detectes whether a provider is included in the list.
 		/// </summary>
 		/// <param name="provider">The provider.</param>
 		/// <returns><c>true</c> if the provider is included, <c>false</c> otherwise.</returns>
-		private bool IsProviderIncludedInList(IProviderV30 provider) {
-			IStorageProviderV30 storageProvider = provider as IStorageProviderV30;
-			IUsersStorageProviderV30 usersProvider = provider as IUsersStorageProviderV30;
+		private bool IsProviderIncludedInList(IProviderV40 provider) {
+			IStorageProviderV40 storageProvider = provider as IStorageProviderV40;
+			IUsersStorageProviderV40 usersProvider = provider as IUsersStorageProviderV40;
 
 			switch(providerType) {
 				case ProviderType.Users:
@@ -93,8 +90,8 @@ namespace ScrewTurn.Wiki {
 					return storageProvider == null || (!storageProvider.ReadOnly || storageProvider.ReadOnly && !excludeReadOnly);
 				case ProviderType.Files:
 					return storageProvider == null || (!storageProvider.ReadOnly || storageProvider.ReadOnly && !excludeReadOnly);
-				case ProviderType.Cache:
-					return true;
+				case ProviderType.Themes:
+					return storageProvider == null || (!storageProvider.ReadOnly || storageProvider.ReadOnly && !excludeReadOnly);
 				default:
 					throw new NotSupportedException();
 			}
@@ -105,7 +102,7 @@ namespace ScrewTurn.Wiki {
 		/// </summary>
 		/// <param name="provider">The provider.</param>
 		/// <returns><c>true</c> if the provider is included, <c>false</c> otherwise.</returns>
-		private bool IsUsersProviderIncludedInList(IUsersStorageProviderV30 provider) {
+		private bool IsUsersProviderIncludedInList(IUsersStorageProviderV40 provider) {
 			switch(usersProviderIntendedUse) {
 				case UsersProviderIntendedUse.AccountsManagement:
 					return !provider.UserAccountsReadOnly || (provider.UserAccountsReadOnly && !excludeReadOnly);
@@ -188,7 +185,11 @@ namespace ScrewTurn.Wiki {
 		public event EventHandler<EventArgs> SelectedProviderChanged;
 
 		protected void lstProviders_SelectedIndexChanged(object sender, EventArgs e) {
-			if(SelectedProviderChanged != null) SelectedProviderChanged(sender, e);
+			if(SelectedProviderChanged != null) {
+				Reload();
+				SelectedProviderChanged(sender, e);
+			}
+
 		}
 
 	}
@@ -210,9 +211,9 @@ namespace ScrewTurn.Wiki {
 		/// </summary>
 		Files,
 		/// <summary>
-		/// Cache providers.
+		///  Theme providers.
 		/// </summary>
-		Cache
+		Themes
 	}
 
 	/// <summary>

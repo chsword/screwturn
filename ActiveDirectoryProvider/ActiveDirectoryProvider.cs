@@ -11,7 +11,7 @@ namespace ScrewTurn.Wiki.Plugins.ActiveDirectory {
 	/// <summary>
 	/// Implements a Users Storage Provider for Active Directory.
 	/// </summary>
-	public class ActiveDirectoryProvider : IUsersStorageProviderV30 {
+	public class ActiveDirectoryProvider : IUsersStorageProviderV40 {
 		private const string HELP_HELP =
 			"<b>Configuration Settings:</b><br/>" +
 			"Map one or more domain groups to wiki groups (Users, Administrators, etc.):" +
@@ -51,8 +51,9 @@ namespace ScrewTurn.Wiki.Plugins.ActiveDirectory {
 			"</ul>" +
 			"Comments start with a semicolon \";\".";
 
-		private IHostV30 m_Host;
-		private IUsersStorageProviderV30 m_StorageProvider;
+		private IHostV40 m_Host;
+		private string m_wiki;
+		private IUsersStorageProviderV40 m_StorageProvider;
 		private Random m_Random;
 		private Config m_Config;
 
@@ -570,7 +571,7 @@ namespace ScrewTurn.Wiki.Plugins.ActiveDirectory {
 
 		/// <summary>
 		/// Gets a user account.
-		/// Not Implemented - Passed Directly to the IUsersStorageProviderV30
+		/// Not Implemented - Passed Directly to the IUsersStorageProviderV40
 		/// </summary>
 		/// <param name="email">The email address.</param>
 		/// <returns>
@@ -586,7 +587,7 @@ namespace ScrewTurn.Wiki.Plugins.ActiveDirectory {
 
 		/// <summary>
 		/// Notifies the provider that a user has logged in through the authentication cookie.
-		/// Not Implemented - Passed Directly to the IUsersStorageProviderV30
+		/// Not Implemented - Passed Directly to the IUsersStorageProviderV40
 		/// </summary>
 		/// <param name="user">The user who has logged in.</param>
 		/// <exception cref="ArgumentNullException">If <paramref name="user"/> is <c>null</c>.</exception>
@@ -597,7 +598,7 @@ namespace ScrewTurn.Wiki.Plugins.ActiveDirectory {
 
 		/// <summary>
 		/// Notifies the provider that a user has logged out.
-		/// Not Implemented - Passed Directly to the IUsersStorageProviderV30
+		/// Not Implemented - Passed Directly to the IUsersStorageProviderV40
 		/// </summary>
 		/// <param name="user">The user who has logged out.</param>
 		/// <exception cref="ArgumentNullException">If <paramref name="user"/> is <c>null</c>.</exception>
@@ -608,7 +609,7 @@ namespace ScrewTurn.Wiki.Plugins.ActiveDirectory {
 
 		/// <summary>
 		/// Stores a user data element, overwriting the previous one if present.
-		/// Not Implemented - Passed Directly to the IUsersStorageProviderV30
+		/// Not Implemented - Passed Directly to the IUsersStorageProviderV40
 		/// </summary>
 		/// <param name="user">The user the data belongs to.</param>
 		/// <param name="key">The key of the data element (case insensitive).</param>
@@ -625,7 +626,7 @@ namespace ScrewTurn.Wiki.Plugins.ActiveDirectory {
 
 		/// <summary>
 		/// Gets a user data element, if any.
-		/// Not Implemented - Passed Directly to the IUsersStorageProviderV30
+		/// Not Implemented - Passed Directly to the IUsersStorageProviderV40
 		/// </summary>
 		/// <param name="user">The user the data belongs to.</param>
 		/// <param name="key">The key of the data element.</param>
@@ -641,7 +642,7 @@ namespace ScrewTurn.Wiki.Plugins.ActiveDirectory {
 
 		/// <summary>
 		/// Retrieves all the user data elements for a user.
-		/// Not Implemented - Passed Directly to the IUsersStorageProviderV30
+		/// Not Implemented - Passed Directly to the IUsersStorageProviderV40
 		/// </summary>
 		/// <param name="user">The user.</param>
 		/// <returns>The user data elements (key-&gt;value).</returns>
@@ -653,7 +654,7 @@ namespace ScrewTurn.Wiki.Plugins.ActiveDirectory {
 
 		/// <summary>
 		/// Gets all the users that have the specified element in their data.
-		/// Not Implemented - Passed Directly to the IUsersStorageProviderV30
+		/// Not Implemented - Passed Directly to the IUsersStorageProviderV40
 		/// </summary>
 		/// <param name="key">The key of the data.</param>
 		/// <returns>The users and the data.</returns>
@@ -702,19 +703,36 @@ namespace ScrewTurn.Wiki.Plugins.ActiveDirectory {
 		}
 
 		/// <summary>
+		/// Gets the wiki that has been used to initialize the current instance of the provider.
+		/// </summary>
+		public string CurrentWiki {
+			get { return m_wiki; }
+		}
+
+		/// <summary>
 		/// Initializes the Storage Provider.
 		/// </summary>
 		/// <param name="host">The Host of the Component.</param>
 		/// <param name="config">The Configuration data, if any.</param>
+		/// <param name="wiki">The wiki.</param>
 		/// <exception cref="ArgumentNullException">If <paramref name="host"/> or <paramref name="config"/> are <c>null</c>.</exception>
 		/// <exception cref="InvalidConfigurationException">If <paramref name="config"/> is not valid or is incorrect.</exception>
-		public void Init(IHostV30 host, string config) {
+		public void Init(IHostV40 host, string config, string wiki) {
 			m_Host = host;
+			m_wiki = wiki;
 			m_Random = new Random();
 
 			InitConfig(config);
 		}
 
+		/// <summary>
+		/// Sets up the Storage Provider.
+		/// </summary>
+		/// <param name="host">The Host of the Component.</param>
+		/// <param name="config">The Configuration data, if any.</param>
+		/// <exception cref="ArgumentNullException">If <paramref name="host"/> or <paramref name="config"/> are <c>null</c>.</exception>
+		/// <exception cref="InvalidConfigurationException">If <paramref name="config"/> is not valid or is incorrect.</exception>
+		public void SetUp(IHostV40 host, string config) { }
 
 		/// <summary>
 		/// Returns the storage provider.
@@ -722,12 +740,12 @@ namespace ScrewTurn.Wiki.Plugins.ActiveDirectory {
 		/// This avoids a dependency on the storage provider being loaded first, which is not guaranteed
 		/// </summary>
 		/// <value>The storage provider.</value>
-		private IUsersStorageProviderV30 StorageProvider {
+		private IUsersStorageProviderV40 StorageProvider {
 			get {
 				if(m_StorageProvider == null) {
 					lock(m_Host) {
 						if(m_StorageProvider == null) {
-							m_StorageProvider = (from a in m_Host.GetUsersStorageProviders(true)
+							m_StorageProvider = (from a in m_Host.GetUsersStorageProviders(m_wiki)
 												 where a.Information.Name != this.Information.Name
 												 select a).FirstOrDefault();
 
@@ -744,13 +762,8 @@ namespace ScrewTurn.Wiki.Plugins.ActiveDirectory {
 		}
 
 
-		/// <summary>
-		/// Method invoked on shutdown.
-		/// Ignored
-		/// </summary>
-		/// <remarks>This method might not be invoked in some cases.</remarks>
-		public void Shutdown() {
-			StorageProvider.Shutdown();
+		void IDisposable.Dispose() {
+			StorageProvider.Dispose();
 		}
 
 
@@ -759,7 +772,7 @@ namespace ScrewTurn.Wiki.Plugins.ActiveDirectory {
 		/// </summary>
 		/// <value>The information</value>
 		public ComponentInformation Information {
-			get { return new ComponentInformation("Active Directory Provider", "Threeplicate Srl", "3.0.2.534", "http://www.screwturn.eu", "http://www.screwturn.eu/Version/ADProv/ADProv.txt"); }
+			get { return new ComponentInformation("Active Directory Provider", "Threeplicate Srl", "4.0.1.71", "http://www.screwturn.eu", null); }
 		}
 
 
@@ -780,7 +793,7 @@ namespace ScrewTurn.Wiki.Plugins.ActiveDirectory {
 		/// <param name="args">The args.</param>
 		private void LogEntry(LogEntryType entryType, string message, params object[] args) {
 			string entry = String.Format(message, args);
-			m_Host.LogEntry(entry, entryType, null, this);
+			m_Host.LogEntry(entry, entryType, null, this, m_wiki);
 		}
 
 
@@ -951,5 +964,6 @@ namespace ScrewTurn.Wiki.Plugins.ActiveDirectory {
 				throw new InvalidConfigurationException("Error parsing the configuration.", ex);
 			}
 		}
+
 	}
 }

@@ -20,6 +20,7 @@ namespace ScrewTurn.Wiki {
 	public partial class Thumb : Page {
 
 		protected void Page_Load(object sender, EventArgs e) {
+			string currentWiki = Tools.DetectCurrentWiki();
 
 			string filename = Request["File"];
 			if(string.IsNullOrEmpty(filename)) {
@@ -31,21 +32,21 @@ namespace ScrewTurn.Wiki {
 			filename = filename.Replace("..", "");
 
 			string page = Request["Page"];
-			PageInfo pageInfo = Pages.FindPage(page);
+			PageContent pageContent = Pages.FindPage(currentWiki, page);
 			bool isPageAttachment = !string.IsNullOrEmpty(page);
 
-			if(isPageAttachment && pageInfo == null) {
+			if(isPageAttachment && pageContent == null) {
 				Response.StatusCode = 404;
 				Response.Write("File not found.");
 				return;
 			}
 
-			IFilesStorageProviderV30 provider = null;
+			IFilesStorageProviderV40 provider = null;
 
-			if(!string.IsNullOrEmpty(Request["Provider"])) provider = Collectors.FilesProviderCollector.GetProvider(Request["Provider"]);
+			if(!string.IsNullOrEmpty(Request["Provider"])) provider = Collectors.CollectorsBox.FilesProviderCollector.GetProvider(Request["Provider"], currentWiki);
 			else {
-				if(isPageAttachment) provider = FilesAndAttachments.FindPageAttachmentProvider(pageInfo, filename);
-				else provider = FilesAndAttachments.FindFileProvider(filename);
+				if(isPageAttachment) provider = FilesAndAttachments.FindPageAttachmentProvider(currentWiki, pageContent.FullName, filename);
+				else provider = FilesAndAttachments.FindFileProvider(currentWiki, filename);
 			}
 
 			if(provider == null) {
@@ -61,15 +62,17 @@ namespace ScrewTurn.Wiki {
 			// Verify permissions
 			bool canDownload = false;
 
-			if(pageInfo != null) {
-				canDownload = AuthChecker.CheckActionForPage(pageInfo, Actions.ForPages.DownloadAttachments,
-					SessionFacade.GetCurrentUsername(), SessionFacade.GetCurrentGroupNames());
+			AuthChecker authChecker = new AuthChecker(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
+
+			if(pageContent != null) {
+				canDownload = authChecker.CheckActionForPage(pageContent.FullName, Actions.ForPages.DownloadAttachments,
+					SessionFacade.GetCurrentUsername(), SessionFacade.GetCurrentGroupNames(currentWiki));
 			}
 			else {
 				string dir = Tools.GetDirectoryName(filename);
-				canDownload = AuthChecker.CheckActionForDirectory(provider, dir,
+				canDownload = authChecker.CheckActionForDirectory(provider, dir,
 					 Actions.ForDirectories.DownloadFiles, SessionFacade.GetCurrentUsername(),
-					 SessionFacade.GetCurrentGroupNames());
+					 SessionFacade.GetCurrentGroupNames(currentWiki));
 			}
 			if(!canDownload) {
 				Response.StatusCode = 401;
@@ -83,10 +86,10 @@ namespace ScrewTurn.Wiki {
 			if(string.IsNullOrEmpty(page)) {
 				bool retrieved = false;
 				try {
-					retrieved = provider.RetrieveFile(filename, ms, false);
+					retrieved = provider.RetrieveFile(filename, ms);
 				}
 				catch(ArgumentException ex) {
-					Log.LogEntry("Attempted to create thumb of inexistent file (" + filename + ")\n" + ex.ToString(), EntryType.Warning, Log.SystemUsername);
+					Log.LogEntry("Attempted to create thumb of inexistent file (" + filename + ")\n" + ex.ToString(), EntryType.Warning, Log.SystemUsername, currentWiki);
 				}
 
 				if(!retrieved) {
@@ -98,7 +101,7 @@ namespace ScrewTurn.Wiki {
 				fileSize = provider.GetFileDetails(filename).Size;
 			}
 			else {
-				if(pageInfo == null) {
+				if(pageContent == null) {
 					Response.StatusCode = 404;
 					Response.Write("Page not found.");
 					return;
@@ -106,10 +109,10 @@ namespace ScrewTurn.Wiki {
 
 				bool retrieved = false;
 				try {
-					retrieved = provider.RetrievePageAttachment(pageInfo, filename, ms, false);
+					retrieved = provider.RetrievePageAttachment(pageContent.FullName, filename, ms);
 				}
 				catch(ArgumentException ex) {
-					Log.LogEntry("Attempted to create thumb of inexistent attachment (" + page + "/" + filename + ")\n" + ex.ToString(), EntryType.Warning, Log.SystemUsername);
+					Log.LogEntry("Attempted to create thumb of inexistent attachment (" + page + "/" + filename + ")\n" + ex.ToString(), EntryType.Warning, Log.SystemUsername, currentWiki);
 				}
 
 				if(!retrieved) {
@@ -118,7 +121,7 @@ namespace ScrewTurn.Wiki {
 					return;
 				}
 
-				fileSize = provider.GetPageAttachmentDetails(pageInfo, filename).Size;
+				fileSize = provider.GetPageAttachmentDetails(pageContent.FullName, filename).Size;
 			}
 
 			ms.Seek(0, SeekOrigin.Begin);
@@ -137,25 +140,25 @@ namespace ScrewTurn.Wiki {
 				// Big thumb (outer size 200x200)
 				result = new Bitmap(200, 200, pixelFormat);
 			}
-            else if(size == "imgeditprev") {
-                // Image Editor Preview thumb (outer size from Request["dim"], if null 200x200)
-                if(!string.IsNullOrEmpty(Request["Width"]) && !string.IsNullOrEmpty(Request["Height"])) {
-                    try {
-                        result = new Bitmap(
+			else if(size == "imgeditprev") {
+				// Image Editor Preview thumb (outer size from Request["dim"], if null 200x200)
+				if(!string.IsNullOrEmpty(Request["Width"]) && !string.IsNullOrEmpty(Request["Height"])) {
+					try {
+						result = new Bitmap(
 							rotation != 90 && rotation != 270 ? int.Parse(Request["Width"]) : int.Parse(Request["Height"]),
 							rotation != 90 && rotation != 270 ? int.Parse(Request["Height"]) : int.Parse(Request["Width"]),
 							pixelFormat);
-                    }
-                    catch(FormatException) {
-                        result = new Bitmap(200, 200, pixelFormat);
-                    }
-                }
-                else result = new Bitmap(200, 200, pixelFormat);
-            }
-            else {
-                // Small thumb (outer size 48x48)
-                result = new Bitmap(48, 48, pixelFormat);
-            }
+					}
+					catch(FormatException) {
+						result = new Bitmap(200, 200, pixelFormat);
+					}
+				}
+				else result = new Bitmap(200, 200, pixelFormat);
+			}
+			else {
+				// Small thumb (outer size 48x48)
+				result = new Bitmap(48, 48, pixelFormat);
+			}
 
 			// Get Graphics object for destination bitmap
 			Graphics g = Graphics.FromImage(result);

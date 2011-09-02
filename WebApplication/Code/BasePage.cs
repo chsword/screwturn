@@ -21,20 +21,14 @@ namespace ScrewTurn.Wiki {
 
 		protected override void OnInit(EventArgs e) {
 			base.OnInit(e);
-
-			// Mitigate Cross-Site Request Forgery (CSRF/XSRF) attacks
-			ViewStateUserKey = Session.SessionID;
 		}
 
 		protected override void OnLoad(EventArgs e) {
 			base.OnLoad(e);
 
-			// Bypass compression if the current request was made by Anthem.NET
-			if(HttpContext.Current.Request["Anthem_CallBack"] != null) return;
-
 			// Request might not be initialized -> use HttpContext
 			string ua = HttpContext.Current.Request.UserAgent != null ? HttpContext.Current.Request.UserAgent.ToLowerInvariant() : "";
-			if(Settings.EnableHttpCompression && !ua.Contains("konqueror") && !ua.Contains("safari")) {
+			if(GlobalSettings.EnableHttpCompression && !ua.Contains("konqueror") && !ua.Contains("safari")) {
 				if(Request.Headers["Accept-encoding"] != null && Request.Headers["Accept-encoding"].Contains("gzip")) {
 					Response.Filter = new GZipStream(Response.Filter, CompressionMode.Compress, true);
 					Response.AppendHeader("Content-encoding", "gzip");
@@ -54,7 +48,7 @@ namespace ScrewTurn.Wiki {
 			// First, look for hard-stored user preferences
 			// If they are not available, look at the cookie
 
-			string culture = Preferences.LoadLanguageFromUserData();
+			string culture = Preferences.LoadLanguageFromUserData(DetectWiki());
 			if(culture == null) culture = Preferences.LoadLanguageFromCookie();
 
 			if(culture != null) {
@@ -63,13 +57,13 @@ namespace ScrewTurn.Wiki {
 			}
 			else {
 				try {
-					if(Settings.DefaultLanguage.Equals("-")) {
+					if(Settings.GetDefaultLanguage(DetectWiki()).Equals("-")) {
 						Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
 						Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
 					}
 					else {
-						Thread.CurrentThread.CurrentCulture = new CultureInfo(Settings.DefaultLanguage);
-						Thread.CurrentThread.CurrentUICulture = new CultureInfo(Settings.DefaultLanguage);
+						Thread.CurrentThread.CurrentCulture = new CultureInfo(Settings.GetDefaultLanguage(DetectWiki()));
+						Thread.CurrentThread.CurrentUICulture = new CultureInfo(Settings.GetDefaultLanguage(DetectWiki()));
 					}
 				}
 				catch {
@@ -85,10 +79,10 @@ namespace ScrewTurn.Wiki {
 		/// Detects the correct <see cref="T:PageInfo" /> object associated to the current page using the <b>Page</b> and <b>NS</b> parameters in the query string.
 		/// </summary>
 		/// <param name="loadDefault"><c>true</c> to load the default page of the specified namespace when <b>Page</b> is not specified, <c>false</c> otherwise.</param>
-		/// <returns>If <b>Page</b> is specified and exists, the correct <see cref="T:PageInfo" />, otherwise <c>null</c> if <b>loadDefault</b> is <c>false</c>,
-		/// or the <see cref="T:PageInfo" /> object representing the default page of the specified namespace if <b>loadDefault</b> is <c>true</c>.</returns>
-		protected PageInfo DetectPageInfo(bool loadDefault) {
-			return Tools.DetectCurrentPageInfo(loadDefault);
+		/// <returns>If <b>Page</b> is specified and exists, the correct <see cref="T:PageContent" />, otherwise <c>null</c> if <b>loadDefault</b> is <c>false</c>,
+		/// or the <see cref="T:PageContent" /> object representing the default page of the specified namespace if <b>loadDefault</b> is <c>true</c>.</returns>
+		protected string DetectPage(bool loadDefault) {
+			return Tools.DetectCurrentPage(loadDefault);
 		}
 
 		/// <summary>
@@ -113,6 +107,14 @@ namespace ScrewTurn.Wiki {
 		/// <returns>The name of the namespace, or an empty string.</returns>
 		protected string DetectNamespace() {
 			return Tools.DetectCurrentNamespace();
+		}
+
+		/// <summary>
+		/// Detects the name of the current wiki using the <b>Wiki</b> parameter in the query string.
+		/// </summary>
+		/// <returns>The name of the wiki, or null.</returns>
+		protected string DetectWiki() {
+			return Tools.DetectCurrentWiki();
 		}
 
 	}

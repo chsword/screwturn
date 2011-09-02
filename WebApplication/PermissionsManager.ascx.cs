@@ -10,7 +10,10 @@ namespace ScrewTurn.Wiki {
 
 	public partial class PermissionsManager : System.Web.UI.UserControl {
 
+		private string currentWiki = null;
+
 		protected void Page_Load(object sender, EventArgs e) {
+			currentWiki = Tools.DetectCurrentWiki();
 		}
 
 		/// <summary>
@@ -61,14 +64,15 @@ namespace ScrewTurn.Wiki {
 				return new SubjectInfo[0];
 			}
 
+			AuthReader authReader = new AuthReader(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
 			switch(CurrentResourceType) {
 				case AclResources.Namespaces:
-					return AuthReader.RetrieveSubjectsForNamespace(Pages.FindNamespace(CurrentResourceName));
+					return authReader.RetrieveSubjectsForNamespace(Pages.FindNamespace(currentWiki, CurrentResourceName));
 				case AclResources.Pages:
-					return AuthReader.RetrieveSubjectsForPage(Pages.FindPage(CurrentResourceName));
+					return authReader.RetrieveSubjectsForPage(CurrentResourceName);
 				case AclResources.Directories:
-					return AuthReader.RetrieveSubjectsForDirectory(
-						Collectors.FilesProviderCollector.GetProvider(CurrentFilesProvider), CurrentResourceName);
+					return authReader.RetrieveSubjectsForDirectory(
+						Collectors.CollectorsBox.FilesProviderCollector.GetProvider(CurrentFilesProvider, currentWiki), CurrentResourceName);
 				default:
 					throw new NotSupportedException();
 			}
@@ -117,61 +121,62 @@ namespace ScrewTurn.Wiki {
 
 			string[] grants = null;
 			string[] denials = null;
-			
+
+			AuthReader authReader = new AuthReader(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
 			switch(CurrentResourceType) {
 				case AclResources.Namespaces:
 					if(type == SubjectType.Group) {
-						grants = AuthReader.RetrieveGrantsForNamespace(
-							Users.FindUserGroup(subject),
-							Pages.FindNamespace(CurrentResourceName));
-						denials = AuthReader.RetrieveDenialsForNamespace(
-							Users.FindUserGroup(subject),
-							Pages.FindNamespace(CurrentResourceName));
+						grants = authReader.RetrieveGrantsForNamespace(
+							Users.FindUserGroup(currentWiki, subject),
+							Pages.FindNamespace(currentWiki, CurrentResourceName));
+						denials = authReader.RetrieveDenialsForNamespace(
+							Users.FindUserGroup(currentWiki, subject),
+							Pages.FindNamespace(currentWiki, CurrentResourceName));
 					}
 					else {
-						grants = AuthReader.RetrieveGrantsForNamespace(
-							Users.FindUser(subject),
-							Pages.FindNamespace(CurrentResourceName));
-						denials = AuthReader.RetrieveDenialsForNamespace(
-							Users.FindUser(subject),
-							Pages.FindNamespace(CurrentResourceName));
+						grants = authReader.RetrieveGrantsForNamespace(
+							Users.FindUser(currentWiki, subject),
+							Pages.FindNamespace(currentWiki, CurrentResourceName));
+						denials = authReader.RetrieveDenialsForNamespace(
+							Users.FindUser(currentWiki, subject),
+							Pages.FindNamespace(currentWiki, CurrentResourceName));
 					}
 					break;
 				case AclResources.Pages:
 					if(type == SubjectType.Group) {
-						grants = AuthReader.RetrieveGrantsForPage(
-							Users.FindUserGroup(subject),
-							Pages.FindPage(CurrentResourceName));
-						denials = AuthReader.RetrieveDenialsForPage(
-							Users.FindUserGroup(subject),
-							Pages.FindPage(CurrentResourceName));
+						grants = authReader.RetrieveGrantsForPage(
+							Users.FindUserGroup(currentWiki, subject),
+							CurrentResourceName);
+						denials = authReader.RetrieveDenialsForPage(
+							Users.FindUserGroup(currentWiki, subject),
+							CurrentResourceName);
 					}
 					else {
-						grants = AuthReader.RetrieveGrantsForPage(
-							Users.FindUser(subject),
-							Pages.FindPage(CurrentResourceName));
-						denials = AuthReader.RetrieveDenialsForPage(
-							Users.FindUser(subject),
-							Pages.FindPage(CurrentResourceName));
+						grants = authReader.RetrieveGrantsForPage(
+							Users.FindUser(currentWiki, subject),
+							CurrentResourceName);
+						denials = authReader.RetrieveDenialsForPage(
+							Users.FindUser(currentWiki, subject),
+							CurrentResourceName);
 					}
 					break;
 				case AclResources.Directories:
 					string directory = CurrentResourceName;
-					IFilesStorageProviderV30 prov = Collectors.FilesProviderCollector.GetProvider(CurrentFilesProvider);
+					IFilesStorageProviderV40 prov = Collectors.CollectorsBox.FilesProviderCollector.GetProvider(CurrentFilesProvider, currentWiki);
 					if(type == SubjectType.Group) {
-						grants = AuthReader.RetrieveGrantsForDirectory(
-							Users.FindUserGroup(subject),
+						grants = authReader.RetrieveGrantsForDirectory(
+							Users.FindUserGroup(currentWiki, subject),
 							prov, directory);
-						denials = AuthReader.RetrieveDenialsForDirectory(
-							Users.FindUserGroup(subject),
+						denials = authReader.RetrieveDenialsForDirectory(
+							Users.FindUserGroup(currentWiki, subject),
 							prov, directory);
 					}
 					else {
-						grants = AuthReader.RetrieveGrantsForDirectory(
-							Users.FindUser(subject),
+						grants = authReader.RetrieveGrantsForDirectory(
+							Users.FindUser(currentWiki, subject),
 							prov, directory);
-						denials = AuthReader.RetrieveDenialsForDirectory(
-							Users.FindUser(subject),
+						denials = authReader.RetrieveDenialsForDirectory(
+							Users.FindUser(currentWiki, subject),
 							prov, directory);
 					}
 					break;
@@ -209,15 +214,17 @@ namespace ScrewTurn.Wiki {
 			bool isGroup = lstSubjects.SelectedValue.StartsWith("G.");
 			subject = subject.Substring(2);
 
-			NamespaceInfo namespaceInfo = Pages.FindNamespace(nspace);
+			NamespaceInfo namespaceInfo = Pages.FindNamespace(currentWiki, nspace);
+
+			AuthWriter authWriter = new AuthWriter(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
 
 			if(isGroup) {
-				return AuthWriter.RemoveEntriesForNamespace(
-					Users.FindUserGroup(subject), namespaceInfo);
+				return authWriter.RemoveEntriesForNamespace(
+					Users.FindUserGroup(currentWiki, subject), namespaceInfo);
 			}
 			else {
-				return AuthWriter.RemoveEntriesForNamespace(
-					Users.FindUser(subject), namespaceInfo);
+				return authWriter.RemoveEntriesForNamespace(
+					Users.FindUser(currentWiki, subject), namespaceInfo);
 			}
 		}
 
@@ -231,15 +238,15 @@ namespace ScrewTurn.Wiki {
 			bool isGroup = lstSubjects.SelectedValue.StartsWith("G.");
 			subject = subject.Substring(2);
 
-			PageInfo currentPage = Pages.FindPage(page);
+			AuthWriter authWriter = new AuthWriter(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
 
 			if(isGroup) {
-				return AuthWriter.RemoveEntriesForPage(
-					Users.FindUserGroup(subject), currentPage);
+				return authWriter.RemoveEntriesForPage(
+					Users.FindUserGroup(currentWiki, subject), page);
 			}
 			else {
-				return AuthWriter.RemoveEntriesForPage(
-					Users.FindUser(subject), currentPage);
+				return authWriter.RemoveEntriesForPage(
+					Users.FindUser(currentWiki, subject), page);
 			}
 		}
 
@@ -250,17 +257,19 @@ namespace ScrewTurn.Wiki {
 		/// <param name="provider">The provider.</param>
 		/// <param name="directory">The directory.</param>
 		/// <returns><c>true</c> if the operation succeeded, <c>false</c> otherwise.</returns>
-		private bool RemoveAllAclEntriesForDirectory(string subject, IFilesStorageProviderV30 provider, string directory) {
+		private bool RemoveAllAclEntriesForDirectory(string subject, IFilesStorageProviderV40 provider, string directory) {
 			bool isGroup = lstSubjects.SelectedValue.StartsWith("G.");
 			subject = subject.Substring(2);
 
+			AuthWriter authWriter = new AuthWriter(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
+
 			if(isGroup) {
-				return AuthWriter.RemoveEntriesForDirectory(
-					Users.FindUserGroup(subject), provider, directory);
+				return authWriter.RemoveEntriesForDirectory(
+					Users.FindUserGroup(currentWiki, subject), provider, directory);
 			}
 			else {
-				return AuthWriter.RemoveEntriesForDirectory(
-					Users.FindUser(subject), provider, directory);
+				return authWriter.RemoveEntriesForDirectory(
+					Users.FindUser(currentWiki, subject), provider, directory);
 			}
 		}
 
@@ -276,22 +285,24 @@ namespace ScrewTurn.Wiki {
 			bool isGroup = subject.StartsWith("G.");
 			subject = subject.Substring(2);
 
-			NamespaceInfo namespaceInfo = Pages.FindNamespace(nspace);
+			NamespaceInfo namespaceInfo = Pages.FindNamespace(currentWiki, nspace);
 
 			UserGroup group = null;
 			UserInfo user = null;
 
-			if(isGroup) group = Users.FindUserGroup(subject);
-			else user = Users.FindUser(subject);
+			if(isGroup) group = Users.FindUserGroup(currentWiki, subject);
+			else user = Users.FindUser(currentWiki, subject);
+
+			AuthWriter authWriter = new AuthWriter(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
 
 			foreach(string action in grants) {
 				bool done = false;
 				if(isGroup) {
-					done = AuthWriter.SetPermissionForNamespace(AuthStatus.Grant,
+					done = authWriter.SetPermissionForNamespace(AuthStatus.Grant,
 						namespaceInfo, action, group);
 				}
 				else {
-					done = AuthWriter.SetPermissionForNamespace(AuthStatus.Grant,
+					done = authWriter.SetPermissionForNamespace(AuthStatus.Grant,
 						namespaceInfo, action, user);
 				}
 				if(!done) return false;
@@ -300,11 +311,11 @@ namespace ScrewTurn.Wiki {
 			foreach(string action in denials) {
 				bool done = false;
 				if(isGroup) {
-					done = AuthWriter.SetPermissionForNamespace(AuthStatus.Deny,
+					done = authWriter.SetPermissionForNamespace(AuthStatus.Deny,
 						namespaceInfo, action, group);
 				}
 				else {
-					done = AuthWriter.SetPermissionForNamespace(AuthStatus.Deny,
+					done = authWriter.SetPermissionForNamespace(AuthStatus.Deny,
 						namespaceInfo, action, user);
 				}
 				if(!done) return false;
@@ -325,23 +336,23 @@ namespace ScrewTurn.Wiki {
 			bool isGroup = subject.StartsWith("G.");
 			subject = subject.Substring(2);
 
-			PageInfo currentPage = Pages.FindPage(page);
-
 			UserGroup group = null;
 			UserInfo user = null;
 
-			if(isGroup) group = Users.FindUserGroup(subject);
-			else user = Users.FindUser(subject);
+			if(isGroup) group = Users.FindUserGroup(currentWiki, subject);
+			else user = Users.FindUser(currentWiki, subject);
+
+			AuthWriter authWriter = new AuthWriter(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
 
 			foreach(string action in grants) {
 				bool done = false;
 				if(isGroup) {
-					done = AuthWriter.SetPermissionForPage(AuthStatus.Grant,
-						currentPage, action, group);
+					done = authWriter.SetPermissionForPage(AuthStatus.Grant,
+						page, action, group);
 				}
 				else {
-					done = AuthWriter.SetPermissionForPage(AuthStatus.Grant,
-						currentPage, action, user);
+					done = authWriter.SetPermissionForPage(AuthStatus.Grant,
+						page, action, user);
 				}
 				if(!done) return false;
 			}
@@ -349,12 +360,12 @@ namespace ScrewTurn.Wiki {
 			foreach(string action in denials) {
 				bool done = false;
 				if(isGroup) {
-					done = AuthWriter.SetPermissionForPage(AuthStatus.Deny,
-						currentPage, action, group);
+					done = authWriter.SetPermissionForPage(AuthStatus.Deny,
+						page, action, group);
 				}
 				else {
-					done = AuthWriter.SetPermissionForPage(AuthStatus.Deny,
-						currentPage, action, user);
+					done = authWriter.SetPermissionForPage(AuthStatus.Deny,
+						page, action, user);
 				}
 				if(!done) return false;
 			}
@@ -371,24 +382,26 @@ namespace ScrewTurn.Wiki {
 		/// <param name="grants">The granted actions.</param>
 		/// <param name="denials">The denies actions.</param>
 		/// <returns><c>true</c> if the operation succeeded, <c>false</c> otherwise.</returns>
-		private bool AddAclEntriesForDirectory(string subject, IFilesStorageProviderV30 provider, string directory, string[] grants, string[] denials) {
+		private bool AddAclEntriesForDirectory(string subject, IFilesStorageProviderV40 provider, string directory, string[] grants, string[] denials) {
 			bool isGroup = subject.StartsWith("G.");
 			subject = subject.Substring(2);
 
 			UserGroup group = null;
 			UserInfo user = null;
 
-			if(isGroup) group = Users.FindUserGroup(subject);
-			else user = Users.FindUser(subject);
+			if(isGroup) group = Users.FindUserGroup(currentWiki, subject);
+			else user = Users.FindUser(currentWiki, subject);
+
+			AuthWriter authWriter = new AuthWriter(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
 
 			foreach(string action in grants) {
 				bool done = false;
 				if(isGroup) {
-					done = AuthWriter.SetPermissionForDirectory(AuthStatus.Grant,
+					done = authWriter.SetPermissionForDirectory(AuthStatus.Grant,
 						provider, directory, action, group);
 				}
 				else {
-					done = AuthWriter.SetPermissionForDirectory(AuthStatus.Grant,
+					done = authWriter.SetPermissionForDirectory(AuthStatus.Grant,
 						provider, directory, action, user);
 				}
 				if(!done) return false;
@@ -397,11 +410,11 @@ namespace ScrewTurn.Wiki {
 			foreach(string action in denials) {
 				bool done = false;
 				if(isGroup) {
-					done = AuthWriter.SetPermissionForDirectory(AuthStatus.Deny,
+					done = authWriter.SetPermissionForDirectory(AuthStatus.Deny,
 						provider, directory, action, group);
 				}
 				else {
-					done = AuthWriter.SetPermissionForDirectory(AuthStatus.Deny,
+					done = authWriter.SetPermissionForDirectory(AuthStatus.Deny,
 						provider, directory, action, user);
 				}
 				if(!done) return false;
@@ -434,7 +447,7 @@ namespace ScrewTurn.Wiki {
 					break;
 				case AclResources.Directories:
 					// Remove old values, add new ones
-					IFilesStorageProviderV30 prov = Collectors.FilesProviderCollector.GetProvider(CurrentFilesProvider);
+					IFilesStorageProviderV40 prov = Collectors.CollectorsBox.FilesProviderCollector.GetProvider(CurrentFilesProvider, currentWiki);
 					done = RemoveAllAclEntriesForDirectory(subject, prov, CurrentResourceName);
 					if(done) {
 						done = AddAclEntriesForDirectory(subject, prov, CurrentResourceName,
@@ -471,7 +484,7 @@ namespace ScrewTurn.Wiki {
 				case AclResources.Directories:
 					// Remove values
 					done = RemoveAllAclEntriesForDirectory(subject,
-						Collectors.FilesProviderCollector.GetProvider(CurrentFilesProvider),
+						Collectors.CollectorsBox.FilesProviderCollector.GetProvider(CurrentFilesProvider, currentWiki),
 						CurrentResourceName);
 					break;
 				default:
@@ -497,7 +510,7 @@ namespace ScrewTurn.Wiki {
 
 				lstFoundSubjects.Items.Clear();
 
-				foreach(UserGroup group in Users.GetUserGroups()) {
+				foreach(UserGroup group in Users.GetUserGroups(currentWiki)) {
 					if(group.Name.ToLowerInvariant().StartsWith(subject) &&
 						!IsAlreadyPresent(group.Name, SubjectType.Group, currentSubjects)) {
 
@@ -505,7 +518,7 @@ namespace ScrewTurn.Wiki {
 					}
 				}
 
-				foreach(UserInfo user in Users.GetUsers()) {
+				foreach(UserInfo user in Users.GetUsers(currentWiki)) {
 					if(user.Username.ToLowerInvariant().StartsWith(subject) &&
 						!IsAlreadyPresent(user.Username, SubjectType.User, currentSubjects)) {
 
@@ -541,42 +554,42 @@ namespace ScrewTurn.Wiki {
 
 			bool done = false;
 
+			AuthWriter authWriter = new AuthWriter(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
+
 			switch(CurrentResourceType) {
 				case AclResources.Namespaces:
 					if(isGroup) {
-						done = AuthWriter.SetPermissionForNamespace(AuthStatus.Deny,
-							Pages.FindNamespace(CurrentResourceName), Actions.FullControl,
-							Users.FindUserGroup(subject));
+						done = authWriter.SetPermissionForNamespace(AuthStatus.Deny,
+							Pages.FindNamespace(currentWiki, CurrentResourceName), Actions.FullControl,
+							Users.FindUserGroup(currentWiki, subject));
 					}
 					else {
-						done = AuthWriter.SetPermissionForNamespace(AuthStatus.Deny,
-							Pages.FindNamespace(CurrentResourceName), Actions.FullControl,
-							Users.FindUser(subject));
+						done = authWriter.SetPermissionForNamespace(AuthStatus.Deny,
+							Pages.FindNamespace(currentWiki, CurrentResourceName), Actions.FullControl,
+							Users.FindUser(currentWiki, subject));
 					}
 					break;
 				case AclResources.Pages:
 					if(isGroup) {
-						done = AuthWriter.SetPermissionForPage(AuthStatus.Deny,
-							Pages.FindPage(CurrentResourceName), Actions.FullControl,
-							Users.FindUserGroup(subject));
+						done = authWriter.SetPermissionForPage(AuthStatus.Deny, CurrentResourceName, Actions.FullControl,
+																Users.FindUserGroup(currentWiki, subject));
 					}
 					else {
-						done = AuthWriter.SetPermissionForPage(AuthStatus.Deny,
-							Pages.FindPage(CurrentResourceName), Actions.FullControl,
-							Users.FindUser(subject));
+						done = authWriter.SetPermissionForPage(AuthStatus.Deny, CurrentResourceName, Actions.FullControl,
+																Users.FindUser(currentWiki, subject));
 					}
 					break;
 				case AclResources.Directories:
-					IFilesStorageProviderV30 prov = Collectors.FilesProviderCollector.GetProvider(CurrentFilesProvider);
+					IFilesStorageProviderV40 prov = Collectors.CollectorsBox.FilesProviderCollector.GetProvider(CurrentFilesProvider, currentWiki);
 					if(isGroup) {
-						done = AuthWriter.SetPermissionForDirectory(AuthStatus.Deny,
+						done = authWriter.SetPermissionForDirectory(AuthStatus.Deny,
 							prov, CurrentResourceName, Actions.FullControl,
-							Users.FindUserGroup(subject));
+							Users.FindUserGroup(currentWiki, subject));
 					}
 					else {
-						done = AuthWriter.SetPermissionForDirectory(AuthStatus.Deny,
+						done = authWriter.SetPermissionForDirectory(AuthStatus.Deny,
 							prov, CurrentResourceName, Actions.FullControl,
-							Users.FindUser(subject));
+							Users.FindUser(currentWiki, subject));
 					}
 					break;
 				default:

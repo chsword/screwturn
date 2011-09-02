@@ -13,18 +13,17 @@ namespace ScrewTurn.Wiki.PluginFramework {
 	public class StFileInfo : FileDetails {
 
 		private string fullName;
-		private IFilesStorageProviderV30 provider;
+		private IFilesStorageProviderV40 provider;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:StFileInfo" /> class.
 		/// </summary>
 		/// <param name="size">The size of the file in bytes.</param>
 		/// <param name="lastModified">The last modification date/time.</param>
-		/// <param name="downloadCount">The download count.</param>
 		/// <param name="fullName">The full name of the file, for example <b>/dir/sub/file.txt</b> or <b>/file.txt</b>.</param>
 		/// <param name="provider">The provider that handles the file.</param>
-		public StFileInfo(long size, DateTime lastModified, int downloadCount, string fullName, IFilesStorageProviderV30 provider)
-			: base(size, lastModified, downloadCount) {
+		public StFileInfo(long size, DateTime lastModified, string fullName, IFilesStorageProviderV40 provider)
+			: base(size, lastModified) {
 
 			this.fullName = fullName;
 			this.provider = provider;
@@ -36,8 +35,8 @@ namespace ScrewTurn.Wiki.PluginFramework {
 		/// <param name="details">The file details.</param>
 		/// <param name="fullName">The full name.</param>
 		/// <param name="provider">The provider.</param>
-		public StFileInfo(FileDetails details, string fullName, IFilesStorageProviderV30 provider)
-			: this(details.Size, details.LastModified, details.RetrievalCount, fullName, provider) {
+		public StFileInfo(FileDetails details, string fullName, IFilesStorageProviderV40 provider)
+			: this(details.Size, details.LastModified, fullName, provider) {
 		}
 
 		/// <summary>
@@ -50,7 +49,7 @@ namespace ScrewTurn.Wiki.PluginFramework {
 		/// <summary>
 		/// Gets the provider that handles the file.
 		/// </summary>
-		public IFilesStorageProviderV30 Provider {
+		public IFilesStorageProviderV40 Provider {
 			get { return provider; }
 		}
 

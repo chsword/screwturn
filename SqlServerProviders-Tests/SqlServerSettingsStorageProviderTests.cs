@@ -17,9 +17,11 @@ namespace ScrewTurn.Wiki.Plugins.SqlServer.Tests {
 		private const string ConnString = "Data Source=(local)\\SQLExpress;Integrated Security=SSPI;";
 		private const string InitialCatalog = "Initial Catalog=ScrewTurnWikiTest;";
 
-		public override ISettingsStorageProviderV30 GetProvider() {
+		public override ISettingsStorageProviderV40 GetProvider() {
 			SqlServerSettingsStorageProvider prov = new SqlServerSettingsStorageProvider();
-			prov.Init(MockHost(), ConnString + InitialCatalog);
+			prov.SetUp(MockHost(), ConnString + InitialCatalog);
+			prov.Init(MockHost(), ConnString + InitialCatalog, "wiki1");
+
 			return prov;
 		}
 
@@ -45,7 +47,7 @@ namespace ScrewTurn.Wiki.Plugins.SqlServer.Tests {
 			cn.Open();
 
 			SqlCommand cmd = cn.CreateCommand();
-			cmd.CommandText = "use [ScrewTurnWikiTest]; delete from [AclEntry]; delete from [OutgoingLink]; delete from [PLuginStatus]; delete from [PluginAssembly]; delete from [RecentChange]; delete from [MetaDataItem]; delete from [Log];delete from [Setting];";
+			cmd.CommandText = "use [ScrewTurnWikiTest]; delete from [AclEntry]; delete from [OutgoingLink]; delete from [PLuginStatus]; delete from [RecentChange]; delete from [MetaDataItem]; delete from [Setting];";
 			try {
 				cmd.ExecuteNonQuery();
 			}
@@ -85,8 +87,8 @@ namespace ScrewTurn.Wiki.Plugins.SqlServer.Tests {
 
 		[Test]
 		public void Init() {
-			ISettingsStorageProviderV30 prov = GetProvider();
-			prov.Init(MockHost(), ConnString + InitialCatalog);
+			ISettingsStorageProviderV40 prov = GetProvider();
+			prov.Init(MockHost(), ConnString + InitialCatalog, "-");
 
 			Assert.IsNotNull(prov.Information, "Information should not be null");
 		}
@@ -94,9 +96,9 @@ namespace ScrewTurn.Wiki.Plugins.SqlServer.Tests {
 		[TestCase("", ExpectedException = typeof(InvalidConfigurationException))]
 		[TestCase("blah", ExpectedException = typeof(InvalidConfigurationException))]
 		[TestCase("Data Source=(local)\\SQLExpress;User ID=inexistent;Password=password;InitialCatalog=Inexistent;", ExpectedException = typeof(InvalidConfigurationException))]
-		public void Init_InvalidConnString(string c) {
-			ISettingsStorageProviderV30 prov = GetProvider();
-			prov.Init(MockHost(), c);
+		public void SetUp_InvalidConnString(string c) {
+			SqlServerSettingsStorageProvider prov = new SqlServerSettingsStorageProvider();
+			prov.SetUp(MockHost(), c);
 		}
 
 	}

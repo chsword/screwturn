@@ -27,14 +27,15 @@ namespace ScrewTurn.Wiki {
 		private int rangeBegin = 0;
 		private int rangeEnd = 49;
 
-		private IList<PageInfo> currentPages = null;
+		private IList<PageContent> currentPages = null;
 
 		protected void Page_Load(object sender, EventArgs e) {
-			Page.Title = Properties.Messages.AllPagesTitle + " - " + Settings.WikiTitle;
-			PageSize = Settings.ListSize;
+			string currentWiki = DetectWiki();
+			Page.Title = Properties.Messages.AllPagesTitle + " - " + Settings.GetWikiTitle(currentWiki);
+			PageSize = Settings.GetListSize(currentWiki);
 			rangeEnd = PageSize - 1;
 
-			LoginTools.VerifyReadPermissionsForCurrentNamespace();
+			LoginTools.VerifyReadPermissionsForCurrentNamespace(currentWiki);
 
 			if(Request["Cat"] != null) {
 				if(Request["Cat"].Equals("-"))
@@ -44,8 +45,8 @@ namespace ScrewTurn.Wiki {
 			}
 
 			if(!Page.IsPostBack) {
-				lnkCategories.NavigateUrl = UrlTools.BuildUrl("Category.aspx");
-				lnkSearch.NavigateUrl = UrlTools.BuildUrl("Search.aspx");
+				lnkCategories.NavigateUrl = UrlTools.BuildUrl(currentWiki, "Category.aspx");
+				lnkSearch.NavigateUrl = UrlTools.BuildUrl(currentWiki, "Search.aspx");
 
 				currentPages = GetAllPages();
 				pageSelector.ItemCount = currentPages.Count;
@@ -75,45 +76,47 @@ namespace ScrewTurn.Wiki {
 		/// </summary>
 		/// <param name="page">The page.</param>
 		/// <returns>The creator.</returns>
-		private string GetCreator(PageInfo page) {
+		private string GetCreator(PageContent page) {
 			List<int> baks = Pages.GetBackups(page);
 
-			PageContent content = null;
+			PageContent temp = null;
 			if(baks.Count > 0) {
-				content = Pages.GetBackupContent(page, baks[0]);
+				temp = Pages.GetBackupContent(page, baks[0]);
 			}
 			else {
-				content = Content.GetPageContent(page, false);
+				temp = page;
 			}
 
-			return content.User;
+			return temp.User;
 		}
 
 		/// <summary>
 		/// Gets all the pages in the namespace.
 		/// </summary>
 		/// <returns>The pages.</returns>
-		private IList<PageInfo> GetAllPages() {
-			IList<PageInfo> pages = null;
+		private IList<PageContent> GetAllPages() {
+			IList<PageContent> pages = null;
+
+			string currentWiki = DetectWiki();
 
 			// Categories Management
 			if(Request["Cat"] != null) {
 				if(Request["Cat"].Equals("-")) {
-					pages = Pages.GetUncategorizedPages(DetectNamespaceInfo());
+					pages = Pages.GetUncategorizedPages(currentWiki, DetectNamespaceInfo());
 				}
 				else {
-					CategoryInfo cat = Pages.FindCategory(Request["Cat"]);
+					CategoryInfo cat = Pages.FindCategory(currentWiki, Request["Cat"]);
 					if(cat != null) {
-						pages = new PageInfo[cat.Pages.Length];
+						pages = new PageContent[cat.Pages.Length];
 						for(int i = 0; i < cat.Pages.Length; i++) {
-							pages[i] = Pages.FindPage(cat.Pages[i]);
+							pages[i] = Pages.FindPage(currentWiki, cat.Pages[i]);
 						}
-						Array.Sort(pages as PageInfo[], new PageNameComparer());
+						Array.Sort(pages as PageContent[], new PageNameComparer());
 					}
 				}
 			}
 			else {
-				pages = Pages.GetPages(DetectNamespaceInfo());
+				pages = Pages.GetPages(currentWiki, DetectNamespaceInfo());
 			}
 
 			return pages;
@@ -127,12 +130,12 @@ namespace ScrewTurn.Wiki {
 
 			if(currentPages == null) currentPages = GetAllPages();
 
+			string currentWiki = DetectWiki();
+
 			// Prepare ExtendedPageInfo array
 			ExtendedPageInfo[] tempPageList = new ExtendedPageInfo[rangeEnd - rangeBegin + 1];
-			PageContent cnt;
 			for(int i = 0; i < tempPageList.Length; i++) {
-				cnt = Content.GetPageContent(currentPages[rangeBegin + i], true);
-				tempPageList[i] = new ExtendedPageInfo(currentPages[rangeBegin + i], cnt.Title, cnt.LastModified, GetCreator(currentPages[rangeBegin + i]), cnt.User);
+				tempPageList[i] = new ExtendedPageInfo(currentPages[rangeBegin + i], GetCreator(currentPages[rangeBegin + i]), currentPages[rangeBegin + i].User);
 			}
 
 			// Prepare for sorting
@@ -157,7 +160,7 @@ namespace ScrewTurn.Wiki {
 			
 			// Page title
 			sb.Append(@"<th><a href=""");
-			UrlTools.BuildUrl(sb, "AllPages.aspx?SortBy=Title",
+			UrlTools.BuildUrl(currentWiki, sb, "AllPages.aspx?SortBy=Title",
 				(!reverse && sortBy == SortingMethod.Title ? "&amp;Reverse=1" : ""),
 				(Request["Cat"] != null ? "&amp;Cat=" + Tools.UrlEncode(Request["Cat"]) : ""),
 				"&amp;Page=", selectedPage.ToString());
@@ -175,7 +178,7 @@ namespace ScrewTurn.Wiki {
 
 			// Creation date/time
 			sb.Append(@"<th><a href=""");
-			UrlTools.BuildUrl(sb, "AllPages.aspx?SortBy=Creation",
+			UrlTools.BuildUrl(currentWiki, sb, "AllPages.aspx?SortBy=Creation",
 				(!reverse && sortBy == SortingMethod.Creation ? "&amp;Reverse=1" : ""),
 				(Request["Cat"] != null ? "&amp;Cat=" + Tools.UrlEncode(Request["Cat"]) : ""),
 				"&amp;Page=", selectedPage.ToString());
@@ -190,7 +193,7 @@ namespace ScrewTurn.Wiki {
 
 			// Mod. date/time
 			sb.Append(@"<th><a href=""");
-			UrlTools.BuildUrl(sb, "AllPages.aspx?SortBy=DateTime",
+			UrlTools.BuildUrl(currentWiki, sb, "AllPages.aspx?SortBy=DateTime",
 				(!reverse && sortBy == SortingMethod.DateTime ? "&amp;Reverse=1" : ""),
 				(Request["Cat"] != null ? "&amp;Cat=" + Tools.UrlEncode(Request["Cat"]) : ""),
 				"&amp;Page=", selectedPage.ToString());
@@ -205,7 +208,7 @@ namespace ScrewTurn.Wiki {
 
 			// Creator
 			sb.Append(@"<th><a href=""");
-			UrlTools.BuildUrl(sb, "AllPages.aspx?SortBy=Creator",
+			UrlTools.BuildUrl(currentWiki, sb, "AllPages.aspx?SortBy=Creator",
 				(!reverse && sortBy == SortingMethod.Creator ? "&amp;Reverse=1" : ""),
 				(Request["Cat"] != null ? "&amp;Cat=" + Tools.UrlEncode(Request["Cat"]) : ""),
 				"&amp;Page=", selectedPage.ToString());
@@ -220,7 +223,7 @@ namespace ScrewTurn.Wiki {
 
 			// Last author
 			sb.Append(@"<th><a href=""");
-			UrlTools.BuildUrl(sb, "AllPages.aspx?SortBy=User",
+			UrlTools.BuildUrl(currentWiki, sb, "AllPages.aspx?SortBy=User",
 				(!reverse && sortBy == SortingMethod.User ? "&amp;Reverse=1" : ""),
 				(Request["Cat"] != null ? "&amp;Cat=" + Tools.UrlEncode(Request["Cat"]) : ""),
 				"&amp;Page=", selectedPage.ToString());
@@ -272,7 +275,7 @@ namespace ScrewTurn.Wiki {
 					// Page title
 					sb.Append(@"<td>");
 					sb.Append(@"<a href=""");
-					UrlTools.BuildUrl(sb, Tools.UrlEncode(pageList[i].PageInfo.FullName), Settings.PageExtension);
+					UrlTools.BuildUrl(currentWiki, sb, Tools.UrlEncode(pageList[i].PageContent.FullName), GlobalSettings.PageExtension);
 					sb.Append(@""">");
 					sb.Append(pageList[i].Title);
 					sb.Append("</a>");
@@ -283,7 +286,7 @@ namespace ScrewTurn.Wiki {
 					int msg = pageList[i].MessageCount;
 					if(msg > 0) {
 						sb.Append(@"<a href=""");
-						UrlTools.BuildUrl(sb, Tools.UrlEncode(pageList[i].PageInfo.FullName), Settings.PageExtension, "?Discuss=1");
+						UrlTools.BuildUrl(currentWiki, sb, Tools.UrlEncode(pageList[i].PageContent.FullName), GlobalSettings.PageExtension, "?Discuss=1");
 						sb.Append(@""" title=""");
 						sb.Append(Properties.Messages.Discuss);
 						sb.Append(@""">");
@@ -295,30 +298,30 @@ namespace ScrewTurn.Wiki {
 
 					// Creation date/time
 					sb.Append(@"<td>");
-					sb.Append(Preferences.AlignWithTimezone(pageList[i].CreationDateTime).ToString(Settings.DateTimeFormat) + "&nbsp;");
+					sb.Append(Preferences.AlignWithTimezone(currentWiki, pageList[i].CreationDateTime).ToString(Settings.GetDateTimeFormat(currentWiki)) + "&nbsp;");
 					sb.Append("</td>");
 
 					// Mod. date/time
 					sb.Append(@"<td>");
-					sb.Append(Preferences.AlignWithTimezone(pageList[i].ModificationDateTime).ToString(Settings.DateTimeFormat) + "&nbsp;");
+					sb.Append(Preferences.AlignWithTimezone(currentWiki, pageList[i].PageContent.LastModified).ToString(Settings.GetDateTimeFormat(currentWiki)) + "&nbsp;");
 					sb.Append("</td>");
 
 					// Creator
 					sb.Append(@"<td>");
-					sb.Append(Users.UserLink(pageList[i].Creator));
+					sb.Append(Users.UserLink(currentWiki, pageList[i].Creator));
 					sb.Append("</td>");
 
 					// Last author
 					sb.Append(@"<td>");
-					sb.Append(Users.UserLink(pageList[i].LastAuthor));
+					sb.Append(Users.UserLink(currentWiki, pageList[i].LastAuthor));
 					sb.Append("</td>");
 
 					// Categories
-					CategoryInfo[] cats = Pages.GetCategoriesForPage(pageList[i].PageInfo);
+					CategoryInfo[] cats = Pages.GetCategoriesForPage(pageList[i].PageContent);
 					sb.Append(@"<td>");
 					if(cats.Length == 0) {
 						sb.Append(@"<a href=""");
-						UrlTools.BuildUrl(sb, "AllPages.aspx?Cat=-");
+						UrlTools.BuildUrl(currentWiki, sb, "AllPages.aspx?Cat=-");
 						sb.Append(@""">");
 						sb.Append(Properties.Messages.NC);
 						sb.Append("</a>");
@@ -326,7 +329,7 @@ namespace ScrewTurn.Wiki {
 					else {
 						for(int k = 0; k < cats.Length; k++) {
 							sb.Append(@"<a href=""");
-							UrlTools.BuildUrl(sb, "AllPages.aspx?Cat=", Tools.UrlEncode(cats[k].FullName));
+							UrlTools.BuildUrl(currentWiki, sb, "AllPages.aspx?Cat=", Tools.UrlEncode(cats[k].FullName));
 							sb.Append(@""">");
 							sb.Append(NameTools.GetLocalName(cats[k].FullName));
 							sb.Append("</a>");

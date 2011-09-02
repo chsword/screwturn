@@ -55,7 +55,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.TextBox txtWikiTitle;
+        protected global::System.Web.UI.WebControls.TextBox txtWikiTitle;
         
         /// <summary>
         /// rfvWikiTitle control.
@@ -64,7 +64,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.RequiredFieldValidator rfvWikiTitle;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvWikiTitle;
         
         /// <summary>
         /// revWikiTitle control.
@@ -73,7 +73,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.RegularExpressionValidator revWikiTitle;
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator revWikiTitle;
         
         /// <summary>
         /// lblWikiUrl control.
@@ -100,7 +100,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.LinkButton btnAutoWikiUrl;
+        protected global::System.Web.UI.WebControls.LinkButton btnAutoWikiUrl;
         
         /// <summary>
         /// txtMainUrl control.
@@ -109,7 +109,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.TextBox txtMainUrl;
+        protected global::System.Web.UI.WebControls.TextBox txtMainUrl;
         
         /// <summary>
         /// rfvMainUrl control.
@@ -118,7 +118,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.RequiredFieldValidator rfvMainUrl;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvMainUrl;
         
         /// <summary>
         /// revMainUrl control.
@@ -127,214 +127,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.RegularExpressionValidator revMainUrl;
-        
-        /// <summary>
-        /// lblContactEmail control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal lblContactEmail;
-        
-        /// <summary>
-        /// txtContactEmail control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.TextBox txtContactEmail;
-        
-        /// <summary>
-        /// rfvContactEmail control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.RequiredFieldValidator rfvContactEmail;
-        
-        /// <summary>
-        /// revContactEmail control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.RegularExpressionValidator revContactEmail;
-        
-        /// <summary>
-        /// lblSenderEmail control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal lblSenderEmail;
-        
-        /// <summary>
-        /// txtSenderEmail control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.TextBox txtSenderEmail;
-        
-        /// <summary>
-        /// rfvSenderEmail control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.RequiredFieldValidator rfvSenderEmail;
-        
-        /// <summary>
-        /// revSenderEmail control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.RegularExpressionValidator revSenderEmail;
-        
-        /// <summary>
-        /// lblErrorsEmails control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal lblErrorsEmails;
-        
-        /// <summary>
-        /// txtErrorsEmails control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.TextBox txtErrorsEmails;
-        
-        /// <summary>
-        /// cvErrorsEmails control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.CustomValidator cvErrorsEmails;
-        
-        /// <summary>
-        /// lblSmtpServer control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal lblSmtpServer;
-        
-        /// <summary>
-        /// txtSmtpServer control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.TextBox txtSmtpServer;
-        
-        /// <summary>
-        /// txtSmtpPort control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.TextBox txtSmtpPort;
-        
-        /// <summary>
-        /// rfvSmtpServer control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.RequiredFieldValidator rfvSmtpServer;
-        
-        /// <summary>
-        /// revSmtpServer control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.RegularExpressionValidator revSmtpServer;
-        
-        /// <summary>
-        /// rvSmtpPort control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.RangeValidator rvSmtpPort;
-        
-        /// <summary>
-        /// lblSmtpAuthentication control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal lblSmtpAuthentication;
-        
-        /// <summary>
-        /// txtUsername control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.TextBox txtUsername;
-        
-        /// <summary>
-        /// txtPassword control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.TextBox txtPassword;
-        
-        /// <summary>
-        /// chkEnableSslForSmtp control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.CheckBox chkEnableSslForSmtp;
-        
-        /// <summary>
-        /// cvUsername control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.CustomValidator cvUsername;
-        
-        /// <summary>
-        /// cvPassword control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.CustomValidator cvPassword;
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator revMainUrl;
         
         /// <summary>
         /// lblContentConfig control.
@@ -373,13 +166,13 @@ namespace ScrewTurn.Wiki {
         protected global::System.Web.UI.WebControls.Literal lblNamespaces1;
         
         /// <summary>
-        /// lstRootTheme control.
+        /// ThemeRootSelector control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.DropDownList lstRootTheme;
+        protected global::ScrewTurn.Wiki.ThemesProviderSelector ThemeRootSelector;
         
         /// <summary>
         /// lblRootMainPage control.
@@ -415,7 +208,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.DropDownList lstMainPage;
+        protected global::System.Web.UI.WebControls.DropDownList lstMainPage;
         
         /// <summary>
         /// lblDateTimeFormat control.
@@ -433,7 +226,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.TextBox txtDateTimeFormat;
+        protected global::System.Web.UI.WebControls.TextBox txtDateTimeFormat;
         
         /// <summary>
         /// lblSelectFormat control.
@@ -460,7 +253,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.RequiredFieldValidator rfvDateTimeFormat;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvDateTimeFormat;
         
         /// <summary>
         /// cvDateTimeFormat control.
@@ -469,7 +262,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CustomValidator cvDateTimeFormat;
+        protected global::System.Web.UI.WebControls.CustomValidator cvDateTimeFormat;
         
         /// <summary>
         /// lblDefaultLanguage control.
@@ -487,7 +280,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.DropDownList lstDefaultLanguage;
+        protected global::System.Web.UI.WebControls.DropDownList lstDefaultLanguage;
         
         /// <summary>
         /// lblDefaultTimeZone control.
@@ -505,7 +298,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.DropDownList lstDefaultTimeZone;
+        protected global::System.Web.UI.WebControls.DropDownList lstDefaultTimeZone;
         
         /// <summary>
         /// lblMaxRecentChangesToDisplayPre control.
@@ -523,7 +316,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.TextBox txtMaxRecentChangesToDisplay;
+        protected global::System.Web.UI.WebControls.TextBox txtMaxRecentChangesToDisplay;
         
         /// <summary>
         /// lblMaxRecentChangesToDisplayPost control.
@@ -541,7 +334,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.RequiredFieldValidator rfvMaxRecentChangesToDisplay;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvMaxRecentChangesToDisplay;
         
         /// <summary>
         /// rvMaxRecentChangesToDisplay control.
@@ -550,7 +343,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.RangeValidator rvMaxRecentChangesToDisplay;
+        protected global::System.Web.UI.WebControls.RangeValidator rvMaxRecentChangesToDisplay;
         
         /// <summary>
         /// lblRssFeedsMode control.
@@ -568,7 +361,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.DropDownList lstRssFeedsMode;
+        protected global::System.Web.UI.WebControls.DropDownList lstRssFeedsMode;
         
         /// <summary>
         /// chkEnableDoubleClickEditing control.
@@ -577,7 +370,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkEnableDoubleClickEditing;
+        protected global::System.Web.UI.WebControls.CheckBox chkEnableDoubleClickEditing;
         
         /// <summary>
         /// chkEnableSectionEditing control.
@@ -586,7 +379,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkEnableSectionEditing;
+        protected global::System.Web.UI.WebControls.CheckBox chkEnableSectionEditing;
         
         /// <summary>
         /// chkEnableSectionAnchors control.
@@ -595,7 +388,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkEnableSectionAnchors;
+        protected global::System.Web.UI.WebControls.CheckBox chkEnableSectionAnchors;
         
         /// <summary>
         /// chkEnablePageToolbar control.
@@ -604,7 +397,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkEnablePageToolbar;
+        protected global::System.Web.UI.WebControls.CheckBox chkEnablePageToolbar;
         
         /// <summary>
         /// chkEnableViewPageCode control.
@@ -613,7 +406,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkEnableViewPageCode;
+        protected global::System.Web.UI.WebControls.CheckBox chkEnableViewPageCode;
         
         /// <summary>
         /// chkEnablePageInfoDiv control.
@@ -622,7 +415,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkEnablePageInfoDiv;
+        protected global::System.Web.UI.WebControls.CheckBox chkEnablePageInfoDiv;
         
         /// <summary>
         /// chkEnableBreadcrumbsTrail control.
@@ -631,7 +424,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkEnableBreadcrumbsTrail;
+        protected global::System.Web.UI.WebControls.CheckBox chkEnableBreadcrumbsTrail;
         
         /// <summary>
         /// chkAutoGeneratePageNames control.
@@ -640,7 +433,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkAutoGeneratePageNames;
+        protected global::System.Web.UI.WebControls.CheckBox chkAutoGeneratePageNames;
         
         /// <summary>
         /// chkProcessSingleLineBreaks control.
@@ -649,7 +442,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkProcessSingleLineBreaks;
+        protected global::System.Web.UI.WebControls.CheckBox chkProcessSingleLineBreaks;
         
         /// <summary>
         /// chkUseVisualEditorAsDefault control.
@@ -658,7 +451,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkUseVisualEditorAsDefault;
+        protected global::System.Web.UI.WebControls.CheckBox chkUseVisualEditorAsDefault;
         
         /// <summary>
         /// lblKeptBackupNumberPre control.
@@ -676,7 +469,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.TextBox txtKeptBackupNumber;
+        protected global::System.Web.UI.WebControls.TextBox txtKeptBackupNumber;
         
         /// <summary>
         /// lblKeptBackupNumberPost control.
@@ -694,7 +487,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.RangeValidator rvKeptBackupNumber;
+        protected global::System.Web.UI.WebControls.RangeValidator rvKeptBackupNumber;
         
         /// <summary>
         /// chkDisplayGravatars control.
@@ -703,7 +496,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkDisplayGravatars;
+        protected global::System.Web.UI.WebControls.CheckBox chkDisplayGravatars;
         
         /// <summary>
         /// lblDisplayAtMostPre control.
@@ -721,7 +514,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.TextBox txtListSize;
+        protected global::System.Web.UI.WebControls.TextBox txtListSize;
         
         /// <summary>
         /// lblDisplayAtMostPost control.
@@ -739,7 +532,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.RangeValidator rvListSize;
+        protected global::System.Web.UI.WebControls.RangeValidator rvListSize;
         
         /// <summary>
         /// lblSecurityConfig control.
@@ -757,7 +550,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkAllowUsersToRegister;
+        protected global::System.Web.UI.WebControls.CheckBox chkAllowUsersToRegister;
         
         /// <summary>
         /// lblActivationMode control.
@@ -775,7 +568,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.DropDownList lstAccountActivationMode;
+        protected global::System.Web.UI.WebControls.DropDownList lstAccountActivationMode;
         
         /// <summary>
         /// lblDefaultUsersGroup control.
@@ -793,7 +586,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.DropDownList lstDefaultUsersGroup;
+        protected global::System.Web.UI.WebControls.DropDownList lstDefaultUsersGroup;
         
         /// <summary>
         /// lblDefaultAdministratorsGroup control.
@@ -811,7 +604,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.DropDownList lstDefaultAdministratorsGroup;
+        protected global::System.Web.UI.WebControls.DropDownList lstDefaultAdministratorsGroup;
         
         /// <summary>
         /// lblDefaultAnonymousGroup control.
@@ -829,7 +622,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.DropDownList lstDefaultAnonymousGroup;
+        protected global::System.Web.UI.WebControls.DropDownList lstDefaultAnonymousGroup;
         
         /// <summary>
         /// chkEnableCaptchaControl control.
@@ -838,7 +631,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkEnableCaptchaControl;
+        protected global::System.Web.UI.WebControls.CheckBox chkEnableCaptchaControl;
         
         /// <summary>
         /// chkPreventConcurrentEditing control.
@@ -847,7 +640,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkPreventConcurrentEditing;
+        protected global::System.Web.UI.WebControls.CheckBox chkPreventConcurrentEditing;
         
         /// <summary>
         /// lblChangeModerationMode control.
@@ -901,7 +694,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.TextBox txtExtensionsAllowed;
+        protected global::System.Web.UI.WebControls.TextBox txtExtensionsAllowed;
         
         /// <summary>
         /// cvExtensionsAllowed control.
@@ -910,7 +703,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CustomValidator cvExtensionsAllowed;
+        protected global::System.Web.UI.WebControls.CustomValidator cvExtensionsAllowed;
         
         /// <summary>
         /// lstFileDownloadCountFilterMode control.
@@ -919,7 +712,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.DropDownList lstFileDownloadCountFilterMode;
+        protected global::System.Web.UI.WebControls.DropDownList lstFileDownloadCountFilterMode;
         
         /// <summary>
         /// txtFileDownloadCountFilter control.
@@ -928,43 +721,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.TextBox txtFileDownloadCountFilter;
-        
-        /// <summary>
-        /// lblMaxFileSize control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal lblMaxFileSize;
-        
-        /// <summary>
-        /// txtMaxFileSize control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.TextBox txtMaxFileSize;
-        
-        /// <summary>
-        /// rfvMaxFileSize control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.RequiredFieldValidator rfvMaxFileSize;
-        
-        /// <summary>
-        /// rvMaxFileSize control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.RangeValidator rvMaxFileSize;
+        protected global::System.Web.UI.WebControls.TextBox txtFileDownloadCountFilter;
         
         /// <summary>
         /// chkAllowScriptTags control.
@@ -973,88 +730,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.CheckBox chkAllowScriptTags;
-        
-        /// <summary>
-        /// lblLoggingLevel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal lblLoggingLevel;
-        
-        /// <summary>
-        /// rdoAllMessages control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.RadioButton rdoAllMessages;
-        
-        /// <summary>
-        /// rdoWarningsAndErrors control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.RadioButton rdoWarningsAndErrors;
-        
-        /// <summary>
-        /// rdoErrorsOnly control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.RadioButton rdoErrorsOnly;
-        
-        /// <summary>
-        /// rdoDisableLog control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.RadioButton rdoDisableLog;
-        
-        /// <summary>
-        /// lblMaxLogSize control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal lblMaxLogSize;
-        
-        /// <summary>
-        /// txtMaxLogSize control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.TextBox txtMaxLogSize;
-        
-        /// <summary>
-        /// rfvMaxLogSize control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.RequiredFieldValidator rfvMaxLogSize;
-        
-        /// <summary>
-        /// rvMaxLogSize control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.RangeValidator rvMaxLogSize;
+        protected global::System.Web.UI.WebControls.CheckBox chkAllowScriptTags;
         
         /// <summary>
         /// lblIpHostFilter control.
@@ -1072,196 +748,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.TextBox txtIpHostFilter;
-        
-        /// <summary>
-        /// lblAdvancedConfig control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal lblAdvancedConfig;
-        
-        /// <summary>
-        /// lblUsernameRegEx control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal lblUsernameRegEx;
-        
-        /// <summary>
-        /// txtUsernameRegEx control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.TextBox txtUsernameRegEx;
-        
-        /// <summary>
-        /// cvUsernameRegEx control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.CustomValidator cvUsernameRegEx;
-        
-        /// <summary>
-        /// lblPasswordRegEx control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal lblPasswordRegEx;
-        
-        /// <summary>
-        /// txtPasswordRegEx control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.TextBox txtPasswordRegEx;
-        
-        /// <summary>
-        /// cvPasswordRegEx control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.CustomValidator cvPasswordRegEx;
-        
-        /// <summary>
-        /// chkEnableAutomaticUpdateChecks control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.CheckBox chkEnableAutomaticUpdateChecks;
-        
-        /// <summary>
-        /// chkDisableCache control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.CheckBox chkDisableCache;
-        
-        /// <summary>
-        /// lblCacheSize control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal lblCacheSize;
-        
-        /// <summary>
-        /// txtCacheSize control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.TextBox txtCacheSize;
-        
-        /// <summary>
-        /// lblPages1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal lblPages1;
-        
-        /// <summary>
-        /// rfvCacheSize control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.RequiredFieldValidator rfvCacheSize;
-        
-        /// <summary>
-        /// rvCacheSize control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.RangeValidator rvCacheSize;
-        
-        /// <summary>
-        /// lblCacheCutSize control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal lblCacheCutSize;
-        
-        /// <summary>
-        /// txtCacheCutSize control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.TextBox txtCacheCutSize;
-        
-        /// <summary>
-        /// lblPages2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal lblPages2;
-        
-        /// <summary>
-        /// rfvCacheCutSize control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.RequiredFieldValidator rfvCacheCutSize;
-        
-        /// <summary>
-        /// rvCacheCutSize control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.RangeValidator rvCacheCutSize;
-        
-        /// <summary>
-        /// chkEnableViewStateCompression control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.CheckBox chkEnableViewStateCompression;
-        
-        /// <summary>
-        /// chkEnableHttpCompression control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Anthem.CheckBox chkEnableHttpCompression;
+        protected global::System.Web.UI.WebControls.TextBox txtIpHostFilter;
         
         /// <summary>
         /// btnSave control.
@@ -1270,7 +757,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Button btnSave;
+        protected global::System.Web.UI.WebControls.Button btnSave;
         
         /// <summary>
         /// lblResult control.
@@ -1279,6 +766,6 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Label lblResult;
+        protected global::System.Web.UI.WebControls.Label lblResult;
     }
 }

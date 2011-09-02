@@ -11,10 +11,13 @@ namespace ScrewTurn.Wiki {
 
 	public partial class AdminCategories : BasePage {
 
+		string currentWiki;
+
 		protected void Page_Load(object sender, EventArgs e) {
+			currentWiki = DetectWiki();
 			AdminMaster.RedirectToLoginIfNeeded();
 
-			bool canManageCategories = AdminMaster.CanManageCategories(SessionFacade.GetCurrentUsername(), SessionFacade.GetCurrentGroupNames());
+			bool canManageCategories = AdminMaster.CanManageCategories(SessionFacade.GetCurrentUsername(), SessionFacade.GetCurrentGroupNames(currentWiki));
 			if(!canManageCategories) UrlTools.Redirect("AccessDenied.aspx");
 
 			if(!Page.IsPostBack) {
@@ -23,7 +26,7 @@ namespace ScrewTurn.Wiki {
 				// Add root namespace
 				lstNamespace.Items.Add(new ListItem("<root>", ""));
 
-				List<NamespaceInfo> namespaces = Pages.GetNamespaces();
+				List<NamespaceInfo> namespaces = Pages.GetNamespaces(currentWiki);
 
 				foreach(NamespaceInfo ns in namespaces) {
 					lstNamespace.Items.Add(new ListItem(ns.Name, ns.Name));
@@ -57,15 +60,15 @@ namespace ScrewTurn.Wiki {
 				return;
 			}
 
-			if(Pages.FindCategory(NameTools.GetFullName(lstNamespace.SelectedValue, txtNewCategory.Text)) != null) {
+			if(Pages.FindCategory(DetectWiki(), NameTools.GetFullName(lstNamespace.SelectedValue, txtNewCategory.Text)) != null) {
 				lblNewCategoryResult.CssClass = "resulterror";
 				lblNewCategoryResult.Text = Properties.Messages.CategoryAlreadyExists;
 				return;
 			}
 			else {
-				Log.LogEntry("Category creation requested for " + txtNewCategory.Text, EntryType.General, Log.SystemUsername);
+				Log.LogEntry("Category creation requested for " + txtNewCategory.Text, EntryType.General, Log.SystemUsername, currentWiki);
 
-				if(Pages.CreateCategory(lstNamespace.SelectedValue, txtNewCategory.Text)) {
+				if(Pages.CreateCategory(DetectWiki(), lstNamespace.SelectedValue, txtNewCategory.Text)) {
 					txtNewCategory.Text = "";
 					lblNewCategoryResult.CssClass = "resultok";
 					lblNewCategoryResult.Text = Properties.Messages.CategoryCreated;
@@ -88,16 +91,19 @@ namespace ScrewTurn.Wiki {
 		/// </summary>
 		/// <returns><c>true</c> if the user can manage categories, <c>false</c> otherwise.</returns>
 		private bool CanManageCategoriesInCurrentNamespace() {
-			NamespaceInfo nspace = Pages.FindNamespace(lstNamespace.SelectedValue);
-			bool canManageCategories = AuthChecker.CheckActionForNamespace(nspace, Actions.ForNamespaces.ManageCategories,
-				SessionFacade.GetCurrentUsername(), SessionFacade.GetCurrentGroupNames());
+			string currentWiki = DetectWiki();
+			NamespaceInfo nspace = Pages.FindNamespace(currentWiki, lstNamespace.SelectedValue);
+			AuthChecker authChecker = new AuthChecker(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
+			bool canManageCategories = authChecker.CheckActionForNamespace(nspace, Actions.ForNamespaces.ManageCategories,
+				SessionFacade.GetCurrentUsername(), SessionFacade.GetCurrentGroupNames(currentWiki));
 			return canManageCategories;
 		}
 
 		protected void rptCategories_DataBinding(object sender, EventArgs e) {
-			NamespaceInfo nspace = Pages.FindNamespace(lstNamespace.SelectedValue);
+			string currentWiki = DetectWiki();
+			NamespaceInfo nspace = Pages.FindNamespace(currentWiki, lstNamespace.SelectedValue);
 			bool canManageCategories = CanManageCategoriesInCurrentNamespace();
-			List<CategoryInfo> categories = Pages.GetCategories(nspace);
+			List<CategoryInfo> categories = Pages.GetCategories(currentWiki, nspace);
 
 			List<CategoryRow> result = new List<CategoryRow>(categories.Count);
 
@@ -151,6 +157,8 @@ namespace ScrewTurn.Wiki {
 
 		protected void rptCategories_ItemCommand(object sender, CommandEventArgs e) {
 			if(e.CommandName == "Select") {
+				string currentWiki = DetectWiki();
+
 				if(!CanManageCategoriesInCurrentNamespace()) return;
 
 				txtCurrentCategory.Value = e.CommandArgument as string;
@@ -160,7 +168,7 @@ namespace ScrewTurn.Wiki {
 
 				// Load target directories for merge function
 				lstDestinationCategory.Items.Clear();
-				List<CategoryInfo> categories = Pages.GetCategories(Pages.FindNamespace(lstNamespace.SelectedValue));
+				List<CategoryInfo> categories = Pages.GetCategories(currentWiki, Pages.FindNamespace(currentWiki, lstNamespace.SelectedValue));
 				foreach(CategoryInfo cat in categories) {
 					if(cat.FullName != txtCurrentCategory.Value) {
 						string name = NameTools.GetLocalName(cat.FullName);
@@ -194,15 +202,17 @@ namespace ScrewTurn.Wiki {
 				return;
 			}
 
-			if(Pages.FindCategory(NameTools.GetFullName(lstNamespace.SelectedValue, txtNewName.Text)) != null) {
+			string currentWiki = DetectWiki();
+
+			if(Pages.FindCategory(currentWiki, NameTools.GetFullName(lstNamespace.SelectedValue, txtNewName.Text)) != null) {
 				lblRenameResult.CssClass = "resulterror";
 				lblRenameResult.Text = Properties.Messages.CategoryAlreadyExists;
 				return;
 			}
 
-			Log.LogEntry("Category rename requested for " + txtCurrentCategory.Value + " to " + txtNewName.Text, EntryType.General, Log.SystemUsername);
+			Log.LogEntry("Category rename requested for " + txtCurrentCategory.Value + " to " + txtNewName.Text, EntryType.General, Log.SystemUsername, currentWiki);
 
-			if(Pages.RenameCategory(Pages.FindCategory(txtCurrentCategory.Value), txtNewName.Text)) {
+			if(Pages.RenameCategory(Pages.FindCategory(currentWiki, txtCurrentCategory.Value), txtNewName.Text)) {
 				RefreshList();
 				lblRenameResult.CssClass = "resultok";
 				lblRenameResult.Text = Properties.Messages.CategoryRenamed;
@@ -217,10 +227,12 @@ namespace ScrewTurn.Wiki {
 		protected void btnMerge_Click(object sender, EventArgs e) {
 			if(!CanManageCategoriesInCurrentNamespace()) return;
 
-			CategoryInfo source = Pages.FindCategory(txtCurrentCategory.Value);
-			CategoryInfo dest = Pages.FindCategory(lstDestinationCategory.SelectedValue);
+			string currentWiki = DetectWiki();
 
-			Log.LogEntry("Category merge requested for " + txtCurrentCategory.Value + " into " + lstDestinationCategory.SelectedValue, EntryType.General, Log.SystemUsername);
+			CategoryInfo source = Pages.FindCategory(currentWiki, txtCurrentCategory.Value);
+			CategoryInfo dest = Pages.FindCategory(currentWiki, lstDestinationCategory.SelectedValue);
+
+			Log.LogEntry("Category merge requested for " + txtCurrentCategory.Value + " into " + lstDestinationCategory.SelectedValue, EntryType.General, Log.SystemUsername, currentWiki);
 
 			if(Pages.MergeCategories(source, dest)) {
 				RefreshList();
@@ -237,9 +249,9 @@ namespace ScrewTurn.Wiki {
 		protected void btnDelete_Click(object sender, EventArgs e) {
 			if(!CanManageCategoriesInCurrentNamespace()) return;
 
-			Log.LogEntry("Category deletion requested for " + txtCurrentCategory.Value, EntryType.General, Log.SystemUsername);
+			Log.LogEntry("Category deletion requested for " + txtCurrentCategory.Value, EntryType.General, Log.SystemUsername, currentWiki);
 
-			if(Pages.RemoveCategory(Pages.FindCategory(txtCurrentCategory.Value))) {
+			if(Pages.RemoveCategory(Pages.FindCategory(DetectWiki(), txtCurrentCategory.Value))) {
 				RefreshList();
 				lblDeleteResult.CssClass = "resultok";
 				lblDeleteResult.Text = Properties.Messages.CategoryDeleted;
@@ -293,12 +305,14 @@ namespace ScrewTurn.Wiki {
 		/// Refreshes the bulk category list.
 		/// </summary>
 		private void RefreshBulkCategoryList() {
+			string currentWiki = DetectWiki();
+
 			lstBulkCategories.Items.Clear();
 
 			string cp = providerSelector.SelectedProvider;
-			NamespaceInfo nspace = Pages.FindNamespace(lstNamespace.SelectedValue);
+			NamespaceInfo nspace = Pages.FindNamespace(currentWiki, lstNamespace.SelectedValue);
 			var categories =
-				from c in Pages.GetCategories(nspace)
+				from c in Pages.GetCategories(currentWiki, nspace)
 				where c.Provider.GetType().FullName == cp
 				select c;
 
@@ -312,16 +326,18 @@ namespace ScrewTurn.Wiki {
 			lblBulkResult.CssClass = "";
 			lblBulkResult.Text = "";
 
-			List<PageInfo> selectedPages = new List<PageInfo>(20);
+			string currentWiki = DetectWiki();
+
+			List<PageContent> selectedPages = new List<PageContent>(20);
 			foreach(string pg in pageListBuilder.SelectedPages) {
-				PageInfo page = Pages.FindPage(pg);
+				PageContent page = Pages.FindPage(currentWiki, pg);
 				if(page != null) selectedPages.Add(page);
 			}
 
 			List<CategoryInfo> selectedCategories = new List<CategoryInfo>(lstBulkCategories.Items.Count);
 			foreach(ListItem item in lstBulkCategories.Items) {
 				if(item.Selected) {
-					CategoryInfo cat = Pages.FindCategory(item.Value);
+					CategoryInfo cat = Pages.FindCategory(currentWiki, item.Value);
 					if(cat != null) selectedCategories.Add(cat);
 				}
 			}
@@ -338,9 +354,9 @@ namespace ScrewTurn.Wiki {
 				return;
 			}
 
-			Log.LogEntry("Bulk rebind requested", EntryType.General, SessionFacade.CurrentUsername);
+			Log.LogEntry("Bulk rebind requested", EntryType.General, SessionFacade.CurrentUsername, currentWiki);
 
-			foreach(PageInfo page in selectedPages) {
+			foreach(PageContent page in selectedPages) {
 				CategoryInfo[] cats = null;
 				if(rdoBulkAdd.Checked) {
 					// Merge selected categories with previous ones

@@ -20,40 +20,36 @@ namespace ScrewTurn.Wiki {
 		/// The username.
 		/// </summary>
 		public const string Username = "Username";
-
-		/// <summary>
-		/// A logout flag.
-		/// </summary>
-		public const string Logout = "Logout";
-
+		
 		/// <summary>
 		/// Tries to automatically login the current user.
 		/// </summary>
-		public static void TryAutoLogin() {
-			if(SessionFacade.LoginKey == null && HttpContext.Current.Request.Cookies[Settings.LoginCookieName] != null) {
-				string username = HttpContext.Current.Request.Cookies[Settings.LoginCookieName].Values[Username];
-				string key = HttpContext.Current.Request.Cookies[Settings.LoginCookieName].Values[LoginKey];
+		/// <param name="wiki">The wiki.</param>
+		public static void TryAutoLogin(string wiki) {
+			if(SessionFacade.LoginKey == null && HttpContext.Current.Request.Cookies[GlobalSettings.LoginCookieName] != null) {
+				string username = HttpContext.Current.Request.Cookies[GlobalSettings.LoginCookieName].Values[Username];
+				string key = HttpContext.Current.Request.Cookies[GlobalSettings.LoginCookieName].Values[LoginKey];
 
 				// Try cookie login
-				UserInfo user = Users.TryCookieLogin(username, key);
+				UserInfo user = Users.TryCookieLogin(wiki, username, key);
 				if(user != null) {
-					SetupSession(user);
-					Log.LogEntry("User " + user.Username + " logged in through cookie", EntryType.General, Log.SystemUsername);
-					TryRedirect(false);
+					SetupSession(wiki, user);
+					Log.LogEntry("User " + user.Username + " logged in through cookie", EntryType.General, Log.SystemUsername, wiki);
+					TryRedirect(wiki, false);
 				}
 				else {
 					// Cookie is not valid, delete it
 					SetLoginCookie("", "", DateTime.Now.AddYears(-1));
-					SetupSession(null);
+					SetupSession(wiki, null);
 				}
 			}
-			else if(SessionFacade.LoginKey == null && HttpContext.Current.Session[Logout] == null) { // Check for filtered autologin
+			else if(SessionFacade.LoginKey == null && !SessionFacade.IsLoggingOut) { // Check for filtered autologin
 				// If no cookie is available, try to autologin through providers
-				UserInfo user = Users.TryAutoLogin(HttpContext.Current);
+				UserInfo user = Users.TryAutoLogin(wiki, HttpContext.Current);
 				if(user != null) {
-					SetupSession(user);
-					Log.LogEntry("User " + user.Username + " logged in via " + user.Provider.GetType().FullName + " autologin", EntryType.General, Log.SystemUsername);
-					TryRedirect(false);
+					SetupSession(wiki, user);
+					Log.LogEntry("User " + user.Username + " logged in via " + user.Provider.GetType().FullName + " autologin", EntryType.General, Log.SystemUsername, wiki);
+					TryRedirect(wiki, false);
 				}
 			}
 		}
@@ -61,17 +57,14 @@ namespace ScrewTurn.Wiki {
 		/// <summary>
 		/// Sets up a user session.
 		/// </summary>
+		/// <param name="wiki">The wiki.</param>
 		/// <param name="user">The user (<c>null</c> for anonymous).</param>
-		public static void SetupSession(UserInfo user) {
+		public static void SetupSession(string wiki, UserInfo user) {
 			if(user != null) {
-				SessionFacade.LoginKey = Users.ComputeLoginKey(user.Username, user.Email, user.DateTime);
-				SessionFacade.CurrentUsername = user.Username;
-
-				HttpContext.Current.Session[Logout] = null; // No session facade because this key is used only in this page
+				SessionFacade.SetupSession(wiki, user);
 			}
 			else {
-				SessionFacade.LoginKey = null;
-				SessionFacade.CurrentUsername = null;
+				SessionFacade.Clear();
 			}
 		}
 
@@ -79,13 +72,13 @@ namespace ScrewTurn.Wiki {
 		/// Tries to redirect the user to any specified URL.
 		/// </summary>
 		/// <param name="goHome">A value indicating whether to redirect to the home page if no explicit redirect URL is found.</param>
-		public static void TryRedirect(bool goHome) {
+		public static void TryRedirect(string wiki, bool goHome) {
 			if(HttpContext.Current.Request["Redirect"] != null) {
 				string target = HttpContext.Current.Request["Redirect"];
 				if(target.StartsWith("http:") || target.StartsWith("https:")) HttpContext.Current.Response.Redirect(target);
-				else UrlTools.Redirect(UrlTools.BuildUrl(target));
+				else UrlTools.Redirect(UrlTools.BuildUrl(wiki, target));
 			}
-			else if(goHome) UrlTools.Redirect(UrlTools.BuildUrl("Default.aspx"));
+			else if(goHome) UrlTools.Redirect(UrlTools.BuildUrl(wiki, "Default.aspx"));
 		}
 
 		/// <summary>
@@ -95,9 +88,9 @@ namespace ScrewTurn.Wiki {
 		/// <param name="loginKey">The login key.</param>
 		/// <param name="expiration">The expiration date/time.</param>
 		public static void SetLoginCookie(string username, string loginKey, DateTime expiration) {
-			HttpCookie cookie = new HttpCookie(Settings.LoginCookieName);
+			HttpCookie cookie = new HttpCookie(GlobalSettings.LoginCookieName);
 			cookie.Expires = expiration;
-			cookie.Path = Settings.CookiePath;
+			cookie.Path = GlobalSettings.CookiePath;
 			cookie.Values.Add(LoginKey, loginKey);
 			cookie.Values.Add(Username, username);
 			HttpContext.Current.Response.Cookies.Add(cookie);
@@ -106,11 +99,14 @@ namespace ScrewTurn.Wiki {
 		/// <summary>
 		/// Verifies read permissions for the current user, redirecting to the appropriate page if no valid permissions are found.
 		/// </summary>
-		public static void VerifyReadPermissionsForCurrentNamespace() {
+		/// <param name="wiki">The wiki.</param>
+		public static void VerifyReadPermissionsForCurrentNamespace(string wiki) {
 			string currentUsername = SessionFacade.GetCurrentUsername();
-			string[] currentGroups = SessionFacade.GetCurrentGroupNames();
+			string[] currentGroups = SessionFacade.GetCurrentGroupNames(wiki);
 
-			bool canViewNamespace = AuthChecker.CheckActionForNamespace(
+			AuthChecker authChecker = new AuthChecker(Collectors.CollectorsBox.GetSettingsProvider(wiki));
+
+			bool canViewNamespace = authChecker.CheckActionForNamespace(
 				Tools.DetectCurrentNamespaceInfo(), Actions.ForNamespaces.ReadPages,
 				currentUsername, currentGroups);
 
