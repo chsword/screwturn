@@ -98,6 +98,7 @@ namespace ScrewTurn.Wiki.BackupRestore {
 			settingsBackup.Settings = (Dictionary<string, string>)settingsStorageProvider.GetAllSettings();
 
 			// Plugins Status and Configuration
+			settingsBackup.PluginsFileNames = knownPlugins.ToList();
 			Dictionary<string, bool> pluginsStatus = new Dictionary<string, bool>();
 			Dictionary<string, string> pluginsConfiguration = new Dictionary<string, string>();
 			foreach(string plugin in knownPlugins) {
@@ -167,14 +168,6 @@ namespace ScrewTurn.Wiki.BackupRestore {
 			buffer = Encoding.Unicode.GetBytes(javascriptSerializer.Serialize(generateVersionFile("Settings")));
 			tempFile.Write(buffer, 0, buffer.Length);
 			tempFile.Close();
-
-			List<string> plugins = settingsStorageProvider.ListPluginAssemblies().ToList();
-			foreach(string pluginFileName in plugins) {
-				tempFile = File.Create(Path.Combine(tempDir, pluginFileName));
-				buffer = settingsStorageProvider.RetrievePluginAssembly(pluginFileName);
-				tempFile.Write(buffer, 0, buffer.Length);
-				tempFile.Close();
-			}
 
 			using(ZipFile zipFile = new ZipFile()) {
 				zipFile.AddDirectory(tempDir, "");
@@ -539,6 +532,7 @@ namespace ScrewTurn.Wiki.BackupRestore {
 
 	internal class SettingsBackup {
 		public Dictionary<string, string> Settings { get; set; }
+		public List<string> PluginsFileNames { get; set; }
 		public Dictionary<string, bool> PluginsStatus { get; set; }
 		public Dictionary<string, string> PluginsConfiguration { get; set; }
 		public List<MetaData> Metadata { get; set; }
