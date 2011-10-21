@@ -65,13 +65,15 @@ namespace ScrewTurn.Wiki {
 				sb.Append(@"<h1 class=""pagetitle"">");
 				sb.Append(title);
 				sb.Append("</h1>");
-				sb.AppendFormat("<small>{0} {1} {2} {3} &mdash; {4}: {5}</small><br /><br />",
-					Properties.Messages.ModifiedOn,
-					Preferences.AlignWithTimezone(content.LastModified).ToString(Settings.DateTimeFormat),
-					Properties.Messages.By,
-					user != null ? Users.GetDisplayName(user) : content.User,
-					Properties.Messages.CategorizedAs,
-					categories.Length == 0 ? Properties.Messages.Uncategorized : string.Join(", ", categories));
+				if(Settings.EnablePageInfoDiv) {
+					sb.AppendFormat("<small>{0} {1} {2} {3} &mdash; {4}: {5}</small><br /><br />",
+						Properties.Messages.ModifiedOn,
+						Preferences.AlignWithTimezone(content.LastModified).ToString(Settings.DateTimeFormat),
+						Properties.Messages.By,
+						user != null ? Users.GetDisplayName(user) : content.User,
+						Properties.Messages.CategorizedAs,
+						categories.Length == 0 ? Properties.Messages.Uncategorized : string.Join(", ", categories));
+				}
 				sb.Append(Content.GetFormattedPageContent(page, true));
 			}
 			else {
