@@ -42,14 +42,10 @@
 		</div>
 	</div>
 	
-	<div id="SearchStatsDiv">
-		<asp:Literal ID="lblStats" runat="server" meta:resourcekey="lblStatsResource1" />
-	</div>
-	
 	<div id="ResultsDiv">
 		<asp:Repeater ID="rptResults" runat="server">
 			<ItemTemplate>
-				<h3 class='searchresult<%# Eval("Type") %>'><a href='<%# Eval("Link") %>' title='<%# Eval("Title") %>'><%# Eval("Title") %></a> &mdash; <%# Eval("Relevance", "{0:N1}") %>%</h3>
+				<h3 class='searchresult<%# Eval("Type") %>'><a href='<%# Eval("Link") %>' title='<%# Eval("Title") %>'><%# Eval("Title") %></a></h3>
 				<p class="excerpt" style='<%# (((string)Eval("FormattedExcerpt")).Length > 0 ? "" : "display: none;") %>'><%# Eval("FormattedExcerpt") %></p>
 			</ItemTemplate>
 		</asp:Repeater>

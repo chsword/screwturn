@@ -9,22 +9,33 @@ namespace ScrewTurn.Wiki.PluginFramework {
 	/// The base interface that all the Providers must implement. All the Provider Type-specific interfaces inherit from this one or from a one, either directly or from a derived interface.
 	/// </summary>
 	/// <remarks>This interface should not be implemented directly by a class.</remarks>
-	public interface IProviderV30 {
+	public interface IProviderV40 : IDisposable {
+
+		/// <summary>
+		/// Gets the wiki that has been used to initialize the current instance of the provider.
+		/// </summary>
+		string CurrentWiki {
+			get;
+		}
 
 		/// <summary>
 		/// Initializes the Storage Provider.
+		/// </summary>
+		/// <param name="wiki">The wiki.</param>
+		/// <param name="host">The Host of the Component.</param>
+		/// <param name="config">The Configuration data, if any.</param>
+		/// <exception cref="ArgumentNullException">If <paramref name="host"/> or <paramref name="config"/> are <c>null</c>.</exception>
+		/// <exception cref="InvalidConfigurationException">If <paramref name="config"/> is not valid or is incorrect.</exception>
+		void Init(IHostV40 host, string config, string wiki);
+
+		/// <summary>
+		/// Sets up the Storage Provider.
 		/// </summary>
 		/// <param name="host">The Host of the Component.</param>
 		/// <param name="config">The Configuration data, if any.</param>
 		/// <exception cref="ArgumentNullException">If <paramref name="host"/> or <paramref name="config"/> are <c>null</c>.</exception>
 		/// <exception cref="InvalidConfigurationException">If <paramref name="config"/> is not valid or is incorrect.</exception>
-		void Init(IHostV30 host, string config);
-
-		/// <summary>
-		/// Method invoked on shutdown.
-		/// </summary>
-		/// <remarks>This method might not be invoked in some cases.</remarks>
-		void Shutdown();
+		void SetUp(IHostV40 host, string config);
 
 		/// <summary>
 		/// Gets the Information about the Provider.

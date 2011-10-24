@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AccessDeniedTitle" xml:space="preserve">
     <value>Access Denied</value>
@@ -194,9 +194,6 @@
   </data>
   <data name="By" xml:space="preserve">
     <value>by</value>
-  </data>
-  <data name="CachedPages" xml:space="preserve">
-    <value>Cached Pages</value>
   </data>
   <data name="CannotDisableDefaultProvider" xml:space="preserve">
     <value>Cannot disable a default Provider</value>
@@ -429,21 +426,11 @@
   <data name="ImageUrl" xml:space="preserve">
     <value>Image URL</value>
   </data>
-  <data name="InactiveUsers" xml:space="preserve">
-    <value>Inactive</value>
-    <comment>Referred to the count of inactive users, for example Users: 8 (3 inactive)</comment>
-  </data>
   <data name="InsertSnippet" xml:space="preserve">
     <value>Insert a Snippet</value>
   </data>
   <data name="InvalidBackupNumber" xml:space="preserve">
     <value>Invalid number: it must be greater or equal to zero (leave blank to disable automatic Backup deletion) </value>
-  </data>
-  <data name="InvalidCacheCutSize" xml:space="preserve">
-    <value>Invalid Cache Cut size: it must be an integer greater than 0 and smaller than Cache size</value>
-  </data>
-  <data name="InvalidCacheSize" xml:space="preserve">
-    <value>Invalid Cache size: it must be an integer greater than 0</value>
   </data>
   <data name="InvalidCategoryName" xml:space="preserve">
     <value>Invalid Category name</value>
@@ -616,9 +603,6 @@
   </data>
   <data name="OlderRevision" xml:space="preserve">
     <value>Older Revision</value>
-  </data>
-  <data name="OnlineUsers" xml:space="preserve">
-    <value>Online Users</value>
   </data>
   <data name="OnlyDllFilesAllowed" xml:space="preserve">
     <value>Only DLL files are allowed</value>
@@ -930,9 +914,6 @@
   <data name="UserActivated" xml:space="preserve">
     <value>User activated</value>
   </data>
-  <data name="UserCount" xml:space="preserve">
-    <value>User Count</value>
-  </data>
   <data name="UserDeactivated" xml:space="preserve">
     <value>User deactivated</value>
   </data>
@@ -1218,9 +1199,6 @@
   <data name="CouldNotSetNamespaceTheme" xml:space="preserve">
     <value>Could not set the Theme for the Namespace</value>
   </data>
-  <data name="NamespaceCreatedCouldNotCreateDefaultPage" xml:space="preserve">
-    <value>Namespace created, but could not create the default Page</value>
-  </data>
   <data name="NamespaceCreatedCouldNotSetDefaultPage" xml:space="preserve">
     <value>Namespace created, but could not set its default Page</value>
   </data>
@@ -1262,9 +1240,6 @@
   </data>
   <data name="CouldNotRenamePage" xml:space="preserve">
     <value>Could not rename Page</value>
-  </data>
-  <data name="PageRenamedCouldNotCreateShadowPage" xml:space="preserve">
-    <value>Page renamed, but could not create shadow Page</value>
   </data>
   <data name="PageRenamedCouldNotSetShadowPageContent" xml:space="preserve">
     <value>Page renamed, but could not set the content for the shadow Page</value>
@@ -1425,8 +1400,8 @@
   <data name="VoidOrInvalidFile" xml:space="preserve">
     <value>Void or invalid file</value>
   </data>
-  <data name="DataCopied" xml:space="preserve">
-    <value>Data copied, please change the active Settings Storage Provider in the web.config file</value>
+  <data name="DataExported" xml:space="preserve">
+    <value>Data exported succesfully.</value>
   </data>
   <data name="DataMigrated" xml:space="preserve">
     <value>Data migrated, please recycle the web application</value>
@@ -1507,7 +1482,7 @@
     <value>Template saved</value>
   </data>
   <data name="SelectTemplate" xml:space="preserve">
-    <value>Select Template...</value>
+    <value>Select template...</value>
   </data>
   <data name="CouldNotRenameNamespace" xml:space="preserve">
     <value>Could not rename Namespace</value>
@@ -1526,12 +1501,6 @@
   </data>
   <data name="PreferencesSaved" xml:space="preserve">
     <value>Preferences saved</value>
-  </data>
-  <data name="Corrupted" xml:space="preserve">
-    <value>Corrupted</value>
-  </data>
-  <data name="OK" xml:space="preserve">
-    <value>OK</value>
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Yes</value>
@@ -1603,7 +1572,7 @@
     <value>Up-to-date</value>
   </data>
   <data name="SelectAndDelete" xml:space="preserve">
-    <value>Select and delete</value>
+    <value>Select and delete...</value>
   </data>
   <data name="NoBr" xml:space="preserve">
     <value>NoBR tag</value>
@@ -1643,9 +1612,6 @@
   </data>
   <data name="NoPagesToMigrate" xml:space="preserve">
     <value>No pages to migrate</value>
-  </data>
-  <data name="Formatted" xml:space="preserve">
-    <value>formatted</value>
   </data>
   <data name="NAccountsDeleted" xml:space="preserve">
     <value>$ accounts deleted</value>
@@ -1749,5 +1715,32 @@
   </data>
   <data name="WrapperBoxTitle" xml:space="preserve">
     <value>Wrap selected text in a 'box'</value>
+  </data>
+  <data name="PasswordEmpty" xml:space="preserve">
+    <value>The new password is required</value>
+  </data>
+  <data name="CouldNotDeleteTheme" xml:space="preserve">
+    <value>Could not delete Theme</value>
+  </data>
+  <data name="LoadedThemes" xml:space="preserve">
+    <value>Loaded theme</value>
+  </data>
+  <data name="ThemeAlreadyExists" xml:space="preserve">
+    <value>Theme already exists</value>
+  </data>
+  <data name="ThemeDeleted" xml:space="preserve">
+    <value>Theme Deleted</value>
+  </data>
+  <data name="SelectTheme" xml:space="preserve">
+    <value>Select theme...</value>
+  </data>
+  <data name="SelectWiki" xml:space="preserve">
+    <value>Select wiki...</value>
+  </data>
+  <data name="ImportedSettings" xml:space="preserve">
+    <value>Settings imported succesfully</value>
+  </data>
+  <data name="Action_Man_Global_Conf" xml:space="preserve">
+    <value>Manage Global Configuration</value>
   </data>
 </root>

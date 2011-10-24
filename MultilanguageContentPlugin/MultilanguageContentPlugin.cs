@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using ScrewTurn.Wiki.PluginFramework;
 
 namespace ScrewTurn.Wiki.Plugins.PluginPack {
@@ -10,11 +11,12 @@ namespace ScrewTurn.Wiki.Plugins.PluginPack {
 	/// <summary>
 	/// Implements a Formatter Provider that allows to write multi-language content in Wiki Pages.
 	/// </summary>
-	public class MultilanguageContentPlugin : IFormatterProviderV30 {
+	public class MultilanguageContentPlugin : IFormatterProviderV40 {
 
-		private IHostV30 host;
+		private IHostV40 host;
 		private string config;
-		private ComponentInformation info = new ComponentInformation("Multilanguage Content Plugin", "Threeplicate Srl", "3.0.1.472", "http://www.screwturn.eu", "http://www.screwturn.eu/Version/PluginPack/Multilanguage2.txt");
+		private string wiki;
+		private ComponentInformation info = new ComponentInformation("Multilanguage Content Plugin", "Threeplicate Srl", "4.0.1.71", "http://www.screwturn.eu", "http://www.screwturn.eu/Version4.0/PluginPack/Multilanguage.txt");
 
 		private string defaultLanguage = "en-us";
 		private bool displayWarning = false;
@@ -86,23 +88,36 @@ namespace ScrewTurn.Wiki.Plugins.PluginPack {
 		}
 
 		/// <summary>
+		/// Gets the wiki that has been used to initialize the current instance of the provider.
+		/// </summary>
+		public string CurrentWiki {
+			get { return wiki; }
+		}
+
+		/// <summary>
 		/// Initializes the Storage Provider.
 		/// </summary>
 		/// <param name="host">The Host of the Component.</param>
 		/// <param name="config">The Configuration data, if any.</param>
+		/// <param name="wiki">The wiki.</param>
 		/// <remarks>If the configuration string is not valid, the methoud should throw a <see cref="InvalidConfigurationException"/>.</remarks>
-		public void Init(IHostV30 host, string config) {
+		public void Init(IHostV40 host, string config, string wiki) {
 			this.host = host;
 			this.config = config != null ? config : "";
-			defaultLanguage = host.GetSettingValue(SettingName.DefaultLanguage);
+			this.wiki = string.IsNullOrEmpty(wiki) ? "root" : wiki;
+			defaultLanguage = host.GetSettingValue(wiki, SettingName.DefaultLanguage);
 			displayWarning = config.ToLowerInvariant().Equals("display warning");
 		}
 
 		/// <summary>
-		/// Method invoked on shutdown.
+		/// Sets up the Storage Provider.
 		/// </summary>
-		/// <remarks>This method might not be invoked in some cases.</remarks>
-		public void Shutdown() { }
+		/// <param name="host">The Host of the Component.</param>
+		/// <param name="config">The Configuration data, if any.</param>
+		/// <remarks>If the configuration string is not valid, the methoud should throw a <see cref="InvalidConfigurationException"/>.</remarks>
+		public void SetUp(IHostV40 host, string config) { }
+
+		void IDisposable.Dispose() { }
 
 		/// <summary>
 		/// Gets the Information about the Provider.
@@ -140,6 +155,19 @@ namespace ScrewTurn.Wiki.Plugins.PluginPack {
 		/// </summary>
 		public string ConfigHelpHtml {
 			get { return "Specify 'display warning' to notify the user of the available content languages."; }
+		}
+
+		/// <summary>
+		/// Method called when the plugin must handle a HTTP request.
+		/// </summary>
+		/// <param name="context">The HTTP context.</param>
+		/// <param name="urlMatch">The URL match.</param>
+		/// <returns><c>true</c> if the request was handled, <c>false</c> otherwise.</returns>
+		/// <remarks>This method is called only when a request matches the 
+		/// parameters configured by calling <see cref="IHostV40.RegisterRequestHandler"/> during <see cref="IProviderV40.SetUp"/>. 
+		/// If the plugin <b>did not</b> call <see cref="IHostV40.RegisterRequestHandler"/>, this method is never called.</remarks>
+		public bool HandleRequest(HttpContext context, Match urlMatch) {
+			return false;
 		}
 
 	}

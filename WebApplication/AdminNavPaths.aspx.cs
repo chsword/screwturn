@@ -11,9 +11,11 @@ namespace ScrewTurn.Wiki {
 	public partial class AdminNavPaths : BasePage {
 
 		protected void Page_Load(object sender, EventArgs e) {
+			string currentWiki = DetectWiki();
+
 			AdminMaster.RedirectToLoginIfNeeded();
 
-			if(!AdminMaster.CanManagePages(SessionFacade.GetCurrentUsername(), SessionFacade.GetCurrentGroupNames())) UrlTools.Redirect("AccessDenied.aspx");
+			if(!AdminMaster.CanManagePages(SessionFacade.GetCurrentUsername(), SessionFacade.GetCurrentGroupNames(currentWiki))) UrlTools.Redirect("AccessDenied.aspx");
 
 			if(!Page.IsPostBack) {
 				// Load namespaces
@@ -21,7 +23,7 @@ namespace ScrewTurn.Wiki {
 				// Add root namespace
 				lstNamespace.Items.Add(new ListItem("<root>", ""));
 
-				List<NamespaceInfo> namespaces = Pages.GetNamespaces();
+				List<NamespaceInfo> namespaces = Pages.GetNamespaces(currentWiki);
 
 				foreach(NamespaceInfo ns in namespaces) {
 					lstNamespace.Items.Add(new ListItem(ns.Name, ns.Name));
@@ -44,15 +46,18 @@ namespace ScrewTurn.Wiki {
 		/// </summary>
 		/// <returns><c>true</c> if the user can manage pages, <c>false</c> otherwise.</returns>
 		private bool CanManagePagesInCurrentNamespace() {
-			NamespaceInfo nspace = Pages.FindNamespace(lstNamespace.SelectedValue);
-			bool canManagePages = AuthChecker.CheckActionForNamespace(nspace, Actions.ForNamespaces.ManagePages,
-				SessionFacade.GetCurrentUsername(), SessionFacade.GetCurrentGroupNames());
+			string currentWiki = DetectWiki();
+
+			NamespaceInfo nspace = Pages.FindNamespace(currentWiki, lstNamespace.SelectedValue);
+			AuthChecker authChecker = new AuthChecker(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
+			bool canManagePages = authChecker.CheckActionForNamespace(nspace, Actions.ForNamespaces.ManagePages,
+				SessionFacade.GetCurrentUsername(), SessionFacade.GetCurrentGroupNames(currentWiki));
 			return canManagePages;
 		}
 
 		protected void rptNavPaths_DataBinding(object sender, EventArgs e) {
 			bool canManagePages = CanManagePagesInCurrentNamespace();
-			List<NavigationPath> paths = NavigationPaths.GetNavigationPaths(Pages.FindNamespace(lstNamespace.SelectedValue));
+			List<NavigationPath> paths = NavigationPaths.GetNavigationPaths(DetectWiki(), Pages.FindNamespace(DetectWiki(), lstNamespace.SelectedValue));
 
 			List<NavigationPathRow> result = new List<NavigationPathRow>(paths.Count);
 
@@ -69,15 +74,16 @@ namespace ScrewTurn.Wiki {
 			if(e.CommandName == "Select") {
 				if(!CanManagePagesInCurrentNamespace()) return;
 
+				string currentWiki = DetectWiki();
+
 				txtName.Text = txtCurrentNavPath.Value;
 				txtName.Enabled = false;
 
-				NavigationPath path = NavigationPaths.Find(txtCurrentNavPath.Value);
+				NavigationPath path = NavigationPaths.Find(currentWiki, txtCurrentNavPath.Value);
 				foreach(string page in path.Pages) {
-					PageInfo pageInfo = Pages.FindPage(page);
-					if(pageInfo != null) {
-						PageContent content = Content.GetPageContent(pageInfo, false);
-						lstPages.Items.Add(new ListItem(FormattingPipeline.PrepareTitle(content.Title, false, FormattingContext.Other, pageInfo), pageInfo.FullName));
+					PageContent pageContent = Pages.FindPage(currentWiki, page);
+					if(pageContent != null) {
+						lstPages.Items.Add(new ListItem(FormattingPipeline.PrepareTitle(currentWiki, pageContent.Title, false, FormattingContext.Other, pageContent.FullName), pageContent.FullName));
 					}
 				}
 
@@ -106,7 +112,7 @@ namespace ScrewTurn.Wiki {
 		}
 
 		protected void cvName2_ServerValidate(object sender, ServerValidateEventArgs e) {
-			e.IsValid = NavigationPaths.Find(NameTools.GetFullName(lstNamespace.SelectedValue, txtName.Text)) == null;
+			e.IsValid = NavigationPaths.Find(DetectWiki(), NameTools.GetFullName(lstNamespace.SelectedValue, txtName.Text)) == null;
 		}
 
 		/// <summary>
@@ -155,23 +161,28 @@ namespace ScrewTurn.Wiki {
 				return;
 			}
 
-			PageInfo[] pages = SearchTools.SearchSimilarPages(txtPageName.Text, lstNamespace.SelectedValue);
+			string currentWiki = DetectWiki();
+
+			List<SearchResult> similarPages = SearchClass.Search(currentWiki, new SearchField[] { SearchField.PageFullName }, txtPageName.Text, SearchOptions.AtLeastOneWord);
 
 			lstAvailablePage.Items.Clear();
 
-			foreach(PageInfo page in pages) {
-				PageContent content = Content.GetPageContent(page, false);
-				lstAvailablePage.Items.Add(new ListItem(FormattingPipeline.PrepareTitle(content.Title, false, FormattingContext.Other, page), page.FullName));
+			foreach(SearchResult page in similarPages) {
+				if(page.DocumentType == DocumentType.Page) {
+					PageDocument pageDocument = page.Document as PageDocument;
+					lstAvailablePage.Items.Add(new ListItem(FormattingPipeline.PrepareTitle(currentWiki, pageDocument.Title, false, FormattingContext.Other, pageDocument.PageFullName), pageDocument.PageFullName));
+				}
 			}
 
-			btnAdd.Enabled = pages.Length > 0;
+			btnAdd.Enabled = lstAvailablePage.Items.Count > 0;
 		}
 
 		protected void btnAdd_Click(object sender, EventArgs e) {
-			PageInfo page = Pages.FindPage(lstAvailablePage.SelectedValue);
-			PageContent content = Content.GetPageContent(page, false);
+			string currentWiki = DetectWiki();
 
-			lstPages.Items.Add(new ListItem(FormattingPipeline.PrepareTitle(content.Title, false, FormattingContext.Other, page), page.FullName));
+			PageContent page = Pages.FindPage(currentWiki, lstAvailablePage.SelectedValue);
+
+			lstPages.Items.Add(new ListItem(FormattingPipeline.PrepareTitle(currentWiki, page.Title, false, FormattingContext.Other, page.FullName), page.FullName));
 
 			txtPageName.Text = "";
 			lstAvailablePage.Items.Clear();
@@ -226,7 +237,7 @@ namespace ScrewTurn.Wiki {
 				return;
 			}
 
-			bool done = NavigationPaths.AddNavigationPath(Pages.FindNamespace(lstNamespace.SelectedValue),
+			bool done = NavigationPaths.AddNavigationPath(DetectWiki(), Pages.FindNamespace(DetectWiki(), lstNamespace.SelectedValue),
 				txtName.Text, GetSelectedPages(), null);
 
 			if(done) {
@@ -244,7 +255,7 @@ namespace ScrewTurn.Wiki {
 		protected void btnDelete_Click(object sender, EventArgs e) {
 			if(!CanManagePagesInCurrentNamespace()) return;
 
-			bool done = NavigationPaths.RemoveNavigationPath(txtCurrentNavPath.Value);
+			bool done = NavigationPaths.RemoveNavigationPath(DetectWiki(), txtCurrentNavPath.Value);
 
 			if(done) {
 				RefreshList();
@@ -261,7 +272,7 @@ namespace ScrewTurn.Wiki {
 		protected void btnSave_Click(object sender, EventArgs e) {
 			if(!CanManagePagesInCurrentNamespace()) return;
 
-			bool done = NavigationPaths.ModifyNavigationPath(txtCurrentNavPath.Value, GetSelectedPages());
+			bool done = NavigationPaths.ModifyNavigationPath(DetectWiki(), txtCurrentNavPath.Value, GetSelectedPages());
 
 			if(done) {
 				RefreshList();
@@ -279,16 +290,12 @@ namespace ScrewTurn.Wiki {
 		/// Gets the selected pages for the navigation path.
 		/// </summary>
 		/// <returns>The selected pages.</returns>
-		private List<PageInfo> GetSelectedPages() {
-			List<PageInfo> result = new List<PageInfo>(lstPages.Items.Count);
+		private List<string> GetSelectedPages() {
+			List<string> result = new List<string>(lstPages.Items.Count);
 
 			foreach(ListItem item in lstPages.Items) {
-				PageInfo page = Pages.FindPage(item.Value);
-				if(page != null) {
-					result.Add(page);
-				}
+				result.Add(item.Value);
 			}
-
 			return result;
 		}
 

@@ -11,9 +11,12 @@ namespace ScrewTurn.Wiki {
 
 	public partial class PageListBuilder : System.Web.UI.UserControl {
 
+		private string currentWiki = null;
+
 		protected void Page_Load(object sender, EventArgs e) {
+			currentWiki = Tools.DetectCurrentWiki();
 			if(!Page.IsPostBack) {
-				CurrentProvider = Settings.DefaultPagesProvider;
+				CurrentProvider = GlobalSettings.DefaultPagesProvider;
 			}
 		}
 
@@ -63,45 +66,43 @@ namespace ScrewTurn.Wiki {
 		}
 
 		protected void btnSearch_Click(object sender, EventArgs e) {
-			lstAvailablePage.Items.Clear();
-			btnAddPage.Enabled = false;
+			//lstAvailablePage.Items.Clear();
+			//btnAddPage.Enabled = false;
 
-			txtPageName.Text = txtPageName.Text.Trim();
+			//txtPageName.Text = txtPageName.Text.Trim();
 
-			if(txtPageName.Text.Length == 0) return;
+			//if(txtPageName.Text.Length == 0) return;
 
-			PageInfo[] pages = SearchTools.SearchSimilarPages(txtPageName.Text, CurrentNamespace);
+			//PageContent[] pages = SearchTools.SearchSimilarPages(txtPageName.Text, CurrentNamespace, currentWiki);
 
-			string cp = CurrentProvider;
+			//string cp = CurrentProvider;
 
-			foreach(PageInfo page in
-				from p in pages
-				where p.Provider.GetType().FullName == cp
-				select p) {
+			//foreach(PageContent page in
+			//    from p in pages
+			//    where p.Provider.GetType().FullName == cp
+			//    select p) {
 
-				// Filter pages already in the list
-				bool found = false;
-				foreach(ListItem item in lstPages.Items) {
-					if(item.Value == page.FullName) {
-						found = true;
-						break;
-					}
-				}
+			//    // Filter pages already in the list
+			//    bool found = false;
+			//    foreach(ListItem item in lstPages.Items) {
+			//        if(item.Value == page.FullName) {
+			//            found = true;
+			//            break;
+			//        }
+			//    }
 
-				if(!found) {
-					PageContent content = Content.GetPageContent(page, false);
-					lstAvailablePage.Items.Add(new ListItem(FormattingPipeline.PrepareTitle(content.Title, false, FormattingContext.Other, page), page.FullName));
-				}
-			}
+			//    if(!found) {
+			//        lstAvailablePage.Items.Add(new ListItem(FormattingPipeline.PrepareTitle(currentWiki, page.Title, false, FormattingContext.Other, page.FullName), page.FullName));
+			//    }
+			//}
 
-			btnAddPage.Enabled = lstAvailablePage.Items.Count > 0;
+			//btnAddPage.Enabled = lstAvailablePage.Items.Count > 0;
 		}
 
 		protected void btnAddPage_Click(object sender, EventArgs e) {
-			PageInfo page = Pages.FindPage(lstAvailablePage.SelectedValue);
-			PageContent content = Content.GetPageContent(page, false);
+			PageContent page = Pages.FindPage(currentWiki, lstAvailablePage.SelectedValue);
 
-			lstPages.Items.Add(new ListItem(FormattingPipeline.PrepareTitle(content.Title, false, FormattingContext.Other, page), page.FullName));
+			lstPages.Items.Add(new ListItem(FormattingPipeline.PrepareTitle(currentWiki, page.Title, false, FormattingContext.Other, page.FullName), page.FullName));
 
 			lstAvailablePage.Items.RemoveAt(lstAvailablePage.SelectedIndex);
 			btnAddPage.Enabled = lstAvailablePage.Items.Count > 0;

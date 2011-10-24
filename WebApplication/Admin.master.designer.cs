@@ -148,22 +148,13 @@ namespace ScrewTurn.Wiki {
         protected global::System.Web.UI.WebControls.HyperLink lnkSelectContent;
         
         /// <summary>
-        /// lnkSelectLog control.
+        /// lnkSelectPluginsConfiguration control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkSelectLog;
-        
-        /// <summary>
-        /// lnkSelectProviders control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkSelectProviders;
+        protected global::System.Web.UI.WebControls.HyperLink lnkSelectPluginsConfiguration;
         
         /// <summary>
         /// lnkSelectConfig control.
@@ -175,6 +166,60 @@ namespace ScrewTurn.Wiki {
         protected global::System.Web.UI.WebControls.HyperLink lnkSelectConfig;
         
         /// <summary>
+        /// lnkSelectTheme control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkSelectTheme;
+        
+        /// <summary>
+        /// lnkSelectAdminGlobalHome control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkSelectAdminGlobalHome;
+        
+        /// <summary>
+        /// lnkSelectGlobalConfig control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkSelectGlobalConfig;
+        
+        /// <summary>
+        /// lnkSelectPluginsManagement control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkSelectPluginsManagement;
+        
+        /// <summary>
+        /// lnkSelectImportExport control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkSelectImportExport;
+        
+        /// <summary>
+        /// lnkSelectLog control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkSelectLog;
+        
+        /// <summary>
         /// cphAdmin control.
         /// </summary>
         /// <remarks>
@@ -182,5 +227,14 @@ namespace ScrewTurn.Wiki {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder cphAdmin;
+        
+        /// <summary>
+        /// keepAlive control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ScrewTurn.Wiki.KeepAlive keepAlive;
     }
 }

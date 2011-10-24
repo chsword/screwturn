@@ -12,10 +12,12 @@ namespace ScrewTurn.Wiki {
 	public partial class MasterPageSA : System.Web.UI.MasterPage {
 
 		private string currentNamespace = null;
+		private string currentWiki = null;
 
 		protected void Page_Load(object sender, EventArgs e) {
 			// Try to detect current namespace
 			currentNamespace = Tools.DetectCurrentNamespace();
+			currentWiki = Tools.DetectCurrentWiki();
 
 			lblStrings.Text = string.Format("<script type=\"text/javascript\">\r\n<!--\r\n__BaseName = \"{0}\";\r\n__ConfirmMessage = \"{1}\";\r\n// -->\r\n</script>",
 				CphMasterSA.ClientID + "_", Properties.Messages.ConfirmOperation);
@@ -44,44 +46,28 @@ namespace ScrewTurn.Wiki {
 		/// </summary>
 		public void PrintHtmlHead() {
 			Literal c = new Literal();
-			c.Text = Tools.GetIncludes(Tools.DetectCurrentNamespace());
+			c.Text = Tools.GetIncludes(currentWiki, Tools.DetectCurrentNamespace()) + "\r\n" + Host.Instance.GetAllHtmlHeadContent(currentWiki);
 			Page.Header.Controls.Add(c);
 		}
-
-		/// <summary>
-		/// Gets the pseudo-cache item name based on the current namespace.
-		/// </summary>
-		/// <param name="name">The item name.</param>
-		/// <returns>The namespace-qualified item name.</returns>
-		private string GetPseudoCacheItemName(string name) {
-			if(string.IsNullOrEmpty(currentNamespace)) return name;
-			else return currentNamespace + "." + name;
-		}
-
+		
 		/// <summary>
 		/// Prints the header.
 		/// </summary>
 		public void PrintHeader() {
-			string h = Content.GetPseudoCacheValue(GetPseudoCacheItemName("Header"));
-			if(h == null) {
-				h = FormattingPipeline.FormatWithPhase1And2(Settings.Provider.GetMetaDataItem(MetaDataItem.Header, currentNamespace),
+			string h = FormattingPipeline.FormatWithPhase1And2(currentWiki, Settings.GetProvider(currentWiki).GetMetaDataItem(MetaDataItem.Header, currentNamespace),
 					false, FormattingContext.Header, null);
-				Content.SetPseudoCacheValue(GetPseudoCacheItemName("Header"), h);
-			}
-			lblHeaderDiv.Text = FormattingPipeline.FormatWithPhase3(h, FormattingContext.Header, null);
+
+			lblHeaderDiv.Text = FormattingPipeline.FormatWithPhase3(currentWiki, h, FormattingContext.Header, null);
 		}
 
 		/// <summary>
 		/// Prints the footer.
 		/// </summary>
 		public void PrintFooter() {
-			string f = Content.GetPseudoCacheValue(GetPseudoCacheItemName("Footer"));
-			if(f == null) {
-				f = FormattingPipeline.FormatWithPhase1And2(Settings.Provider.GetMetaDataItem(MetaDataItem.Footer, currentNamespace),
+			string f = FormattingPipeline.FormatWithPhase1And2(currentWiki, Settings.GetProvider(currentWiki).GetMetaDataItem(MetaDataItem.Footer, currentNamespace),
 					false, FormattingContext.Footer, null);
-				Content.SetPseudoCacheValue(GetPseudoCacheItemName("Footer"), f);
-			}
-			lblFooterDiv.Text = FormattingPipeline.FormatWithPhase3(f, FormattingContext.Footer, null);
+
+			lblFooterDiv.Text = FormattingPipeline.FormatWithPhase3(currentWiki, f, FormattingContext.Footer, null);
 		}
 
 	}

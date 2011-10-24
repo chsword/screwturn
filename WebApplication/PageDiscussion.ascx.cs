@@ -11,7 +11,7 @@ namespace ScrewTurn.Wiki {
 
 	public partial class PageDiscussion : System.Web.UI.UserControl {
 
-		private PageInfo currentPage;
+		private PageContent currentPage;
 		private bool canPostMessages = false;
 		private bool canManageDiscussion = false;
 
@@ -24,7 +24,7 @@ namespace ScrewTurn.Wiki {
 		/// <summary>
 		/// Gets or sets the current page.
 		/// </summary>
-		public PageInfo CurrentPage {
+		public PageContent CurrentPage {
 			get { return currentPage; }
 			set { currentPage = value; }
 		}
@@ -102,6 +102,8 @@ namespace ScrewTurn.Wiki {
 		/// <param name="parent">The parent message, or <c>null</c>.</param>
 		/// <param name="sb">The output <see cref="T:StringBuilder" />.</param>
 		private void PrintMessage(Message message, Message parent, StringBuilder sb) {
+			string currentWiki = Tools.DetectCurrentWiki();
+
 			// Print header
 			sb.Append(@"<div class=""messageheader"">");
 			//sb.AppendFormat(@"<a id=""MSG_{0}""></a>", message.ID);
@@ -112,7 +114,7 @@ namespace ScrewTurn.Wiki {
 
 				if(canPostMessages) {
 					sb.Append(@"<a class=""reply"" href=""");
-					sb.Append(UrlTools.BuildUrl("Post.aspx?Page=", Tools.UrlEncode(currentPage.FullName), "&amp;Parent=", message.ID.ToString()));
+					sb.Append(UrlTools.BuildUrl(currentWiki, "Post.aspx?Page=", Tools.UrlEncode(currentPage.FullName), "&amp;Parent=", message.ID.ToString()));
 
 					sb.Append(@""">");
 					sb.Append(Properties.Messages.Reply);
@@ -123,7 +125,7 @@ namespace ScrewTurn.Wiki {
 				// A message can be edited only if the user is authenticated - anonymous users cannot edit their messages
 				if(SessionFacade.LoginKey != null && ((message.Username == SessionFacade.CurrentUsername && canPostMessages) || canManageDiscussion)) {
 					sb.Append(@" <a class=""edit"" href=""");
-					sb.Append(UrlTools.BuildUrl("Post.aspx?Page=", Tools.UrlEncode(currentPage.FullName), "&amp;Edit=", message.ID.ToString()));
+					sb.Append(UrlTools.BuildUrl(currentWiki, "Post.aspx?Page=", Tools.UrlEncode(currentPage.FullName), "&amp;Edit=", message.ID.ToString()));
 
 					sb.Append(@""">");
 					sb.Append(Properties.Messages.Edit);
@@ -133,7 +135,7 @@ namespace ScrewTurn.Wiki {
 				// If the current user is an admin, print the delete hyperLink
 				if(SessionFacade.LoginKey != null && canManageDiscussion) {
 					sb.Append(@" <a class=""delete"" href=""");
-					sb.Append(UrlTools.BuildUrl("Operation.aspx?Operation=DeleteMessage&amp;Message=", message.ID.ToString(),
+					sb.Append(UrlTools.BuildUrl(currentWiki, "Operation.aspx?Operation=DeleteMessage&amp;Message=", message.ID.ToString(),
 						"&amp;Page=", Tools.UrlEncode(currentPage.FullName)));
 
 					sb.Append(@""">");
@@ -149,17 +151,17 @@ namespace ScrewTurn.Wiki {
 			// Print subject
 			if(message.Subject.Length > 0) {
 				sb.Append(@"<span class=""messagesubject"">");
-				sb.Append(FormattingPipeline.PrepareTitle(message.Subject, false, FormattingContext.MessageBody, currentPage));
+				sb.Append(FormattingPipeline.PrepareTitle(currentWiki, message.Subject, false, FormattingContext.MessageBody, currentPage.FullName));
 				sb.Append("</span>");
 			}
 
 			// Print message date/time
 			sb.Append(@"<span class=""messagedatetime"">");
-			sb.Append(Preferences.AlignWithTimezone(message.DateTime).ToString(Settings.DateTimeFormat));
+			sb.Append(Preferences.AlignWithTimezone(currentWiki, message.DateTime).ToString(Settings.GetDateTimeFormat(currentWiki)));
 			sb.Append(" ");
 			sb.Append(Properties.Messages.By);
 			sb.Append(" ");
-			sb.Append(Users.UserLink(message.Username));
+			sb.Append(Users.UserLink(currentWiki, message.Username));
 			sb.Append("</span>");
 
 			sb.Append("</div>");
@@ -168,8 +170,8 @@ namespace ScrewTurn.Wiki {
 
 			// Print body
 			sb.Append(@"<div class=""messagebody"">");
-			sb.Append(FormattingPipeline.FormatWithPhase3(FormattingPipeline.FormatWithPhase1And2(message.Body, false, FormattingContext.MessageBody, currentPage),
-				FormattingContext.MessageBody, currentPage));
+			sb.Append(FormattingPipeline.FormatWithPhase3(currentWiki, FormattingPipeline.FormatWithPhase1And2(currentWiki, message.Body, false, FormattingContext.MessageBody, currentPage.FullName),
+				FormattingContext.MessageBody, currentPage.FullName));
 			sb.Append("</div>");
 		}
 

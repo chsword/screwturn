@@ -40,11 +40,20 @@ select {
 }
 
 #MainDiv {
-	 padding: 10px 20px 10px 20px;
+	 padding: 10px 5px 10px 5px;
 }
 
 #TabDiv {
+	width: 200px;
+	float: left;
+	margin-top: 20px;
 	white-space: nowrap;
+}
+
+#ContentDiv {
+	margin: 20px 0px 0px 200px;
+	padding: 10px 20px 20px 20px;
+	border: solid 3px #2D6BCE;
 }
 
 /* Small text */
@@ -68,31 +77,39 @@ a:hover {
 }
 
 .tab, .tab:visited {
-	background-color: #DDDDDD;
-	border: solid 3px #DDDDDD;
 	color: #214C9A;
-	font-size: 11px;
-	padding: 2px 4px 2px 4px;
+	font-size: 13px;
+	padding: 10px 8px;
 	text-decoration: none;
+	display: block;
 }
 
 .tab:hover {
-	background-color: #214C9A;
-	border: solid 3px #214C9A;
+	background-color: #2D6BCE;
 	color: #FFFFFF;
-	font-size: 11px;
-	padding: 2px 4px 2px 4px;
+	font-size: 13px;
+	padding: 10px 8px;
 	text-decoration: none;
+	display: block;
 }
 
 .tabselected, .tabselected:visited {
-	background-color: #214C9A;
-	border: solid 3px #214C9A;
+	background-color: #2D6BCE;
 	color: #FFFFFF;
-	font-size: 11px;
 	font-weight: bold;
-	padding: 2px 4px 2px 4px;
+	font-size: 13px;
+	padding: 10px 8px;
 	text-decoration: none;
+	display: block;
+}
+
+a.red, a.red:visited {
+	color: #00A859;
+}
+
+a.red:hover, a.red.selected, a.red:hover.selected {
+	color: #FFFFFF;
+	background-color: #00A859;
 }
 
 h1 {
@@ -139,10 +156,10 @@ h1.admintitle {
 }
 
 h2.sectiontitle {
-	background-color: #214C9A;
-	color: #FFFFFF;
+	color: #214C9A;
+	font-weight: bold;
 	padding: 4px 24px 4px 24px;
-	margin: 5px -20px 10px -20px;
+	margin: 0px -20px 10px -20px;
 }
 
 h1.pagetitle {
@@ -211,7 +228,7 @@ div.warning {
 #LicenseInfoDiv {
 	background-color: #F0F0F0;
 	border-top: solid 3px #CCCCCC;
-	margin: -10px -20px -10px -20px;
+	margin: 20px 0px 0px 0px;
 	padding: 10px;
 }
 
@@ -296,11 +313,15 @@ tr.warning td {
 	margin-right: 40px;
 }
 
+.ButtonsDiv {
+	float: left;
+	clear: both;
+}
+
 /* BEGIN AdminHome.aspx */
 
 #BulkEmailDiv {
-	float: right;
-	width: 33%;
+	margin: 40px 0px;
 	padding: 8px;
 	border: solid 1px #999999;
 	background-color: #FFFFFF;
@@ -324,7 +345,7 @@ tr.warning td {
 
 /* BEGIN AdminUsers.aspx, AdminGroups.aspx, AdminNamespaces.aspx,
 	AdminPages.aspx, AdminCategories.aspx, AdminSnippets.aspx,
-	AdminNavPaths.aspx, AdminLog.aspx, AdminProviders.aspx */
+	AdminNavPaths.aspx, AdminLog.aspx, AdminProviders.aspx, AdminThemes.aspx */
 
 /* AdminPages.aspx - specific */
 #NamespaceSelectorDiv {
@@ -373,9 +394,10 @@ div.pagefeaturecontainerwarning, div.categoryfeaturecontainerwarning {
 	padding: 6px;
 	margin: 6px 0px 6px 0px;
 	float: left;
+	clear: both;
 }
 
-#PagesListContainerDiv, #CategoriesListContainerDiv, #NavPathsListContainerDiv {
+#CategoriesListContainerDiv, #NavPathsListContainerDiv {
 	clear: left;
 }
 
@@ -384,9 +406,12 @@ div.pagefeaturecontainerwarning, div.categoryfeaturecontainerwarning {
 }
 
 /* AdminProviders.aspx - specific */
+#ProvidersListContainerDiv {
+	margin-right: 20px;
+}
+
 #EditProviderDiv {
 	margin-top: 6px;
-	margin-left: 20px;
 	float: left;
 	border: solid 1px #999999;
 	padding: 6px;
@@ -415,7 +440,7 @@ div.defaultprovbutton {
 }
 
 /* AdminProviders.aspx - specific */
-#DllsListContainerDiv {
+#DllsListContainerDiv, #DllUploadContainerDiv {
 	margin-top: 16px;
 }
 #DllNoticeDiv {
@@ -473,6 +498,11 @@ input.searchtextbox {
 	float: right;
 }
 
+.leftaligned {
+	float: left;
+	width: 100%;
+}
+
 #AclSelectorDiv {
 	margin: 10px 0px 10px 0px;
 	background-color: #FEF693;
@@ -495,14 +525,6 @@ input.searchtextbox {
 
 #MembershipDiv label {
 	padding-left: 10px;
-}
-
-#ButtonsDiv, #ButtonsDiv2, #ButtonsDiv3 {
-	clear: left;
-}
-
-#ButtonsDiv.log {
-	float: right;
 }
 
 .injectedmessage {
@@ -538,11 +560,15 @@ input.searchtextbox {
 #PermissionsTemplatesDiv li {
 	margin-bottom: 4px;
 }
+
+#PermissionsManagerDiv {
+	float: left;
+	clear: both;
+}
 /* AdminUsers.aspx - specific, AdminPages.aspx - specific */
 #PageSelectorDiv {
 	margin: 6px 0px 6px 0px;
 	font-size: 11px;
-	clear: left;
 }
 
 #PageSelectorDiv a {
@@ -560,7 +586,7 @@ input.searchtextbox {
 
 /* AdminCategories.aspx - specific */
 #CategoryBulkAdminDiv #PageSelectionDiv {
-	height: 250px;
+	height: 280px;
 	float: left;
 	margin-right: 16px;
 }
@@ -579,7 +605,7 @@ input.searchtextbox {
 }
 #CategoryBulkAdminDiv #CategorySelectionDiv {
 	width: 200px;
-	height: 250px;
+	height: 280px;
 	float: left;
 	margin-right: 16px;
 }
@@ -590,21 +616,21 @@ input.searchtextbox {
 	height: 180px;
 }
 #CategoryBulkAdminDiv #BatchControlDiv {
-	height: 250px;
+	height: 280px;
 	width: 200px;
 	float: left;
 	margin-right: 16px;
 }
-#CategoryBulkAdminDiv #ButtonsDiv2 {
+#CategoryBulkAdminDiv .ButtonsDiv {
 	clear: left;
-	padding-top: 30px;
+	padding-top: 10px;
 }
 
 /* AdminPages.aspx - specific */
 #PageBulkMigrateDiv #PageSelectionDiv {
-	height: 250px;
+	height: 280px;
 	float: left;
-	margin-right: 16px;
+	margin-right: 36px;
 }
 #PageBulkMigrateDiv #PageSelectionDiv #PagesListDiv select.listbox {
 	width: 250px;
@@ -621,24 +647,24 @@ input.searchtextbox {
 }
 #PageBulkMigrateDiv #NamespaceSelectionDiv {
 	width: 200px;
-	height: 250px;
+	height: 280px;
 	float: left;
-	margin-right: 16px;
+	margin-right: 36px;
 }
 #PageBulkMigrateDiv #BatchControlDiv {
-	height: 250px;
+	height: 280px;
 	width: 200px;
 	float: left;
-	margin-right: 16px;
+	margin-right: 36px;
 }
-#PageBulkMigrateDiv #ButtonsDiv3 {
+#PageBulkMigrateDiv .ButtonsDiv {
 	clear: left;
-	padding-top: 30px;
+	padding-top: 10px;
 }
 
 /* END AdminUsers.aspx, AdminGroups.aspx, AdminNamespaces.aspx,
 	AdminPages.aspx, AdminCategories.aspx, AdminSnippets.aspx,
-	AdminNavPaths.aspx, AdminLog.aspx, AdminProviders.aspx */
+	AdminNavPaths.aspx, AdminLog.aspx, AdminProviders.aspx, AdminThemes.aspx */
 
 /* BEGIN AdminConfig.aspx */
 
@@ -673,6 +699,15 @@ input.searchtextbox {
 #ConfigGeneralDiv, #ConfigContentDiv {
 	background-color: #F0F0F0;
 	border: solid 1px #999999;
+	padding: 10px;
+	margin-right: 20px;
+	margin-bottom: 20px;
+	width: 600px;
+}
+
+#ChangeMasterPasswordDiv {
+	background-color: #CCDDEE;
+	border: solid 1px #214C9A;
 	padding: 10px;
 	margin-right: 20px;
 	margin-bottom: 20px;
@@ -750,3 +785,8 @@ ul.spaced li {
 }
 
 /* END AdminContent.aspx */
+
+/* Div used for clearing floats */
+div.clear {
+	clear: both;
+}

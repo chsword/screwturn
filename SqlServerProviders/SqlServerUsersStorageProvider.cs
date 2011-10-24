@@ -7,17 +7,17 @@ using ScrewTurn.Wiki.PluginFramework;
 using System.Data.SqlClient;
 
 namespace ScrewTurn.Wiki.Plugins.SqlServer {
-	
+
 	/// <summary>
 	/// Implements a SQL Server-based users storage provider.
 	/// </summary>
-	public class SqlServerUsersStorageProvider : SqlUsersStorageProviderBase, IUsersStorageProviderV30 {
+	public class SqlServerUsersStorageProvider : SqlUsersStorageProviderBase, IUsersStorageProviderV40 {
 
-		private readonly ComponentInformation info = new ComponentInformation("SQL Server Users Storage Provider", "Threeplicate Srl", "3.0.1.471", "http://www.screwturn.eu", "http://www.screwturn.eu/Version/SQLServerProv/Users.txt");
-		
+		private readonly ComponentInformation info = new ComponentInformation("SQL Server Users Storage Provider", "Threeplicate Srl", "4.0.1.71", "http://www.screwturn.eu", null);
+
 		private readonly SqlServerCommandBuilder commandBuilder = new SqlServerCommandBuilder();
 
-		private const int CurrentSchemaVersion = 3000;
+		private const int CurrentSchemaVersion = 4000;
 
 		/// <summary>
 		/// Gets a new command with an open connection.
@@ -135,113 +135,11 @@ namespace ScrewTurn.Wiki.Plugins.SqlServer {
 		/// </summary>
 		protected override void CreateOrUpdateDatabaseIfNecessary() {
 			if(!SchemaExists()) {
-				// Verify if an upgrade from version 2.0 is possible
-				if(SchemaAllowsUpgradeFrom20()) {
-					UpgradeFrom20();
-				}
-				else {
-					// If not, create the standard schema
-					CreateStandardSchema();
-				}
+				CreateStandardSchema();
 			}
 			if(SchemaNeedsUpdate()) {
 				// Run minor update batches...
 			}
-		}
-
-		/// <summary>
-		/// Detects whether an upgrade is possible from version 2.0.
-		/// </summary>
-		/// <returns><c>true</c> if the upgrade is possible, <c>false</c> otherwise.</returns>
-		private bool SchemaAllowsUpgradeFrom20() {
-			// Look for 'UsersProviderVersion' tables
-			SqlCommand cmd = GetCommand(connString);
-			cmd.CommandText = "select count(*) from sys.tables where [name] = 'UsersProviderVersion'";
-
-			int count = ExecuteScalar<int>(cmd, -1);
-
-			return count == 1;
-		}
-
-		/// <summary>
-		/// Upgrades the database schema and data from version 2.0.
-		/// </summary>
-		private void UpgradeFrom20() {
-			// 1. Load all user data in memory
-			// 2. Rename old tables so they won't get in the way but the can still be recovered (_v2)
-			// 3. Create new schema
-			// 4. Add new users and default groups (admins, users)
-
-			SqlCommand cmd = GetCommand(connString);
-			cmd.CommandText = "select * from [User]";
-
-			SqlDataReader reader = cmd.ExecuteReader();
-
-			string administratorsGroup = host.GetSettingValue(SettingName.AdministratorsGroup);
-			string usersGroup = host.GetSettingValue(SettingName.UsersGroup);
-
-			List<UserInfo> newUsers = new List<UserInfo>(100);
-			List<string> passwordHashes = new List<string>(100);
-
-			while(reader.Read()) {
-				string username = reader["Username"] as string;
-				string passwordHash = reader["PasswordHash"] as string;
-				string email = reader["Email"] as string;
-				DateTime dateTime = (DateTime)reader["DateTime"];
-				bool active = (bool)reader["Active"];
-				bool admin = (bool)reader["Admin"];
-
-				UserInfo temp = new UserInfo(username, null, email, active, dateTime, this);
-				temp.Groups = admin ? new string[] { administratorsGroup } : new string[] { usersGroup };
-				newUsers.Add(temp);
-				passwordHashes.Add(passwordHash);
-			}
-
-			reader.Close();
-			cmd.Connection.Close();
-
-			cmd = GetCommand(connString);
-			cmd.CommandText = "exec sp_rename 'UsersProviderVersion', 'UsersProviderVersion_v2'; exec sp_rename 'User', 'User_v2';";
-			cmd.ExecuteNonQuery();
-			cmd.Connection.Close();
-
-			CreateStandardSchema();
-
-			UserGroup admins = AddUserGroup(administratorsGroup, "Built-in Administrators");
-			UserGroup users = AddUserGroup(usersGroup, "Built-in Users");
-
-			for(int i = 0; i < newUsers.Count; i++) {
-				cmd = GetCommand(connString);
-				cmd.CommandText = "insert into [User] ([Username], [PasswordHash], [Email], [Active], [DateTime]) values (@Username, @PasswordHash, @Email, @Active, @DateTime)";
-				cmd.Parameters.Add(new SqlParameter("@Username", newUsers[i].Username));
-				cmd.Parameters.Add(new SqlParameter("@PasswordHash", passwordHashes[i]));
-				cmd.Parameters.Add(new SqlParameter("@Email", newUsers[i].Email));
-				cmd.Parameters.Add(new SqlParameter("@Active", newUsers[i].Active));
-				cmd.Parameters.Add(new SqlParameter("@DateTime", newUsers[i].DateTime));
-
-				cmd.ExecuteNonQuery();
-				cmd.Connection.Close();
-
-				SetUserMembership(newUsers[i], newUsers[i].Groups);
-			}
-
-			host.UpgradeSecurityFlagsToGroupsAcl(admins, users);
-		}
-
-		/// <summary>
-		/// Tries to load the configuration from a corresponding v2 provider.
-		/// </summary>
-		/// <returns>The configuration, or an empty string.</returns>
-		protected override string TryLoadV2Configuration() {
-			return host.GetProviderConfiguration("ScrewTurn.Wiki.PluginPack.SqlServerUsersStorageProvider");
-		}
-
-		/// <summary>
-		/// Tries to load the configuration of the corresponding settings storage provider.
-		/// </summary>
-		/// <returns>The configuration, or an empty string.</returns>
-		protected override string TryLoadSettingsStorageProviderConfiguration() {
-			return host.GetProviderConfiguration(typeof(SqlServerSettingsStorageProvider).FullName);
 		}
 
 		/// <summary>
@@ -258,6 +156,16 @@ namespace ScrewTurn.Wiki.Plugins.SqlServer {
 			get { return "Connection string format:<br /><code>Data Source=<i>Database Address and Instance</i>;Initial Catalog=<i>Database name</i>;User ID=<i>login</i>;Password=<i>password</i>;</code>"; }
 		}
 
+		/// <summary>
+		/// Closes the database connection.
+		/// </summary>
+		/// <param name="connection">The connection.</param>
+		protected override void CloseConnection(System.Data.Common.DbConnection connection) {
+			try {
+				connection.Close();
+			}
+			catch { } 
+		}
 	}
 
 }

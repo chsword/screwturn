@@ -10,13 +10,19 @@ namespace ScrewTurn.Wiki {
 	/// Utility class for checking permissions and authorizations.
 	/// </summary>
 	/// <remarks>All the methods in this class implement a security bypass for the <i>admin</i> user.</remarks>
-	public static class AuthChecker {
+	public class AuthChecker {
 
 		/// <summary>
 		/// Gets the settings storage provider.
 		/// </summary>
-		private static ISettingsStorageProviderV30 SettingsProvider {
-			get { return Collectors.SettingsProvider; }
+		private ISettingsStorageProviderV40 _settingsProvider;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="AuthChecker"/> class.
+		/// </summary>
+		/// <param name="settingsProvider">The settings provider.</param>
+		public AuthChecker(ISettingsStorageProviderV40 settingsProvider) {
+			_settingsProvider = settingsProvider;
 		}
 
 		/// <summary>
@@ -26,7 +32,7 @@ namespace ScrewTurn.Wiki {
 		/// <param name="currentUser">The current user.</param>
 		/// <param name="groups">The groups the user is member of.</param>
 		/// <returns><c>true</c> if the action is allowed.</returns>
-		public static bool CheckActionForGlobals(string action, string currentUser, string[] groups) {
+		public bool CheckActionForGlobals(string action, string currentUser, string[] groups) {
 			if(action == null) throw new ArgumentNullException("action");
 			if(action.Length == 0) throw new ArgumentException("Action cannot be empty", "action");
 			if(!AuthTools.IsValidAction(action, Actions.ForGlobals.All)) throw new ArgumentException("Invalid action", "action");
@@ -41,8 +47,8 @@ namespace ScrewTurn.Wiki {
 			return LocalCheckActionForGlobals(action, currentUser, groups) == Authorization.Granted;
 		}
 
-		private static Authorization LocalCheckActionForGlobals(string action, string currentUser, string[] groups) {
-			AclEntry[] entries = SettingsProvider.AclManager.RetrieveEntriesForResource(Actions.ForGlobals.ResourceMasterPrefix);
+		private Authorization LocalCheckActionForGlobals(string action, string currentUser, string[] groups) {
+			AclEntry[] entries = _settingsProvider.AclManager.RetrieveEntriesForResource(Actions.ForGlobals.ResourceMasterPrefix);
 			Authorization auth = AclEvaluator.AuthorizeAction(Actions.ForGlobals.ResourceMasterPrefix, action,
 				AuthTools.PrepareUsername(currentUser), AuthTools.PrepareGroups(groups), entries);
 
@@ -58,7 +64,7 @@ namespace ScrewTurn.Wiki {
 		/// <param name="groups">The groups the user is member of.</param>
 		/// <param name="localEscalator"><c>true</c> is the method is called in a local escalator process.</param>
 		/// <returns><c>true</c> if the action is allowed, <c>false</c> otherwise.</returns>
-		public static bool CheckActionForNamespace(NamespaceInfo nspace, string action, string currentUser, string[] groups, bool localEscalator = false) {
+		public bool CheckActionForNamespace(NamespaceInfo nspace, string action, string currentUser, string[] groups, bool localEscalator = false) {
 			if(action == null) throw new ArgumentNullException("action");
 			if(action.Length == 0) throw new ArgumentException("Action cannot be empty", "action");
 			if(!AuthTools.IsValidAction(action, Actions.ForNamespaces.All)) throw new ArgumentException("Invalid action", "action");
@@ -73,10 +79,10 @@ namespace ScrewTurn.Wiki {
 			return LocalCheckActionForNamespace(nspace, action, currentUser, groups, localEscalator) == Authorization.Granted;
 		}
 
-		private static Authorization LocalCheckActionForNamespace(NamespaceInfo nspace, string action, string currentUser, string[] groups, bool localEscalator = false) {
+		private Authorization LocalCheckActionForNamespace(NamespaceInfo nspace, string action, string currentUser, string[] groups, bool localEscalator = false) {
 			string namespaceName = nspace != null ? nspace.Name : "";
 
-			AclEntry[] entries = SettingsProvider.AclManager.RetrieveEntriesForResource(
+			AclEntry[] entries = _settingsProvider.AclManager.RetrieveEntriesForResource(
 				Actions.ForNamespaces.ResourceMasterPrefix + namespaceName);
 
 			Authorization auth = AclEvaluator.AuthorizeAction(Actions.ForNamespaces.ResourceMasterPrefix + namespaceName,
@@ -114,14 +120,14 @@ namespace ScrewTurn.Wiki {
 		/// <summary>
 		/// Checks whether an action is allowed for a page.
 		/// </summary>
-		/// <param name="page">The current page.</param>
+		/// <param name="pageFullName">The current page full name.</param>
 		/// <param name="action">The action the user is attempting to perform.</param>
 		/// <param name="currentUser">The current user.</param>
 		/// <param name="groups">The groups the user is member of.</param>
 		/// <param name="localEscalator"><c>true</c> is the method is called in a local escalator process.</param>
 		/// <returns><c>true</c> if the action is allowed, <c>false</c> otherwise.</returns>
-		public static bool CheckActionForPage(PageInfo page, string action, string currentUser, string[] groups, bool localEscalator = false) {
-			if(page == null) throw new ArgumentNullException("page");
+		public bool CheckActionForPage(string pageFullName, string action, string currentUser, string[] groups, bool localEscalator = false) {
+			if(pageFullName == null) throw new ArgumentNullException("page");
 
 			if(action == null) throw new ArgumentNullException("action");
 			if(action.Length == 0) throw new ArgumentException("Action cannot be empty", "action");
@@ -134,12 +140,12 @@ namespace ScrewTurn.Wiki {
 
 			if(currentUser == "admin") return true;
 
-			return LocalCheckActionForPage(page, action, currentUser, groups, localEscalator) == Authorization.Granted;
+			return LocalCheckActionForPage(pageFullName, action, currentUser, groups, localEscalator) == Authorization.Granted;
 		}
 
-		private static Authorization LocalCheckActionForPage(PageInfo page, string action, string currentUser, string[] groups, bool localEscalator = false) {
-			AclEntry[] entries = SettingsProvider.AclManager.RetrieveEntriesForResource(Actions.ForPages.ResourceMasterPrefix + page.FullName);
-			Authorization auth = AclEvaluator.AuthorizeAction(Actions.ForPages.ResourceMasterPrefix + page.FullName, action,
+		private Authorization LocalCheckActionForPage(string pageFullName, string action, string currentUser, string[] groups, bool localEscalator = false) {
+			AclEntry[] entries = _settingsProvider.AclManager.RetrieveEntriesForResource(Actions.ForPages.ResourceMasterPrefix + pageFullName);
+			Authorization auth = AclEvaluator.AuthorizeAction(Actions.ForPages.ResourceMasterPrefix + pageFullName, action,
 				AuthTools.PrepareUsername(currentUser), AuthTools.PrepareGroups(groups), entries);
 
 			if(localEscalator || auth != Authorization.Unknown) return auth;
@@ -148,14 +154,14 @@ namespace ScrewTurn.Wiki {
 			string[] localEscalators = null;
 			if(Actions.ForPages.LocalEscalators.TryGetValue(action, out localEscalators)) {
 				foreach(string localAction in localEscalators) {
-					Authorization authorization = LocalCheckActionForPage(page, localAction, currentUser, groups, true);
+					Authorization authorization = LocalCheckActionForPage(pageFullName, localAction, currentUser, groups, true);
 					if(authorization != Authorization.Unknown) return authorization;
 				}
 			}
 
 			// Try namespace escalators
 			string[] namespaceEscalators = null;
-			string nsName = NameTools.GetNamespace(page.FullName);
+			string nsName = NameTools.GetNamespace(pageFullName);
 			NamespaceInfo ns = string.IsNullOrEmpty(nsName) ? null : new NamespaceInfo(nsName, null, null);
 			if(Actions.ForPages.NamespaceEscalators.TryGetValue(action, out namespaceEscalators)) {
 				foreach(string namespaceAction in namespaceEscalators) {
@@ -191,7 +197,7 @@ namespace ScrewTurn.Wiki {
 		/// <param name="currentUser">The current user.</param>
 		/// <param name="groups">The groups the user is member of.</param>
 		/// <returns><c>true</c> if the action is allowed, <c>false</c> otherwise.</returns>
-		public static bool CheckActionForDirectory(IFilesStorageProviderV30 provider, string directory, string action, string currentUser, string[] groups) {
+		public bool CheckActionForDirectory(IFilesStorageProviderV40 provider, string directory, string action, string currentUser, string[] groups) {
 			if(provider == null) throw new ArgumentNullException("provider");
 
 			if(directory == null) throw new ArgumentNullException("directory");
@@ -210,7 +216,7 @@ namespace ScrewTurn.Wiki {
 
 			string resourceName = Actions.ForDirectories.ResourceMasterPrefix + AuthTools.GetDirectoryName(provider, directory);
 
-			AclEntry[] entries = SettingsProvider.AclManager.RetrieveEntriesForResource(resourceName);
+			AclEntry[] entries = _settingsProvider.AclManager.RetrieveEntriesForResource(resourceName);
 
 			Authorization auth = AclEvaluator.AuthorizeAction(resourceName, action,
 				AuthTools.PrepareUsername(currentUser), AuthTools.PrepareGroups(groups), entries);

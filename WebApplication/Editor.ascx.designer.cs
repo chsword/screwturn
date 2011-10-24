@@ -28,7 +28,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Button btnWikiMarkup;
+        protected global::System.Web.UI.WebControls.Button btnWikiMarkup;
         
         /// <summary>
         /// btnVisual control.
@@ -37,7 +37,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Button btnVisual;
+        protected global::System.Web.UI.WebControls.Button btnVisual;
         
         /// <summary>
         /// btnPreview control.
@@ -46,7 +46,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.Button btnPreview;
+        protected global::System.Web.UI.WebControls.Button btnPreview;
         
         /// <summary>
         /// mlvEditor control.
@@ -55,7 +55,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.MultiView mlvEditor;
+        protected global::System.Web.UI.WebControls.MultiView mlvEditor;
         
         /// <summary>
         /// viwStandard control.
@@ -64,7 +64,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.View viwStandard;
+        protected global::System.Web.UI.WebControls.View viwStandard;
         
         /// <summary>
         /// btnBiggerMarkup control.
@@ -73,7 +73,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.ImageButton btnBiggerMarkup;
+        protected global::System.Web.UI.WebControls.ImageButton btnBiggerMarkup;
         
         /// <summary>
         /// btnSmallerMarkup control.
@@ -82,7 +82,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.ImageButton btnSmallerMarkup;
+        protected global::System.Web.UI.WebControls.ImageButton btnSmallerMarkup;
         
         /// <summary>
         /// txtMarkup control.
@@ -91,7 +91,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.TextBox txtMarkup;
+        protected global::System.Web.UI.WebControls.TextBox txtMarkup;
         
         /// <summary>
         /// viwVisual control.
@@ -100,7 +100,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.View viwVisual;
+        protected global::System.Web.UI.WebControls.View viwVisual;
         
         /// <summary>
         /// btnBiggerMarkupVisual control.
@@ -109,7 +109,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.ImageButton btnBiggerMarkupVisual;
+        protected global::System.Web.UI.WebControls.ImageButton btnBiggerMarkupVisual;
         
         /// <summary>
         /// btnSmallerMarkupVisual control.
@@ -118,7 +118,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.ImageButton btnSmallerMarkupVisual;
+        protected global::System.Web.UI.WebControls.ImageButton btnSmallerMarkupVisual;
         
         /// <summary>
         /// lblWYSIWYG control.
@@ -127,7 +127,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.TextBox lblWYSIWYG;
+        protected global::System.Web.UI.WebControls.TextBox lblWYSIWYG;
         
         /// <summary>
         /// viwPreview control.
@@ -136,7 +136,7 @@ namespace ScrewTurn.Wiki {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Anthem.View viwPreview;
+        protected global::System.Web.UI.WebControls.View viwPreview;
         
         /// <summary>
         /// lblPreviewWarning control.

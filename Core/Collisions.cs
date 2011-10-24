@@ -20,8 +20,7 @@ namespace ScrewTurn.Wiki {
 		/// </summary>
 		/// <param name="page">The edited Page.</param>
 		/// <param name="user">The User who is editing the Page.</param>
-		public static void RenewEditingSession(PageInfo page, string user) {
-			Cache.Provider.RenewEditingSession(page.FullName, user);
+		public static void RenewEditingSession(PageContent page, string user) {
 		}
 
 		/// <summary>
@@ -29,8 +28,7 @@ namespace ScrewTurn.Wiki {
 		/// </summary>
 		/// <param name="page">The Page.</param>
 		/// <param name="user">The User.</param>
-		public static void CancelEditingSession(PageInfo page, string user) {
-			Cache.Provider.CancelEditingSession(page.FullName, user);
+		public static void CancelEditingSession(PageContent page, string user) {
 		}
 
 		/// <summary>
@@ -39,8 +37,8 @@ namespace ScrewTurn.Wiki {
 		/// <param name="page">The Page.</param>
 		/// <param name="currentUser">The User who is requesting the status of the Page.</param>
 		/// <returns>True if the Page is being edited by another User.</returns>
-		public static bool IsPageBeingEdited(PageInfo page, string currentUser) {
-			return Cache.Provider.IsPageBeingEdited(page.FullName, currentUser);
+		public static bool IsPageBeingEdited(PageContent page, string currentUser) {
+			return false;
 		}
 
 		/// <summary>
@@ -48,8 +46,8 @@ namespace ScrewTurn.Wiki {
 		/// </summary>
 		/// <param name="page">The page.</param>
 		/// <returns>The username.</returns>
-		public static string WhosEditing(PageInfo page) {
-			return Cache.Provider.WhosEditing(page.FullName);
+		public static string WhosEditing(PageContent page) {
+			return "";
 		}
 
 	}

@@ -31,19 +31,19 @@ namespace ScrewTurn.Wiki {
 			// Extract the physical page name, e.g. MainPage, Edit or Category
 			string pageName = Path.GetFileNameWithoutExtension(physicalPath);
 			// Exctract the extension, e.g. .ashx or .aspx
-			string ext = Path.GetExtension(HttpContext.Current.Request.PhysicalPath).ToLowerInvariant();
+			string ext = (Path.GetExtension(HttpContext.Current.Request.PhysicalPath) + "").ToLowerInvariant();
 			// Remove trailing dot, .ashx -> ashx
 			if(ext.Length > 0) ext = ext.Substring(1);
 
 			// IIS7+Integrated Pipeline handles all requests through the ASP.NET engine
 			// All non-interesting files are not processed, such as GIF, CSS, etc.
-			if(ext != "ashx" && ext != "aspx") return;
+			if(ext.Length > 0 && ext != "ashx" && ext != "aspx") return;
 
 			// Extract the current namespace, if any
 			string nspace = GetCurrentNamespace() + "";
 			if(!string.IsNullOrEmpty(nspace)) {
 				// Verify that namespace exists
-				if(Pages.FindNamespace(nspace) == null) HttpContext.Current.Response.Redirect("~/PageNotFound.aspx?Page=" + pageName);
+				if(Pages.FindNamespace(Tools.DetectCurrentWiki(), nspace) == null) HttpContext.Current.Response.Redirect("~/PageNotFound.aspx?Page=" + pageName);
 			}
 			// Trim Namespace. from pageName
 			if(!string.IsNullOrEmpty(nspace)) pageName = pageName.Substring(nspace.Length + 1);
@@ -117,9 +117,10 @@ namespace ScrewTurn.Wiki {
 		/// <summary>
 		/// Builds a URL properly prepending the namespace to the URL.
 		/// </summary>
+		/// <param name="wiki">The wiki.</param>
 		/// <param name="chunks">The chunks used to build the URL.</param>
 		/// <returns>The complete URL.</returns>
-		public static string BuildUrl(params string[] chunks) {
+		public static string BuildUrl(string wiki, params string[] chunks) {
 			if(chunks == null) throw new ArgumentNullException("chunks");
 			if(chunks.Length == 0) return ""; // Shortcut
 
@@ -142,11 +143,11 @@ namespace ScrewTurn.Wiki {
 				if(nspace == null) nspace = GetCurrentNamespace();
 			}
 			if(string.IsNullOrEmpty(nspace)) nspace = null;
-			else nspace = Pages.FindNamespace(nspace).Name;
+			else nspace = Pages.FindNamespace(wiki, nspace).Name;
 
 			if(nspace != null) {
 				string tempStringLower = tempString.ToLowerInvariant();
-				if((tempStringLower.Contains(".ashx") || tempStringLower.Contains(".aspx")) && !tempString.StartsWith(Tools.UrlEncode(nspace) + ".")) temp.Insert(0, nspace + ".");
+				if((tempStringLower.Contains(GlobalSettings.PageExtension) || tempStringLower.Contains(".aspx")) && !tempString.StartsWith(Tools.UrlEncode(nspace) + ".")) temp.Insert(0, nspace + ".");
 			}
 
 			return temp.ToString();
@@ -155,19 +156,21 @@ namespace ScrewTurn.Wiki {
 		/// <summary>
 		/// Builds a URL properly appendind the <b>NS</b> parameter if appropriate.
 		/// </summary>
+		/// <param name="wiki">The wiki.</param>
 		/// <param name="destination">The destination <see cref="T:StringBuilder"/>.</param>
 		/// <param name="chunks">The chunks to append.</param>
-		public static void BuildUrl(StringBuilder destination, params string[] chunks) {
+		public static void BuildUrl(string wiki, StringBuilder destination, params string[] chunks) {
 			if(destination == null) throw new ArgumentNullException("destination");
 
-			destination.Append(BuildUrl(chunks));
+			destination.Append(BuildUrl(wiki, chunks));
 		}
 
 		/// <summary>
-		/// Redirects to the default page of the current namespace.
+		/// Redirects to the default page of the current namespace and wiki.
 		/// </summary>
-		public static void RedirectHome() {
-			Redirect(BuildUrl(Settings.DefaultPage, Settings.PageExtension));
+		/// <param name="wiki">The wiki.</param>
+		public static void RedirectHome(string wiki) {
+			Redirect(BuildUrl(wiki, Settings.GetDefaultPage(wiki), GlobalSettings.PageExtension));
 		}
 
 	}

@@ -18,7 +18,8 @@ namespace ScrewTurn.Wiki {
 
 	public partial class FileManager : System.Web.UI.UserControl {
 
-		private IFilesStorageProviderV30 provider = null;
+		private IFilesStorageProviderV40 provider = null;
+		private string currentWiki = null;
 
 		bool canList = false;
 		bool canDownload = false;
@@ -30,6 +31,7 @@ namespace ScrewTurn.Wiki {
 		bool isAdmin = false;
 
 		protected void Page_Load(object sender, EventArgs e) {
+			currentWiki = Tools.DetectCurrentWiki();
 
 			if(!Page.IsPostBack) {
 				permissionsManager.CurrentResourceName = "/";
@@ -45,9 +47,9 @@ namespace ScrewTurn.Wiki {
 				lblStrings.Text = sb.ToString();
 
 				// Setup upload information (max file size, allowed file types)
-				lblUploadFilesInfo.Text = lblUploadFilesInfo.Text.Replace("$1", Tools.BytesToString(Settings.MaxFileSize * 1024));
+				lblUploadFilesInfo.Text = lblUploadFilesInfo.Text.Replace("$1", Tools.BytesToString(GlobalSettings.MaxFileSize * 1024));
 				sb = new StringBuilder();
-				string[] aft = Settings.AllowedFileTypes;
+				string[] aft = Settings.GetAllowedFileTypes(currentWiki);
 				for(int i = 0; i < aft.Length; i++) {
 					sb.Append(aft[i].ToUpper());
 					if(i != aft.Length - 1) sb.Append(", ");
@@ -68,7 +70,7 @@ namespace ScrewTurn.Wiki {
 			}
 
 			// Set provider
-			provider = Collectors.FilesProviderCollector.GetProvider(lstProviders.SelectedValue);
+			provider = Collectors.CollectorsBox.FilesProviderCollector.GetProvider(lstProviders.SelectedValue, currentWiki);
 
 			// The following actions are verified ***FOR THE CURRENT DIRECTORY***:
 			// - List contents
@@ -97,9 +99,9 @@ namespace ScrewTurn.Wiki {
 		/// </summary>
 		private void LoadProviders() {
 			lstProviders.Items.Clear();
-			foreach(IFilesStorageProviderV30 prov in Collectors.FilesProviderCollector.AllProviders) {
+			foreach(IFilesStorageProviderV40 prov in Collectors.CollectorsBox.FilesProviderCollector.GetAllProviders(currentWiki)) {
 				ListItem item = new ListItem(prov.Information.Name, prov.GetType().FullName);
-				if(item.Value == Settings.DefaultFilesProvider) {
+				if(item.Value == GlobalSettings.DefaultFilesProvider) {
 					item.Selected = true;
 				}
 				lstProviders.Items.Add(item);
@@ -111,16 +113,18 @@ namespace ScrewTurn.Wiki {
 		/// </summary>
 		private void DetectPermissions() {
 			string currentUser = SessionFacade.GetCurrentUsername();
-			string[] currentGroups = SessionFacade.GetCurrentGroupNames();
+			string[] currentGroups = SessionFacade.GetCurrentGroupNames(currentWiki);
 
-			canList = AuthChecker.CheckActionForDirectory(provider, CurrentDirectory, Actions.ForDirectories.List, currentUser, currentGroups);
-			canDownload = AuthChecker.CheckActionForDirectory(provider, CurrentDirectory, Actions.ForDirectories.DownloadFiles, currentUser, currentGroups);
-			canUpload = AuthChecker.CheckActionForDirectory(provider, CurrentDirectory, Actions.ForDirectories.UploadFiles, currentUser, currentGroups);
-			canCreateDirs = AuthChecker.CheckActionForDirectory(provider, CurrentDirectory, Actions.ForDirectories.CreateDirectories, currentUser, currentGroups);
-			canDeleteFiles = AuthChecker.CheckActionForDirectory(provider, CurrentDirectory, Actions.ForDirectories.DeleteFiles, currentUser, currentGroups);
-			canDeleteDirs = AuthChecker.CheckActionForDirectory(provider, CurrentDirectory, Actions.ForDirectories.DeleteDirectories, currentUser, currentGroups);
-			canSetPerms = AuthChecker.CheckActionForGlobals(Actions.ForGlobals.ManagePermissions, currentUser, currentGroups);
-			isAdmin = Array.Find(currentGroups, delegate(string g) { return g == Settings.AdministratorsGroup; }) != null;
+			AuthChecker authChecker = new AuthChecker(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
+
+			canList = authChecker.CheckActionForDirectory(provider, CurrentDirectory, Actions.ForDirectories.List, currentUser, currentGroups);
+			canDownload = authChecker.CheckActionForDirectory(provider, CurrentDirectory, Actions.ForDirectories.DownloadFiles, currentUser, currentGroups);
+			canUpload = authChecker.CheckActionForDirectory(provider, CurrentDirectory, Actions.ForDirectories.UploadFiles, currentUser, currentGroups);
+			canCreateDirs = authChecker.CheckActionForDirectory(provider, CurrentDirectory, Actions.ForDirectories.CreateDirectories, currentUser, currentGroups);
+			canDeleteFiles = authChecker.CheckActionForDirectory(provider, CurrentDirectory, Actions.ForDirectories.DeleteFiles, currentUser, currentGroups);
+			canDeleteDirs = authChecker.CheckActionForDirectory(provider, CurrentDirectory, Actions.ForDirectories.DeleteDirectories, currentUser, currentGroups);
+			canSetPerms = authChecker.CheckActionForGlobals(Actions.ForGlobals.ManagePermissions, currentUser, currentGroups);
+			isAdmin = Array.Find(currentGroups, delegate(string g) { return g == Settings.GetAdministratorsGroup(currentWiki); }) != null;
 		}
 
 		/// <summary>
@@ -150,7 +154,6 @@ namespace ScrewTurn.Wiki {
 			table.Columns.Add("Link");
 			table.Columns.Add("Editable", typeof(bool));
 			table.Columns.Add("FullPath");
-			table.Columns.Add("Downloads");
 			table.Columns.Add("CanDelete", typeof(bool));
 			table.Columns.Add("CanDownload", typeof(bool));
 
@@ -166,10 +169,12 @@ namespace ScrewTurn.Wiki {
 			string[] dirs = provider.ListDirectories(currDir);
 
 			string currentUser = SessionFacade.GetCurrentUsername();
-			string[] currentGroups = SessionFacade.GetCurrentGroupNames();
+			string[] currentGroups = SessionFacade.GetCurrentGroupNames(currentWiki);
+
+			AuthChecker authChecker = new AuthChecker(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
 
 			foreach(string s in dirs) {
-				bool canListThisSubDir = AuthChecker.CheckActionForDirectory(provider, s, Actions.ForDirectories.List, currentUser, currentGroups);
+				bool canListThisSubDir = authChecker.CheckActionForDirectory(provider, s, Actions.ForDirectories.List, currentUser, currentGroups);
 
 				DataRow row = table.NewRow();
 				row["Type"] = "D";
@@ -179,7 +184,6 @@ namespace ScrewTurn.Wiki {
 				row["Link"] = "";
 				row["Editable"] = false;
 				row["FullPath"] = s;
-				row["Downloads"] = "&nbsp;";
 				row["CanDelete"] = canDeleteDirs;
 				row["CanDownload"] = canListThisSubDir;
 				table.Rows.Add(row);
@@ -204,7 +208,6 @@ namespace ScrewTurn.Wiki {
 				}
 				row["Editable"] = canUpload && canDeleteFiles && (ext == ".jpg" || ext == ".jpeg" || ext == ".png");
 				row["FullPath"] = s;
-				row["Downloads"] = details.RetrievalCount.ToString();
 				row["CanDelete"] = canDeleteFiles;
 				row["CanDownload"] = canDownload;
 				table.Rows.Add(row);
@@ -225,7 +228,8 @@ namespace ScrewTurn.Wiki {
 				DeletePermissions(sub);
 			}
 
-			AuthWriter.ClearEntriesForDirectory(provider, directory);
+			AuthWriter authWriter = new AuthWriter(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
+			authWriter.ClearEntriesForDirectory(provider, directory);
 		}
 
 		protected void rptItems_ItemCommand(object sender, RepeaterCommandEventArgs e) {
@@ -255,7 +259,7 @@ namespace ScrewTurn.Wiki {
 							bool d = provider.DeleteDirectory(item);
 
 							if(d) {
-								Host.Instance.OnDirectoryActivity(provider.GetType().FullName,
+								Host.Instance.OnDirectoryActivity(currentWiki, provider.GetType().FullName,
 									item, null, FileActivity.DirectoryDeleted);
 							}
 						}
@@ -266,8 +270,11 @@ namespace ScrewTurn.Wiki {
 							bool d = provider.DeleteFile(item);
 
 							if(d) {
-								Host.Instance.OnFileActivity(provider.GetType().FullName,
+								Host.Instance.OnFileActivity(currentWiki, provider.GetType().FullName,
 									item, null, FileActivity.FileDeleted);
+
+								// Unindex file content
+								SearchClass.UnindexFile(provider.GetType().FullName + "|" + item, currentWiki);
 							}
 						}
 					}
@@ -290,7 +297,7 @@ namespace ScrewTurn.Wiki {
 
 			LoadProviders();
 
-			IFilesStorageProviderV30 realProvider = Collectors.FilesProviderCollector.GetProvider(provider);
+			IFilesStorageProviderV40 realProvider = Collectors.CollectorsBox.FilesProviderCollector.GetProvider(provider, currentWiki);
 			if(realProvider == null) return;
 			this.provider = realProvider;
 
@@ -302,8 +309,10 @@ namespace ScrewTurn.Wiki {
 				return;
 			}
 
-			bool canListThisSubDir = AuthChecker.CheckActionForDirectory(realProvider, directory, Actions.ForDirectories.List,
-				SessionFacade.GetCurrentUsername(), SessionFacade.GetCurrentGroupNames());
+			AuthChecker authChecker = new AuthChecker(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
+
+			bool canListThisSubDir = authChecker.CheckActionForDirectory(realProvider, directory, Actions.ForDirectories.List,
+				SessionFacade.GetCurrentUsername(), SessionFacade.GetCurrentGroupNames(currentWiki));
 			if(!canListThisSubDir) {
 				return;
 			}
@@ -338,8 +347,11 @@ namespace ScrewTurn.Wiki {
 		/// <param name="name">The name of the current directory.</param>
 		private void EnterDirectory(string name) {
 			string newDirectory = CurrentDirectory + name + "/";
-			bool canListThisSubDir = AuthChecker.CheckActionForDirectory(provider, newDirectory, Actions.ForDirectories.List,
-				SessionFacade.GetCurrentUsername(), SessionFacade.GetCurrentGroupNames());
+
+			AuthChecker authChecker = new AuthChecker(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
+
+			bool canListThisSubDir = authChecker.CheckActionForDirectory(provider, newDirectory, Actions.ForDirectories.List,
+				SessionFacade.GetCurrentUsername(), SessionFacade.GetCurrentGroupNames(currentWiki));
 			if(!canListThisSubDir) {
 				return;
 			}
@@ -382,7 +394,7 @@ namespace ScrewTurn.Wiki {
 		}
 
 		private void linkButton_Click(object sender, EventArgs e) {
-			Anthem.LinkButton lnk = sender as Anthem.LinkButton;
+			System.Web.UI.WebControls.LinkButton lnk = sender as System.Web.UI.WebControls.LinkButton;
 			if(lnk != null) {
 				CurrentDirectory = lnk.CommandArgument;
 
@@ -405,7 +417,7 @@ namespace ScrewTurn.Wiki {
 			// Add a LinkButton and a "/" label for each directory
 			string current = "/";
 			for(int i = 0; i < dirs.Length; i++) {
-				Anthem.LinkButton lnk = new Anthem.LinkButton();
+				System.Web.UI.WebControls.LinkButton lnk = new System.Web.UI.WebControls.LinkButton();
 				lnk.ID = "lnkDir" + i.ToString();
 				lnk.Text = dirs[i];
 				current += dirs[i] + "/";
@@ -414,7 +426,7 @@ namespace ScrewTurn.Wiki {
 				lnk.Click += new EventHandler(linkButton_Click);
 				plhDirectory.Controls.Add(lnk);
 
-				Anthem.Label lbl = new Anthem.Label();
+				System.Web.UI.WebControls.Label lbl = new System.Web.UI.WebControls.Label();
 				lbl.ID = "lblDir" + i.ToString();
 				lbl.Text = " / ";
 				plhDirectory.Controls.Add(lbl);
@@ -454,9 +466,9 @@ namespace ScrewTurn.Wiki {
 				string subNew = newDirectory + sub.Substring(oldDirectory.Length);
 				MovePermissions(sub, subNew);
 			}
-
-			AuthWriter.ClearEntriesForDirectory(provider, newDirectory);
-			AuthWriter.ProcessDirectoryRenaming(provider, oldDirectory, newDirectory);
+			AuthWriter authWriter = new AuthWriter(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
+			authWriter.ClearEntriesForDirectory(provider, newDirectory);
+			authWriter.ProcessDirectoryRenaming(provider, oldDirectory, newDirectory);
 		}
 
 		protected void btnRename_Click(object sender, EventArgs e) {
@@ -472,7 +484,7 @@ namespace ScrewTurn.Wiki {
 					done = provider.RenameDirectory(CurrentDirectory + lblItem.Text, CurrentDirectory + txtNewName.Text);
 
 					if(done) {
-						Host.Instance.OnDirectoryActivity(provider.GetType().FullName,
+						Host.Instance.OnDirectoryActivity(currentWiki, provider.GetType().FullName,
 							CurrentDirectory + txtNewName.Text, CurrentDirectory + lblItem.Text, FileActivity.DirectoryRenamed);
 					}
 				}
@@ -498,8 +510,10 @@ namespace ScrewTurn.Wiki {
 						done = provider.RenameFile(CurrentDirectory + lblItem.Text, CurrentDirectory + txtNewName.Text);
 
 						if(done) {
-							Host.Instance.OnFileActivity(provider.GetType().FullName,
+							Host.Instance.OnFileActivity(currentWiki, provider.GetType().FullName,
 								CurrentDirectory + txtNewName.Text, CurrentDirectory + lblItem.Text, FileActivity.FileRenamed);
+
+							SearchClass.RenameFile(currentWiki, provider.GetType().FullName + "|" + CurrentDirectory + lblItem.Text, provider.GetType().FullName + "|" + CurrentDirectory + txtNewName.Text);
 						}
 					}
 				}
@@ -529,8 +543,14 @@ namespace ScrewTurn.Wiki {
 
 				lblNewDirectoryResult.Text = "";
 				txtNewDirectoryName.Text = txtNewDirectoryName.Text.Trim('/');
-				AuthWriter.ClearEntriesForDirectory(provider, CurrentDirectory + txtNewDirectoryName.Text + "/");
-				bool done = provider.CreateDirectory(CurrentDirectory, txtNewDirectoryName.Text);
+				AuthWriter authWriter = new AuthWriter(Collectors.CollectorsBox.GetSettingsProvider(currentWiki));
+				authWriter.ClearEntriesForDirectory(provider, CurrentDirectory + txtNewDirectoryName.Text + "/");
+				bool done = false;
+				try {
+					done = provider.CreateDirectory(CurrentDirectory, txtNewDirectoryName.Text);
+				}
+				catch(ArgumentNullException) { }
+				catch(ArgumentException) { }
 				if(!done) {
 					lblNewDirectoryResult.CssClass = "resulterror";
 					lblNewDirectoryResult.Text = Properties.Messages.CannotCreateNewDirectory;
@@ -538,7 +558,7 @@ namespace ScrewTurn.Wiki {
 				else {
 					txtNewDirectoryName.Text = "";
 
-					Host.Instance.OnDirectoryActivity(provider.GetType().FullName,
+					Host.Instance.OnDirectoryActivity(currentWiki, provider.GetType().FullName,
 						CurrentDirectory + txtNewDirectoryName.Text + "/", null, FileActivity.DirectoryCreated);
 				}
 				rptItems.DataBind();
@@ -549,13 +569,13 @@ namespace ScrewTurn.Wiki {
 			if(canUpload && (chkOverwrite.Checked && canDeleteFiles || !chkOverwrite.Checked)) {
 				lblUploadResult.Text = "";
 				if(fileUpload.HasFile) {
-					if(fileUpload.FileBytes.Length > Settings.MaxFileSize * 1024) {
+					if(fileUpload.FileBytes.Length > GlobalSettings.MaxFileSize * 1024) {
 						lblUploadResult.Text = Properties.Messages.FileTooBig;
 						lblUploadResult.CssClass = "resulterror";
 					}
 					else {
 						// Check file extension
-						string[] aft = Settings.AllowedFileTypes;
+						string[] aft = Settings.GetAllowedFileTypes(currentWiki);
 						bool allowed = false;
 
 						if(aft.Length > 0 && aft[0] == "*") allowed = true;
@@ -583,8 +603,23 @@ namespace ScrewTurn.Wiki {
 								lblUploadResult.CssClass = "resulterror";
 							}
 							else {
-								Host.Instance.OnFileActivity(provider.GetType().FullName,
+								Host.Instance.OnFileActivity(currentWiki, provider.GetType().FullName,
 									CurrentDirectory + fileUpload.FileName, null, FileActivity.FileUploaded);
+
+								// If overwrite remove old indexed document
+								if(chkOverwrite.Checked) {
+									SearchClass.UnindexFile(provider.GetType().FullName + "|" + CurrentDirectory + fileUpload.FileName, currentWiki);
+								}
+
+								// Index the attached file
+								string tempDir = Path.Combine(Environment.GetEnvironmentVariable("TEMP"), Guid.NewGuid().ToString());
+								if(!Directory.Exists(tempDir)) Directory.CreateDirectory(tempDir);
+								string tempFile = Path.Combine(tempDir, fileUpload.FileName);
+								using(FileStream writer = File.Create(tempFile)) {
+									writer.Write(fileUpload.FileBytes, 0, fileUpload.FileBytes.Length);
+								}
+								SearchClass.IndexFile(provider.GetType().FullName + "|" + CurrentDirectory + fileUpload.FileName, tempFile, currentWiki);
+								Directory.Delete(tempDir, true);
 							}
 							rptItems.DataBind();
 						}
@@ -598,7 +633,7 @@ namespace ScrewTurn.Wiki {
 		}
 
 		protected void lstProviders_SelectedIndexChanged(object sender, EventArgs e) {
-			provider = Collectors.FilesProviderCollector.GetProvider(lstProviders.SelectedValue);
+			provider = Collectors.CollectorsBox.FilesProviderCollector.GetProvider(lstProviders.SelectedValue, currentWiki);
 			GoToRoot();
 		}
 

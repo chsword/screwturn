@@ -7,9 +7,44 @@ using ScrewTurn.Wiki.PluginFramework;
 namespace ScrewTurn.Wiki {
 
 	/// <summary>
-	/// Contains instances of the Providers Collectors.
+	/// Contains private instances of the Providers Collectors accessible through the CollectorsBox ThreadStatic property.
 	/// </summary>
 	public static class Collectors {
+
+		[ThreadStatic]
+		private static ICollectorsBox collectorsBox;
+
+		/// <summary>
+		/// <c>true</c> if the collectorsBox has been instantiated
+		/// </summary>
+		[ThreadStatic]
+		public static bool CollectorsBoxUsed = false;
+
+		/// <summary>
+		/// Gets the collectors box.
+		/// </summary>
+		public static ICollectorsBox CollectorsBox {
+			get {
+				if(collectorsBox == null) {
+					collectorsBox = new CollectorsBox(_globalSettingsProvider,
+													  _globalSettingsProviderAssembly,
+													  _settingsProvider,
+													  _settingsProviderAssembly,
+													  _indexDirectoryProvider,
+													  _indexDirectoryProviderAssembly,
+													  _usersProviderCollector.Clone(),
+													  _themeProviderCollector.Clone(),
+													  _pagesProviderCollector.Clone(),
+													  _filesProviderCollector.Clone(),
+													  _formatterProviderCollector.Clone());
+					CollectorsBoxUsed = true;
+				}
+				return collectorsBox;
+			}
+			set {
+				collectorsBox = value;
+			}
+		}
 
 		// The following static instances are "almost" thread-safe because they are set at startup and never changed
 		// The ProviderCollector generic class is fully thread-safe
@@ -20,247 +55,178 @@ namespace ScrewTurn.Wiki {
 		public static Dictionary<string, string> FileNames;
 
 		/// <summary>
+		/// Contains the configuration strings of each storage provider.
+		/// </summary>
+		private static Dictionary<string, string> StorageProvidersConfigurations;
+		
+		/// <summary>
 		/// The settings storage provider.
 		/// </summary>
-		public static ISettingsStorageProviderV30 SettingsProvider;
+		private static Type _settingsProvider;
 
+		/// <summary>
+		/// The settings storage provider assembly.
+		/// </summary>
+		private static System.Reflection.Assembly _settingsProviderAssembly;
+
+		/// <summary>
+		/// The index Directory provider.
+		/// </summary>
+		private static Type _indexDirectoryProvider;
+
+		/// <summary>
+		/// The index Directory provider assembly.
+		/// </summary>
+		private static System.Reflection.Assembly _indexDirectoryProviderAssembly;
+
+		/// <summary>
+		/// The global settings storage provider.
+		/// </summary>
+		private static Type _globalSettingsProvider;
+
+		/// <summary>
+		/// The global settings storage provider assembly.
+		/// </summary>
+		private static System.Reflection.Assembly _globalSettingsProviderAssembly;
+		
 		/// <summary>
 		/// The Users Provider Collector instance.
 		/// </summary>
-		public static ProviderCollector<IUsersStorageProviderV30> UsersProviderCollector;
+		private static ProviderCollector<IUsersStorageProviderV40> _usersProviderCollector;
+
+		/// <summary>
+		/// The Theme Provider Collector istance.
+		/// </summary>
+		private static ProviderCollector<IThemesStorageProviderV40> _themeProviderCollector;
 
 		/// <summary>
 		/// The Pages Provider Collector instance.
 		/// </summary>
-		public static ProviderCollector<IPagesStorageProviderV30> PagesProviderCollector;
+		private static ProviderCollector<IPagesStorageProviderV40> _pagesProviderCollector;
 
 		/// <summary>
 		/// The Files Provider Collector instance.
 		/// </summary>
-		public static ProviderCollector<IFilesStorageProviderV30> FilesProviderCollector;
+		private static ProviderCollector<IFilesStorageProviderV40> _filesProviderCollector;
 
 		/// <summary>
 		/// The Formatter Provider Collector instance.
 		/// </summary>
-		public static ProviderCollector<IFormatterProviderV30> FormatterProviderCollector;
+		private static ProviderCollector<IFormatterProviderV40> _formatterProviderCollector;
+
 
 		/// <summary>
-		/// The Cache Provider Collector instance.
+		/// Initializes the collectors.
 		/// </summary>
-		public static ProviderCollector<ICacheProviderV30> CacheProviderCollector;
-
-		/// <summary>
-		/// The Disabled Users Provider Collector instance.
-		/// </summary>
-		public static ProviderCollector<IUsersStorageProviderV30> DisabledUsersProviderCollector;
-
-		/// <summary>
-		/// The Disabled Files Provider Collector instance.
-		/// </summary>
-		public static ProviderCollector<IFilesStorageProviderV30> DisabledFilesProviderCollector;
-
-		/// <summary>
-		/// The Disabled Pages Provider Collector instance.
-		/// </summary>
-		public static ProviderCollector<IPagesStorageProviderV30> DisabledPagesProviderCollector;
-
-		/// <summary>
-		/// The Disabled Formatter Provider Collector instance.
-		/// </summary>
-		public static ProviderCollector<IFormatterProviderV30> DisabledFormatterProviderCollector;
-
-		/// <summary>
-		/// The Disabled Cache Provider Collector instance.
-		/// </summary>
-		public static ProviderCollector<ICacheProviderV30> DisabledCacheProviderCollector;
-
-		/// <summary>
-		/// Finds a provider.
-		/// </summary>
-		/// <param name="typeName">The provider type name.</param>
-		/// <param name="enabled">A value indicating whether the provider is enabled.</param>
-		/// <param name="canDisable">A value indicating whether the provider can be disabled.</param>
-		/// <returns>The provider, or <c>null</c>.</returns>
-		public static IProviderV30 FindProvider(string typeName, out bool enabled, out bool canDisable) {
-			enabled = true;
-			canDisable = true;
-			IProviderV30 prov = null;
-
-			prov = PagesProviderCollector.GetProvider(typeName);
-			canDisable = typeName != Settings.DefaultPagesProvider;
-			if(prov == null) {
-				prov = DisabledPagesProviderCollector.GetProvider(typeName);
-				if(prov != null) enabled = false;
-			}
-			if(prov != null) return prov;
-
-			prov = UsersProviderCollector.GetProvider(typeName);
-			canDisable = typeName != Settings.DefaultUsersProvider;
-			if(prov == null) {
-				prov = DisabledUsersProviderCollector.GetProvider(typeName);
-				if(prov != null) enabled = false;
-			}
-			if(prov != null) return prov;
-
-			prov = FilesProviderCollector.GetProvider(typeName);
-			canDisable = typeName != Settings.DefaultFilesProvider;
-			if(prov == null) {
-				prov = DisabledFilesProviderCollector.GetProvider(typeName);
-				if(prov != null) enabled = false;
-			}
-			if(prov != null) return prov;
-
-			prov = CacheProviderCollector.GetProvider(typeName);
-			canDisable = typeName != Settings.DefaultCacheProvider;
-			if(prov == null) {
-				prov = DisabledCacheProviderCollector.GetProvider(typeName);
-				if(prov != null) enabled = false;
-			}
-			if(prov != null) return prov;
-
-			prov = FormatterProviderCollector.GetProvider(typeName);
-			if(prov == null) {
-				prov = DisabledFormatterProviderCollector.GetProvider(typeName);
-				if(prov != null) enabled = false;
-			}
-			if(prov != null) return prov;
-			
-			return null;
+		public static void InitCollectors() {
+			StorageProvidersConfigurations = new Dictionary<string, string>();
+			_usersProviderCollector = new ProviderCollector<IUsersStorageProviderV40>();
+			_pagesProviderCollector = new ProviderCollector<IPagesStorageProviderV40>();
+			_filesProviderCollector = new ProviderCollector<IFilesStorageProviderV40>();
+			_themeProviderCollector = new ProviderCollector<IThemesStorageProviderV40>();
+			_formatterProviderCollector = new ProviderCollector<IFormatterProviderV40>();
 		}
-
+		
 		/// <summary>
 		/// Tries to unload a provider.
 		/// </summary>
 		/// <param name="typeName">The provider.</param>
-		public static void TryUnload(string typeName) {
-			bool enabled, canDisable;
-			IProviderV30 prov = FindProvider(typeName, out enabled, out canDisable);
-
-			PagesProviderCollector.RemoveProvider(prov as IPagesStorageProviderV30);
-			DisabledPagesProviderCollector.RemoveProvider(prov as IPagesStorageProviderV30);
-
-			UsersProviderCollector.RemoveProvider(prov as IUsersStorageProviderV30);
-			DisabledUsersProviderCollector.RemoveProvider(prov as IUsersStorageProviderV30);
-
-			FilesProviderCollector.RemoveProvider(prov as IFilesStorageProviderV30);
-			DisabledFilesProviderCollector.RemoveProvider(prov as IFilesStorageProviderV30);
-
-			CacheProviderCollector.RemoveProvider(prov as ICacheProviderV30);
-			DisabledCacheProviderCollector.RemoveProvider(prov as ICacheProviderV30);
-
-			FormatterProviderCollector.RemoveProvider(prov as IFormatterProviderV30);
-			DisabledFormatterProviderCollector.RemoveProvider(prov as IFormatterProviderV30);
+		public static void TryUnloadPlugin(string typeName) {
+			_formatterProviderCollector.RemoveProvider(typeName);
+			collectorsBox = null;
 		}
 
 		/// <summary>
-		/// Tries to disable a provider.
+		/// Adds the given provider to the appropriate collector.
 		/// </summary>
-		/// <param name="typeName">The provider.</param>
-		public static void TryDisable(string typeName) {
-			IProviderV30 prov = null;
-
-			prov = PagesProviderCollector.GetProvider(typeName);
-			if(prov != null) {
-				DisabledPagesProviderCollector.AddProvider((IPagesStorageProviderV30)prov);
-				PagesProviderCollector.RemoveProvider((IPagesStorageProviderV30)prov);
-				return;
+		/// <param name="provider">The provider.</param>
+		/// <param name="assembly">The provider assembly.</param>
+		/// <param name="configuration">The provider configuration.</param>
+		/// <param name="providerInterface">The provider interface.</param>
+		public static void AddProvider(Type provider, System.Reflection.Assembly assembly, string configuration, Type providerInterface) {
+			collectorsBox = null;
+			if(providerInterface.FullName == typeof(ISettingsStorageProviderV40).FullName) {
+				StorageProvidersConfigurations.Add(provider.FullName, configuration);
+				_settingsProvider = provider;
+				_settingsProviderAssembly = assembly;
 			}
-
-			prov = UsersProviderCollector.GetProvider(typeName);
-			if(prov != null) {
-				DisabledUsersProviderCollector.AddProvider((IUsersStorageProviderV30)prov);
-				UsersProviderCollector.RemoveProvider((IUsersStorageProviderV30)prov);
-				return;
+			else if(providerInterface.FullName == typeof(IIndexDirectoryProviderV40).FullName) {
+				StorageProvidersConfigurations.Add(provider.FullName, configuration);
+				_indexDirectoryProvider = provider;
+				_indexDirectoryProviderAssembly = assembly;
 			}
-
-			prov = FilesProviderCollector.GetProvider(typeName);
-			if(prov != null) {
-				DisabledFilesProviderCollector.AddProvider((IFilesStorageProviderV30)prov);
-				FilesProviderCollector.RemoveProvider((IFilesStorageProviderV30)prov);
-				return;
+			else if(providerInterface.FullName == typeof(IPagesStorageProviderV40).FullName) {
+				StorageProvidersConfigurations.Add(provider.FullName, configuration);
+				_pagesProviderCollector.AddProvider(provider, assembly);
 			}
-
-			prov = CacheProviderCollector.GetProvider(typeName);
-			if(prov != null) {
-				DisabledCacheProviderCollector.AddProvider((ICacheProviderV30)prov);
-				CacheProviderCollector.RemoveProvider((ICacheProviderV30)prov);
-				return;
+			else if(providerInterface.FullName == typeof(IThemesStorageProviderV40).FullName) {
+				StorageProvidersConfigurations.Add(provider.FullName, configuration);
+				_themeProviderCollector.AddProvider(provider, assembly);
 			}
-
-			prov = FormatterProviderCollector.GetProvider(typeName);
-			if(prov != null) {
-				DisabledFormatterProviderCollector.AddProvider((IFormatterProviderV30)prov);
-				FormatterProviderCollector.RemoveProvider((IFormatterProviderV30)prov);
-				return;
+			else if(providerInterface.FullName == typeof(IUsersStorageProviderV40).FullName) {
+				StorageProvidersConfigurations.Add(provider.FullName, configuration);
+				_usersProviderCollector.AddProvider(provider, assembly);
+			}
+			else if(providerInterface.FullName == typeof(IFilesStorageProviderV40).FullName) {
+				StorageProvidersConfigurations.Add(provider.FullName, configuration);
+				_filesProviderCollector.AddProvider(provider, assembly);
+			}
+			else {
+				throw new Exception("The provider with the given interface (" + providerInterface.FullName + ") could not be added to a colletor.");
 			}
 		}
 
 		/// <summary>
-		/// Tries to enable a provider.
+		/// Adds the gine plugin (formatter provider) to the appropriate collector..
 		/// </summary>
-		/// <param name="typeName">The provider.</param>
-		public static void TryEnable(string typeName) {
-			IProviderV30 prov = null;
-
-			prov = DisabledPagesProviderCollector.GetProvider(typeName);
-			if(prov != null) {
-				PagesProviderCollector.AddProvider((IPagesStorageProviderV30)prov);
-				DisabledPagesProviderCollector.RemoveProvider((IPagesStorageProviderV30)prov);
-				return;
-			}
-
-			prov = DisabledUsersProviderCollector.GetProvider(typeName);
-			if(prov != null) {
-				UsersProviderCollector.AddProvider((IUsersStorageProviderV30)prov);
-				DisabledUsersProviderCollector.RemoveProvider((IUsersStorageProviderV30)prov);
-				return;
-			}
-
-			prov = DisabledFilesProviderCollector.GetProvider(typeName);
-			if(prov != null) {
-				FilesProviderCollector.AddProvider((IFilesStorageProviderV30)prov);
-				DisabledFilesProviderCollector.RemoveProvider((IFilesStorageProviderV30)prov);
-				return;
-			}
-
-			prov = DisabledCacheProviderCollector.GetProvider(typeName);
-			if(prov != null) {
-				CacheProviderCollector.AddProvider((ICacheProviderV30)prov);
-				DisabledCacheProviderCollector.RemoveProvider((ICacheProviderV30)prov);
-				return;
-			}
-
-			prov = DisabledFormatterProviderCollector.GetProvider(typeName);
-			if(prov != null) {
-				FormatterProviderCollector.AddProvider((IFormatterProviderV30)prov);
-				DisabledFormatterProviderCollector.RemoveProvider((IFormatterProviderV30)prov);
-				return;
-			}
+		/// <param name="plugin">The plugin.</param>
+		/// <param name="assembly">The assembly.</param>
+		public static void AddPlugin(Type plugin, System.Reflection.Assembly assembly) {
+			_formatterProviderCollector.AddProvider(plugin, assembly);
+			FileNames[plugin.GetType().FullName] = assembly.FullName;
+			collectorsBox = null;
 		}
 
 		/// <summary>
-		/// Gets the names of all known providers, both enabled and disabled.
+		/// Set the global settings storage provider.
 		/// </summary>
-		/// <returns>The names of the known providers.</returns>
-		public static string[] GetAllProviders() {
-			List<string> result = new List<string>(20);
+		/// <param name="provider">The provider.</param>
+		/// <param name="assembly">The provider assembly.</param>
+		public static void AddGlobalSettingsStorageProvider(Type provider, System.Reflection.Assembly assembly) {
+			collectorsBox = null;
+			_globalSettingsProvider = provider;
+			_globalSettingsProviderAssembly = assembly;
+		}
 
-			foreach(IProviderV30 prov in PagesProviderCollector.AllProviders) result.Add(prov.GetType().FullName);
-			foreach(IProviderV30 prov in DisabledPagesProviderCollector.AllProviders) result.Add(prov.GetType().FullName);
+		/// <summary>
+		/// Gets the storage provider configuration.
+		/// </summary>
+		/// <param name="typeName">The Type Name of the Storage Provider.</param>
+		/// <returns>The configuration string.</returns>
+		public static string GetStorageProviderConfiguration(string typeName) {
+			string configuration;
+	  		if(StorageProvidersConfigurations.TryGetValue(typeName, out configuration)) return configuration;
+			return "";
+		}
 
-			foreach(IProviderV30 prov in UsersProviderCollector.AllProviders) result.Add(prov.GetType().FullName);
-			foreach(IProviderV30 prov in DisabledUsersProviderCollector.AllProviders) result.Add(prov.GetType().FullName);
+		/// <summary>
+		/// Finds a provider.
+		/// </summary>
+		/// <param name="wiki">The wiki.</param>
+		/// <param name="typeName">The provider type name.</param>
+		/// <param name="enabled">A value indicating whether the provider is enabled.</param>
+		/// <returns>The provider, or <c>null</c>.</returns>
+		public static IProviderV40 FindProvider(string wiki, string typeName, out bool enabled) {
+			enabled = false;
+			IProviderV40 prov = null;
 
-			foreach(IProviderV30 prov in FilesProviderCollector.AllProviders) result.Add(prov.GetType().FullName);
-			foreach(IProviderV30 prov in DisabledFilesProviderCollector.AllProviders) result.Add(prov.GetType().FullName);
+			prov = CollectorsBox.FormatterProviderCollector.GetProvider(typeName, wiki);
+			if(prov != null) {
+				enabled = Settings.GetProvider(wiki).GetPluginStatus(typeName);
+				return prov;
+			}
 
-			foreach(IProviderV30 prov in CacheProviderCollector.AllProviders) result.Add(prov.GetType().FullName);
-			foreach(IProviderV30 prov in DisabledCacheProviderCollector.AllProviders) result.Add(prov.GetType().FullName);
-
-			foreach(IProviderV30 prov in FormatterProviderCollector.AllProviders) result.Add(prov.GetType().FullName);
-			foreach(IProviderV30 prov in DisabledFormatterProviderCollector.AllProviders) result.Add(prov.GetType().FullName);
-
-			return result.ToArray();
+			return null;
 		}
 
 	}

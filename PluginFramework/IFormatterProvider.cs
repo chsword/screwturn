@@ -2,13 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Web;
 
 namespace ScrewTurn.Wiki.PluginFramework {
 
 	/// <summary>
 	/// It is the interface that must be implemented in order to create a custom Formatter Provider for ScrewTurn Wiki.
 	/// </summary>
-	public interface IFormatterProviderV30 : IProviderV30 {
+	public interface IFormatterProviderV40 : IProviderV40 {
 
 		/// <summary>
 		/// Specifies whether or not to execute Phase 1.
@@ -46,6 +48,17 @@ namespace ScrewTurn.Wiki.PluginFramework {
 		/// <param name="context">The context information.</param>
 		/// <returns>The prepared title (no markup allowed).</returns>
 		string PrepareTitle(string title, ContextInformation context);
+
+		/// <summary>
+		/// Method called when the plugin must handle a HTTP request.
+		/// </summary>
+		/// <param name="context">The HTTP context.</param>
+		/// <param name="urlMatch">The URL match.</param>
+		/// <returns><c>true</c> if the request was handled, <c>false</c> otherwise.</returns>
+		/// <remarks>This method is called only when a request matches the 
+		/// parameters configured by calling <see cref="IHostV40.RegisterRequestHandler"/> during <see cref="IProviderV40.SetUp"/>. 
+		/// If the plugin <b>did not</b> call <see cref="IHostV40.RegisterRequestHandler"/>, this method is never called.</remarks>
+		bool HandleRequest(HttpContext context, Match urlMatch);
 
 	}
 

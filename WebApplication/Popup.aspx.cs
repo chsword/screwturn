@@ -17,34 +17,36 @@ namespace ScrewTurn.Wiki {
 
 	public partial class Popup : BasePage {
 
-		private PageInfo currentPage = null;
+		private PageContent currentPage = null;
+		private string currentWiki = null;
 
 		protected void Page_Load(object sender, EventArgs e) {
+			currentWiki = DetectWiki();
 			Literal l = new Literal();
-			l.Text = Tools.GetIncludes(DetectNamespace());
+			l.Text = Tools.GetIncludes(currentWiki, DetectNamespace());
 			Page.Header.Controls.AddAt(0, l);
 
 			if(string.IsNullOrEmpty(Request["Feature"])) return;
 
 			// Get instance of Current Page, if any
 			if(!string.IsNullOrEmpty(Request["CurrentPage"])) {
-				currentPage = Pages.FindPage(Request["CurrentPage"]);
+				currentPage = Pages.FindPage(currentWiki, Request["CurrentPage"]);
 			}
 			else currentPage = null;
 
 			if(!Page.IsPostBack) {
 
 				// Load FilesStorageProviders
-				IFilesStorageProviderV30[] provs = Collectors.FilesProviderCollector.AllProviders;
-				foreach(IFilesStorageProviderV30 p in provs) {
+				IFilesStorageProviderV40[] provs = Collectors.CollectorsBox.FilesProviderCollector.GetAllProviders(currentWiki);
+				foreach(IFilesStorageProviderV40 p in provs) {
 					lstProviderFiles.Items.Add(new ListItem(p.Information.Name, p.GetType().FullName));
 					// Select the default files provider
-					if (p.GetType().FullName == Settings.DefaultFilesProvider) {
+					if (p.GetType().FullName == GlobalSettings.DefaultFilesProvider) {
 						lstProviderFiles.Items[lstProviderFiles.Items.Count - 1].Selected = true;
 					}
 					lstProviderImages.Items.Add(new ListItem(p.Information.Name, p.GetType().FullName));
 					// Select the default images provider
-					if (p.GetType().FullName == Settings.DefaultFilesProvider) {
+					if (p.GetType().FullName == GlobalSettings.DefaultFilesProvider) {
 						lstProviderImages.Items[lstProviderImages.Items.Count - 1].Selected = true;
 					}
 
@@ -55,7 +57,7 @@ namespace ScrewTurn.Wiki {
 				if(string.IsNullOrEmpty(currentNamespace)) currentNamespace = "";
 				lstNamespace.Items.Clear();
 				lstNamespace.Items.Add(new ListItem("<root>", ""));
-				foreach(NamespaceInfo ns in Pages.GetNamespaces()) {
+				foreach(NamespaceInfo ns in Pages.GetNamespaces(currentWiki)) {
 					lstNamespace.Items.Add(new ListItem(ns.Name, ns.Name));
 				}
 				foreach(ListItem itm in lstNamespace.Items) {
@@ -152,20 +154,19 @@ namespace ScrewTurn.Wiki {
 			if(string.IsNullOrEmpty(currentNamespace)) currentNamespace = null;
 
 			List<TreeElement> result = new List<TreeElement>(100);
-			foreach(PageInfo pi in Pages.GetPages(Pages.FindNamespace(lstNamespace.SelectedValue))) {
+			foreach(PageContent pi in Pages.GetPages(currentWiki, Pages.FindNamespace(currentWiki, lstNamespace.SelectedValue))) {
 				string pageNamespace = NameTools.GetNamespace(pi.FullName);
 				if(string.IsNullOrEmpty(pageNamespace)) pageNamespace = null;
-				PageContent cont = Content.GetPageContent(pi, true);
-				string formattedTitle = FormattingPipeline.PrepareTitle(cont.Title, false, FormattingContext.Other, pi);
+				string formattedTitle = FormattingPipeline.PrepareTitle(currentWiki, pi.Title, false, FormattingContext.Other, pi.FullName);
 				string onClickJavascript = "javascript:";
 				// Populate the page title box if the title is different to the page name
-				if (pi.FullName != cont.Title) {
+				if (pi.FullName != pi.Title) {
 					// Supply the page title to the Javascript that sets the page title on the page
 					// We can safely escape the \ and ' characters, but the " character is interpreted by the browser even if it is escaped to Javascript, so we can't allow it.
 					// Instead we replace it with an escaped single quote.
 					// Similarly, < on it's own is fine, but causes problems when combined with text and > to form a tag.  Safest to remove < characters to prevent
 					// breaking the drop-down.
-					onClickJavascript += "SetValue('txtPageTitle', '" + cont.Title.Replace("\\", "\\\\").Replace("'", "\\'").Replace("\"", "\\'").Replace("<", "") + "');";
+					onClickJavascript += "SetValue('txtPageTitle', '" + pi.Title.Replace("\\", "\\\\").Replace("'", "\\'").Replace("\"", "\\'").Replace("<", "") + "');";
 				}
 				else {
 					onClickJavascript += "SetValue('txtPageTitle', '');";
@@ -188,17 +189,17 @@ namespace ScrewTurn.Wiki {
 		}
 
 		protected List<TreeElement> ctFiles_Populate(object sender, PopulateEventArgs e) {
-			IFilesStorageProviderV30 p = Collectors.FilesProviderCollector.GetProvider(lstProviderFiles.SelectedValue);
+			IFilesStorageProviderV40 p = Collectors.CollectorsBox.FilesProviderCollector.GetProvider(lstProviderFiles.SelectedValue, currentWiki);
 			return BuildFilesSubTree(p, "/");
 		}
 
-		private List<TreeElement> BuildFilesSubTree(IFilesStorageProviderV30 provider, string path) {
+		private List<TreeElement> BuildFilesSubTree(IFilesStorageProviderV40 provider, string path) {
 			string[] dirs = new string[0];
 			string[] files = new string[0];
 
 			if(chkFilesAttachments.Checked) {
 				// Load page attachments
-				files = provider.ListPageAttachments(currentPage);
+				files = provider.ListPageAttachments(currentPage.FullName);
 			}
 			else {
 				// Load files
@@ -218,7 +219,7 @@ namespace ScrewTurn.Wiki {
 			}
 
 			foreach(string f in files) {
-				long size = chkFilesAttachments.Checked ? provider.GetPageAttachmentDetails(currentPage, f).Size : provider.GetFileDetails(f).Size;
+				long size = chkFilesAttachments.Checked ? provider.GetPageAttachmentDetails(currentPage.FullName, f).Size : provider.GetFileDetails(f).Size;
 				TreeElement item = new TreeElement(f, f.Substring(f.LastIndexOf("/") + 1) + " (" + Tools.BytesToString(size) + ")",
 					"javascript:return SelectFile('" +
 					(chkFilesAttachments.Checked ? "(" + currentPage.FullName + ")" : "") + "', '" + f.Replace("'", "\\'") + "');");
@@ -242,17 +243,17 @@ namespace ScrewTurn.Wiki {
 		}
 
 		protected List<TreeElement> cibImages_Populate(object sender, PopulateEventArgs e) {
-			IFilesStorageProviderV30 p = Collectors.FilesProviderCollector.GetProvider(lstProviderImages.SelectedValue);
+			IFilesStorageProviderV40 p = Collectors.CollectorsBox.FilesProviderCollector.GetProvider(lstProviderImages.SelectedValue, currentWiki);
 			return BuildImagesSubTree(p, "/");
 		}
 
-		private List<TreeElement> BuildImagesSubTree(IFilesStorageProviderV30 provider, string path) {
+		private List<TreeElement> BuildImagesSubTree(IFilesStorageProviderV40 provider, string path) {
 			string[] dirs = new string[0];
 			string[] files = new string[0];
 
 			if(chkImageAttachments.Checked) {
 				// Load page attachments
-				files = provider.ListPageAttachments(currentPage);
+				files = provider.ListPageAttachments(currentPage.FullName);
 			}
 			else {
 				// Load files

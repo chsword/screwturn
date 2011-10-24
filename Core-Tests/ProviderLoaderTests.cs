@@ -10,16 +10,12 @@ namespace ScrewTurn.Wiki.Tests {
 	[TestFixture]
 	public class ProviderLoaderTests {
 
-		[TestCase(null, typeof(SettingsStorageProvider))]
-		[TestCase("", typeof(SettingsStorageProvider))]
-		[TestCase("default", typeof(SettingsStorageProvider))]
-		[TestCase("DEfaulT", typeof(SettingsStorageProvider))]
-		[TestCase("ScrewTurn.Wiki.SettingsStorageProvider, ScrewTurn.Wiki.Core", typeof(SettingsStorageProvider))]
-		[TestCase("ScrewTurn.Wiki.SettingsStorageProvider, ScrewTurn.Wiki.Core.dll", typeof(SettingsStorageProvider))]
-		[TestCase("ScrewTurn.Wiki.Tests.TestSettingsStorageProvider, ScrewTurn.Wiki.Core.Tests.dll", typeof(TestSettingsStorageProvider))]
+		[TestCase(null, typeof(TestGlobalSettingsStorageProvider), ExpectedException = typeof(Exception))]
+		[TestCase("", typeof(TestGlobalSettingsStorageProvider), ExpectedException = typeof(Exception))]
+		[TestCase("ScrewTurn.Wiki.Tests.TestGlobalSettingsStorageProvider, ScrewTurn.Wiki.Core.Tests.dll", typeof(TestGlobalSettingsStorageProvider))]
 		[TestCase("glglglglglglg, gfgfgfgfggf.dll", typeof(string), ExpectedException = typeof(ArgumentException))]
 		public void Static_LoadSettingsStorageProvider(string p, Type type) {
-			ISettingsStorageProviderV30 prov = ProviderLoader.LoadSettingsStorageProvider(p);
+			IGlobalSettingsStorageProviderV40 prov = ProviderLoader.LoadGlobalSettingsStorageProvider(p);
 			Assert.IsNotNull(prov, "Provider should not be null");
 			// type == prov.GetType() seems to fail due to reflection
 			Assert.AreEqual(type.ToString(), prov.GetType().FullName, "Wrong return type");

@@ -1,24 +1,26 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Xml;
 using ScrewTurn.Wiki.PluginFramework;
-using System.Net;
-using System.IO;
 
 namespace ScrewTurn.Wiki.Plugins.PluginPack {
 
 	/// <summary>
 	/// Implements a formatter provider that counts download of files and attachments.
 	/// </summary>
-	public class RssFeedDisplay : IFormatterProviderV30 {
+	public class RssFeedDisplay : IFormatterProviderV40 {
 
-		private IHostV30 _host;
+		private IHostV40 _host;
 		private string _config;
+		private string _wiki;
 		private bool _enableLogging = true;
-		private static readonly ComponentInformation Info = new ComponentInformation("RSS Feed Display Plugin", "Threeplicate Srl", "3.0.2.528", "http://www.screwturn.eu", "http://www.screwturn.eu/Version/PluginPack/RssFeedDisplay2.txt");
+		private static readonly ComponentInformation Info = new ComponentInformation("RSS Feed Display Plugin", "Threeplicate Srl", "4.0.1.71", "http://www.screwturn.eu", "http://www.screwturn.eu/Version4.0/PluginPack/RssFeedDisplay.txt");
 
 		private static readonly Regex RssRegex = new Regex(@"{(RSS|Twitter):(.+?)(\|(.+?))?}",
 			RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
@@ -267,14 +269,23 @@ namespace ScrewTurn.Wiki.Plugins.PluginPack {
 		}
 
 		/// <summary>
+		/// Gets the wiki that has been used to initialize the current instance of the provider.
+		/// </summary>
+		public string CurrentWiki {
+			get { return _wiki; }
+		}
+
+		/// <summary>
 		/// Initializes the Storage Provider.
 		/// </summary>
 		/// <param name="host">The Host of the Component.</param>
 		/// <param name="config">The Configuration data, if any.</param>
+		/// <param name="wiki">The wiki.</param>
 		/// <remarks>If the configuration string is not valid, the methoud should throw a <see cref="InvalidConfigurationException"/>.</remarks>
-		public void Init(IHostV30 host, string config) {
+		public void Init(IHostV40 host, string config, string wiki) {
 			this._host = host;
 			this._config = config != null ? config : "";
+			this._wiki = string.IsNullOrEmpty(wiki) ? "root" : wiki;
 
 			if(this._config.ToLowerInvariant() == "nolog") _enableLogging = false;
 		}
@@ -285,15 +296,22 @@ namespace ScrewTurn.Wiki.Plugins.PluginPack {
 		/// <param name="message">The message.</param>
 		private void LogWarning(string message) {
 			if(_enableLogging) {
-				_host.LogEntry(message, LogEntryType.Warning, null, this);
+				_host.LogEntry(message, LogEntryType.Warning, null, this, _wiki);
 			}
 		}
 
 		/// <summary>
-		/// Method invoked on shutdown.
+		/// Sets up the Storage Provider.
 		/// </summary>
-		/// <remarks>This method might not be invoked in some cases.</remarks>
-		public void Shutdown() {
+		/// <param name="host">The Host of the Component.</param>
+		/// <param name="config">The Configuration data, if any.</param>
+		/// <remarks>If the configuration string is not valid, the methoud should throw a <see cref="InvalidConfigurationException"/>.</remarks>
+		public void SetUp(IHostV40 host, string config) { }
+
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+		/// </summary>
+		public void Dispose() {
 			// Nothing to do
 		}
 
@@ -311,6 +329,19 @@ namespace ScrewTurn.Wiki.Plugins.PluginPack {
 			get { return "Specify <i>nolog</i> for disabling warning log messages."; }
 		}
 
+		/// <summary>
+		/// Method called when the plugin must handle a HTTP request.
+		/// </summary>
+		/// <param name="context">The HTTP context.</param>
+		/// <param name="urlMatch">The URL match.</param>
+		/// <returns><c>true</c> if the request was handled, <c>false</c> otherwise.</returns>
+		/// <remarks>This method is called only when a request matches the 
+		/// parameters configured by calling <see cref="IHostV40.RegisterRequestHandler"/> during <see cref="IProviderV40.SetUp"/>. 
+		/// If the plugin <b>did not</b> call <see cref="IHostV40.RegisterRequestHandler"/>, this method is never called.</remarks>
+		public bool HandleRequest(HttpContext context, Match urlMatch) {
+			return false;
+		}
+		
 	}
 
 }

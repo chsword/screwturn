@@ -1,39 +1,60 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ScrewTurn.Wiki.PluginFramework;
 using System.Text.RegularExpressions;
+using System.Web;
+using ScrewTurn.Wiki.PluginFramework;
 
 namespace ScrewTurn.Wiki.Plugins.PluginPack {
 
 	/// <summary>
 	/// Implements a footnotes plugin.
 	/// </summary>
-	public class Footnotes : IFormatterProviderV30 {
+	public class Footnotes : IFormatterProviderV40 {
 
 		// Kindly contributed by Jens Felsner
 
-		private static readonly ComponentInformation info = new ComponentInformation("Footnotes Plugin", "Threeplicate Srl", "3.0.1.472", "http://www.screwturn.eu", "http://www.screwturn.eu/Version/PluginPack/Footnotes2.txt");
+		private static readonly ComponentInformation info = new ComponentInformation("Footnotes Plugin", "Threeplicate Srl", "4.0.1.71", "http://www.screwturn.eu", "http://www.screwturn.eu/Version4.0/PluginPack/Footnotes.txt");
 
 		private static readonly Regex ReferencesRegex = new Regex("(<[ ]*references[ ]*/[ ]*>|<[ ]*references[ ]*>.*?<[ ]*/[ ]*references[ ]*>)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		private static readonly Regex RefRegex = new Regex("<[ ]*ref[ ]*>.*?<[ ]*/[ ]*ref[ ]*>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		private static readonly Regex RefRemovalRegex = new Regex("(<[ ]*ref[ ]*>|<[ ]*/[ ]*ref[ ]*>)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-		private IHostV30 host = null;
+		private IHostV40 host = null;
 		private string config = "";
+		private string wiki;
+
+		/// <summary>
+		/// Gets the wiki that has been used to initialize the current instance of the provider.
+		/// </summary>
+		public string CurrentWiki {
+			get { return wiki; }
+		}
 
 		/// <summary>
 		/// Initializes the Storage Provider.
 		/// </summary>
 		/// <param name="host">The Host of the Component.</param>
 		/// <param name="config">The Configuration data, if any.</param>
+		/// <param name="wiki">The wiki.</param>
 		/// <exception cref="ArgumentNullException">If <paramref name="host"/> or <paramref name="config"/> are <c>null</c>.</exception>
 		/// <exception cref="InvalidConfigurationException">If <paramref name="config"/> is not valid or is incorrect.</exception>
-		public void Init(IHostV30 host, string config) {
+		public void Init(IHostV40 host, string config, string wiki) {
 			this.host = host;
 			this.config = config != null ? config : "";
+			this.wiki = string.IsNullOrEmpty(wiki) ? "root" : wiki;
 		}
+
+		/// <summary>
+		/// Sets up the Storage Provider.
+		/// </summary>
+		/// <param name="host">The Host of the Component.</param>
+		/// <param name="config">The Configuration data, if any.</param>
+		/// <exception cref="ArgumentNullException">If <paramref name="host"/> or <paramref name="config"/> are <c>null</c>.</exception>
+		/// <exception cref="InvalidConfigurationException">If <paramref name="config"/> is not valid or is incorrect.</exception>
+		public void SetUp(IHostV40 host, string config) { }
 
 		// Replaces the first occurence of 'find' in 'input' with 'replace'
 		private static string ReplaceFirst(string input, string find, string replace) {
@@ -79,8 +100,6 @@ namespace ScrewTurn.Wiki.Plugins.PluginPack {
 			return output;
 		}
 
-		#region IFormatterProviderV30 Member
-
 		/// <summary>
 		/// Specifies whether or not to execute Phase 1.
 		/// </summary>
@@ -119,16 +138,10 @@ namespace ScrewTurn.Wiki.Plugins.PluginPack {
 			return title;
 		}
 
-		#endregion
-
-		#region IProviderV30 Member
-
 		/// <summary>
-		/// Method invoked on shutdown.
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
 		/// </summary>
-		/// <remarks>This method might not be invoked in some cases.</remarks>
-		public void Shutdown() {
-		}
+		public void Dispose() { }
 
 		/// <summary>
 		/// Gets the Information about the Provider.
@@ -144,7 +157,19 @@ namespace ScrewTurn.Wiki.Plugins.PluginPack {
 			get { return null; }
 		}
 
-		#endregion
+		/// <summary>
+		/// Method called when the plugin must handle a HTTP request.
+		/// </summary>
+		/// <param name="context">The HTTP context.</param>
+		/// <param name="urlMatch">The URL match.</param>
+		/// <returns><c>true</c> if the request was handled, <c>false</c> otherwise.</returns>
+		/// <remarks>This method is called only when a request matches the 
+		/// parameters configured by calling <see cref="IHostV40.RegisterRequestHandler"/> during <see cref="IProviderV40.SetUp"/>. 
+		/// If the plugin <b>did not</b> call <see cref="IHostV40.RegisterRequestHandler"/>, this method is never called.</remarks>
+		public bool HandleRequest(HttpContext context, Match urlMatch) {
+			return false;
+		}
+
 	}
 
 }

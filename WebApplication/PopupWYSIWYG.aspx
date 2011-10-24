@@ -5,7 +5,7 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html dir="<%= ScrewTurn.Wiki.Settings.Direction %>" xmlns="http://www.w3.org/1999/xhtml" >
+<html dir="<%= ScrewTurn.Wiki.GlobalSettings.Direction %>" xmlns="http://www.w3.org/1999/xhtml" >
 <head runat="server">
 	<title runat="server">ScrewTurn Wiki</title>
 	<link rel="stylesheet" type="text/css" href="Themes/Editor.css" />
@@ -29,7 +29,7 @@
 			
 			var html = "<a class=\"pagelink\" ";
 			if(IsChecked("chkPageNW")) html += "target=\"_blank\" ";
-			html += "href=\"" + name + ".ashx\" ";
+			html += "href=\"" + name + PageExtension + "\" ";
 			html += "title=\"" + title + "\">" + title + "</a>";
 			
 			Execute("insertHTML('" + html + "');");
@@ -263,7 +263,7 @@
 			
 				<asp:View ID="viwPageLink" runat="server">
 					
-					<asp:DropDownList ID="lstNamespace" runat="server" AutoPostBack="true" Width="270px" OnSelectedIndexChanged="lstNamespace_SelectedIndexChanged" />
+					<asp:DropDownList ID="lstNamespace" runat="server" Width="270px" OnSelectedIndexChanged="lstNamespace_SelectedIndexChanged" />
 				
 					<div id="ClientTreePagesDiv">
 					
@@ -317,9 +317,9 @@
 				<asp:View ID="viwFileLink" runat="server">
 				
 					<asp:DropDownList ID="lstProviderFiles" runat="server"
-						AutoPostBack="True" OnSelectedIndexChanged="lstProviderFiles_SelectedIndexChanged" meta:resourcekey="lstProviderFilesResource1" /><br />
+						OnSelectedIndexChanged="lstProviderFiles_SelectedIndexChanged" meta:resourcekey="lstProviderFilesResource1" /><br />
 					<asp:CheckBox ID="chkFilesAttachments" runat="server" Text="Browse Page Attachments"
-						AutoPostBack="True" OnCheckedChanged="chkFilesAttachments_CheckedChanged" meta:resourcekey="chkFilesAttachmentsResource1" />
+						OnCheckedChanged="chkFilesAttachments_CheckedChanged" meta:resourcekey="chkFilesAttachmentsResource1" AutoPostBack="true" />
 					<br /><br />
 							
 					<div id="ClientTreeFilesDiv">
@@ -373,9 +373,9 @@
 				<asp:View ID="viwImage" runat="server">
 				
 					<asp:DropDownList ID="lstProviderImages" runat="server"
-						AutoPostBack="True" OnSelectedIndexChanged="lstProviderImages_SelectedIndexChanged" meta:resourcekey="lstProviderImagesResource1" />
+						OnSelectedIndexChanged="lstProviderImages_SelectedIndexChanged" meta:resourcekey="lstProviderImagesResource1" />
 					<asp:CheckBox ID="chkImageAttachments" runat="server" Text="Browse Page Attachments"
-						AutoPostBack="True" OnCheckedChanged="chkImageAttachments_CheckedChanged" meta:resourcekey="chkImageAttachmentsResource1" />
+						OnCheckedChanged="chkImageAttachments_CheckedChanged" meta:resourcekey="chkImageAttachmentsResource1" AutoPostBack="true" />
 				
 					<table id="ImageBrowserTable">
 						<tr>
@@ -446,9 +446,9 @@
 				
 					<asp:Literal ID="lblInsertAnchor" runat="server" Text="Insert:" EnableViewState="False" meta:resourcekey="lblInsertAnchorResource1" /><br />
 					<asp:RadioButton ID="rdoNewAnchor" runat="server" Checked="True" Text="New Anchor"
-						AutoPostBack="True" OnCheckedChanged="rdoAnchor_CheckedChanged" GroupName="do_not_translate_anchor" meta:resourcekey="rdoNewAnchorResource1" /><br />
+						OnCheckedChanged="rdoAnchor_CheckedChanged" GroupName="do_not_translate_anchor" meta:resourcekey="rdoNewAnchorResource1" /><br />
 					<asp:RadioButton ID="rdoAnchorLink" runat="server" Text="Link to an existing Anchor"
-						AutoPostBack="True" OnCheckedChanged="rdoAnchor_CheckedChanged" GroupName="do_not_translate_anchor" meta:resourcekey="rdoAnchorLinkResource1" />
+						OnCheckedChanged="rdoAnchor_CheckedChanged" GroupName="do_not_translate_anchor" meta:resourcekey="rdoAnchorLinkResource1" />
 					
 					<br /><br />
 					

@@ -13,9 +13,11 @@ namespace ScrewTurn.Wiki {
 	/// <summary>
 	/// Implements reverse formatting methods (HTML-&gt;WikiMarkup).
 	/// </summary>
-	public static class ReverseFormatter {
+	public class ReverseFormatter {
 
-		private static void ProcessList(XmlNodeList nodes, string marker, StringBuilder sb) {
+		private string _wiki;
+
+		private void ProcessList(XmlNodeList nodes, string marker, StringBuilder sb) {
 			string ul = "*";
 			string ol = "#";
 			foreach(XmlNode node in nodes) {
@@ -55,7 +57,7 @@ namespace ScrewTurn.Wiki {
 			}
 		}
 
-		private static string ProcessImage(XmlNode node) {
+		private string ProcessImage(XmlNode node) {
 			string result = "";
 			if(node.Attributes.Count != 0) {
 				foreach(XmlAttribute attName in node.Attributes) {
@@ -69,7 +71,7 @@ namespace ScrewTurn.Wiki {
 			return result;
 		}
 
-		private static string ProcessLink(string link) {
+		private string ProcessLink(string link) {
 			string subLink = "";
 			if(link.ToLowerInvariant().StartsWith("getfile.aspx")) {
 				string[] urlParameters = link.Remove(0, 13).Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
@@ -89,7 +91,7 @@ namespace ScrewTurn.Wiki {
 			return link;
 		}
 
-		private static void ProcessChildImage(XmlNodeList nodes, StringBuilder sb) {
+		private void ProcessChildImage(XmlNodeList nodes, StringBuilder sb) {
 			string image = "";
 			string p = "";
 			string url = "";
@@ -121,7 +123,7 @@ namespace ScrewTurn.Wiki {
 			sb.Append(p + image + url);
 		}
 		
-		private static void ProcessTableImage(XmlNodeList nodes, StringBuilder sb) {
+		private void ProcessTableImage(XmlNodeList nodes, StringBuilder sb) {
 			foreach(XmlNode node in nodes) {
 				switch(node.Name.ToLowerInvariant()) {
 					case "tbody":
@@ -175,7 +177,7 @@ namespace ScrewTurn.Wiki {
 			}
 		}
 
-		private static void ProcessTable(XmlNodeList nodes, StringBuilder sb) {
+		private void ProcessTable(XmlNodeList nodes, StringBuilder sb) {
 			foreach(XmlNode node in nodes) {
 				switch(node.Name.ToLowerInvariant()) {
 					case "thead":
@@ -222,7 +224,7 @@ namespace ScrewTurn.Wiki {
 			}
 		}
 
-		private static void ProcessChild(XmlNodeList nodes, StringBuilder sb) {
+		private void ProcessChild(XmlNodeList nodes, StringBuilder sb) {
 			foreach(XmlNode node in nodes) {
 				bool anchor = false;
 				if(node.NodeType == XmlNodeType.Text) sb.Append(node.Value.TrimStart('\n'));
@@ -326,7 +328,7 @@ namespace ScrewTurn.Wiki {
 								sb.Append("\n");
 							}
 							else {
-								if(Settings.ProcessSingleLineBreaks) sb.Append("\n");
+								if(Settings.GetProcessSingleLineBreaks(_wiki)) sb.Append("\n");
 								else sb.Append("\n\n");
 							}
 							break;
@@ -384,7 +386,7 @@ namespace ScrewTurn.Wiki {
 							else {
 								ProcessChild(node.ChildNodes, sb);
 								sb.Append("\n");
-								if(!Settings.ProcessSingleLineBreaks) sb.Append("\n");
+								if(!Settings.GetProcessSingleLineBreaks(_wiki)) sb.Append("\n");
 							}
 							break;
 						case "div":
@@ -421,14 +423,14 @@ namespace ScrewTurn.Wiki {
 							else {
 								sb.Append("\n");
 								if(node.PreviousSibling != null && node.PreviousSibling.Name != "div") {
-									if(!Settings.ProcessSingleLineBreaks) sb.Append("\n");
+									if(!Settings.GetProcessSingleLineBreaks(_wiki)) sb.Append("\n");
 								}
 								if(node.FirstChild != null && node.FirstChild.Name == "br") {
 									node.RemoveChild(node.FirstChild);
 								}
 								if(node.HasChildNodes) {
 									ProcessChild(node.ChildNodes, sb);
-									if(Settings.ProcessSingleLineBreaks) sb.Append("\n");
+									if(Settings.GetProcessSingleLineBreaks(_wiki)) sb.Append("\n");
 									else sb.Append("\n\n");
 								}
 							}
@@ -483,7 +485,7 @@ namespace ScrewTurn.Wiki {
 								}
 								else if(pageLink) {
 									formattedLink = link.LastIndexOf('/') > 0 ? link.Substring(link.LastIndexOf('/') + 1) : link;
-									formattedLink = formattedLink.Remove(formattedLink.IndexOf(Settings.PageExtension));
+									if(GlobalSettings.PageExtension.Length > 0) formattedLink = formattedLink.Remove(formattedLink.IndexOf(GlobalSettings.PageExtension));
 									formattedLink = Uri.UnescapeDataString(formattedLink);
 								}
 								else {
@@ -518,7 +520,7 @@ namespace ScrewTurn.Wiki {
 			}
 		}
 
-		private static XmlDocument FromHTML(TextReader reader) {
+		private XmlDocument FromHTML(TextReader reader) {
 			// setup SgmlReader
 			Sgml.SgmlReader sgmlReader = new Sgml.SgmlReader();
 			sgmlReader.DocType = "HTML";
@@ -538,9 +540,11 @@ namespace ScrewTurn.Wiki {
 		/// <summary>
 		/// Reverse formats HTML content into WikiMarkup.
 		/// </summary>
+		/// <param name="wiki">The wiki.</param>
 		/// <param name="html">The input HTML.</param>
 		/// <returns>The corresponding WikiMarkup.</returns>
-		public static string ReverseFormat(string html) {
+		public string ReverseFormat(string wiki, string html) {
+			_wiki = wiki;
 			StringReader strReader = new StringReader(html);
 			XmlDocument x = FromHTML((TextReader)strReader);
 			if(x != null && x.HasChildNodes && x.FirstChild.HasChildNodes) {

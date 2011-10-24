@@ -7,7 +7,7 @@ using Rhino.Mocks;
 using ScrewTurn.Wiki.PluginFramework;
 
 namespace ScrewTurn.Wiki.Tests {
-	
+
 	[TestFixture]
 	public class ReverseFormatterTests {
 
@@ -58,29 +58,28 @@ namespace ScrewTurn.Wiki.Tests {
 		[TestCase("<a target=\"_blank\" href=\"www.google.it\" title=\"description\"><img src=\"GetFile.aspx?Page=MainPage&File=image.png\" alt=\"description\" /></a>", "[image|description|{UP(MainPage)}image.png|^www.google.it]")]
 		[TestCase("<table class=\"imageauto\" cellpadding=\"0\" cellspacing=\"0\"><tbody><tr><td><img class=\"image\" src=\"GetFile.aspx?Page=MainPage&File=image.png\" alt=\"autoalign\" /><p class=\"imagedescription\">autoalign</p></td></tr></tbody></table>", "[imageauto|autoalign|{UP(MainPage)}image.png]")]
 		[TestCase("<table class=\"imageauto\" cellpadding=\"0\" cellspacing=\"0\"><tbody><tr><td><a href=\"www.link.com\" title=\"Auto align\"><img class=\"image\" src=\"GetFile.aspx?Page=MainPage&File=image.png\" alt=\"Auto align\" /></a><p class=\"imagedescription\">Auto align</p></td></tr></tbody></table>", "[imageauto|Auto align|{UP(MainPage)}image.png|www.link.com]")]
-		[TestCase("<table cellspacing=\"0\" cellpadding=\"2\" style=\"background-color: #EEEEEE; margin: 0px auto;\"><caption>Styled Table</caption><tbody><tr style=\"background-color: #990000; color: #FFFFFF;\"><td>This is a cell</td><td>This is a cell</td><td>This is a cell</td></tr><tr><td style=\"background-color: #000000; color: #CCCCCC;\">Styled cell</td><td style=\"border: solid 1px #FF0000;\">Styled cell</td><td><b>Normal cell</b></td></tr><tr><td>Normal</td><td>Normal</td><td><a class=\"internallink\" href=\"Download.ashx\" title=\"Download\">Download</a></td></tr></tbody></table>","{| cellspacing=\"0\" cellpadding=\"2\" style=\"background-color: #EEEEEE; margin: 0px auto;\" \n|+ Styled Table\n|- style=\"background-color: #990000; color: #FFFFFF;\" \n| This is a cell\n| This is a cell\n| This is a cell\n|- \n|  style=\"background-color: #000000; color: #CCCCCC;\"  | Styled cell\n|  style=\"border: solid 1px #FF0000;\"  | Styled cell\n| '''Normal cell'''\n|- \n| Normal\n| Normal\n| [Download.ashx|Download]\n|}\n")]
+		[TestCase("<table cellspacing=\"0\" cellpadding=\"2\" style=\"background-color: #EEEEEE; margin: 0px auto;\"><caption>Styled Table</caption><tbody><tr style=\"background-color: #990000; color: #FFFFFF;\"><td>This is a cell</td><td>This is a cell</td><td>This is a cell</td></tr><tr><td style=\"background-color: #000000; color: #CCCCCC;\">Styled cell</td><td style=\"border: solid 1px #FF0000;\">Styled cell</td><td><b>Normal cell</b></td></tr><tr><td>Normal</td><td>Normal</td><td><a class=\"internallink\" href=\"Download.ashx\" title=\"Download\">Download</a></td></tr></tbody></table>", "{| cellspacing=\"0\" cellpadding=\"2\" style=\"background-color: #EEEEEE; margin: 0px auto;\" \n|+ Styled Table\n|- style=\"background-color: #990000; color: #FFFFFF;\" \n| This is a cell\n| This is a cell\n| This is a cell\n|- \n|  style=\"background-color: #000000; color: #CCCCCC;\"  | Styled cell\n|  style=\"border: solid 1px #FF0000;\"  | Styled cell\n| '''Normal cell'''\n|- \n| Normal\n| Normal\n| [Download.ashx|Download]\n|}\n")]
 		[TestCase("<pre>block code - [WikiMarkup] is ignored</pre>", "@@block code - [WikiMarkup] is ignored@@")]
 		[TestCase(@"<a class=""unknownlink"" href=""test.ashx"" title=""test"">test</a>", "[test|test]")]
 		[TestCase(@"<a class=""pagelink"" href=""MainPage.ashx"" title=""Main Page"">Main Page</a>", "[MainPage|Main Page]")]
 		public void PlainTest(string input, string output) {
-			Assert.AreEqual(output, ReverseFormatter.ReverseFormat(input));
-		}
-
-		[SetUp]
-		public void SetUp() {
 			mocks = new MockRepository();
 
-			ISettingsStorageProviderV30 settingsProvider = mocks.StrictMock<ISettingsStorageProviderV30>();
-			Expect.Call(settingsProvider.GetSetting("ProcessSingleLineBreaks")).Return("true").Repeat.Any();
+			ISettingsStorageProviderV40 settingsProvider = mocks.StrictMock<ISettingsStorageProviderV40>();
+			ICollectorsBox collectorsBox = mocks.DynamicMock<ICollectorsBox>();
 
-			Collectors.SettingsProvider = settingsProvider;
+			Collectors.CollectorsBox = collectorsBox;
 
-			mocks.Replay(settingsProvider);
+			using(mocks.Record()) {
+				Expect.Call(settingsProvider.GetSetting("ProcessSingleLineBreaks")).Return("true").Repeat.Any();
+				Expect.Call(collectorsBox.GetSettingsProvider(null)).Return(settingsProvider).Repeat.Any();
+			}
+
+			using(mocks.Playback()) {
+				ReverseFormatter reverseFormatter = new ReverseFormatter();
+				Assert.AreEqual(output, reverseFormatter.ReverseFormat(null, input));
+			}
 		}
 
-		[TearDown]
-		public void TearDown() {
-			mocks.VerifyAll();
-		}
 	}
 }

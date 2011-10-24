@@ -13,11 +13,11 @@ namespace ScrewTurn.Wiki.Plugins.SqlServer {
 	/// </summary>
 	public class SqlServerFilesStorageProvider : SqlFilesStorageProviderBase {
 
-		private readonly ComponentInformation info = new ComponentInformation("SQL Server Files Storage Provider", "Threeplicate Srl", "3.0.1.471", "http://www.screwturn.eu", "http://www.screwturn.eu/Version/SQLServerProv/Files.txt");
+		private readonly ComponentInformation info = new ComponentInformation("SQL Server Files Storage Provider", "Threeplicate Srl", "4.0.1.71", "http://www.screwturn.eu", null);
 
 		private readonly SqlServerCommandBuilder commandBuilder = new SqlServerCommandBuilder();
 
-		private const int CurrentSchemaVersion = 3000;
+		private const int CurrentSchemaVersion = 4000;
 
 		/// <summary>
 		/// Gets a new command with an open connection.
@@ -143,22 +143,6 @@ namespace ScrewTurn.Wiki.Plugins.SqlServer {
 		}
 
 		/// <summary>
-		/// Tries to load the configuration from a corresponding v2 provider.
-		/// </summary>
-		/// <returns>The configuration, or an empty string.</returns>
-		protected override string TryLoadV2Configuration() {
-			return "";
-		}
-
-		/// <summary>
-		/// Tries to load the configuration of the corresponding settings storage provider.
-		/// </summary>
-		/// <returns>The configuration, or an empty string.</returns>
-		protected override string TryLoadSettingsStorageProviderConfiguration() {
-			return host.GetProviderConfiguration(typeof(SqlServerSettingsStorageProvider).FullName);
-		}
-
-		/// <summary>
 		/// Gets the Information about the Provider.
 		/// </summary>
 		public override ComponentInformation Information {
@@ -172,6 +156,16 @@ namespace ScrewTurn.Wiki.Plugins.SqlServer {
 			get { return "Connection string format:<br /><code>Data Source=<i>Database Address and Instance</i>;Initial Catalog=<i>Database name</i>;User ID=<i>login</i>;Password=<i>password</i>;</code>"; }
 		}
 
+		/// <summary>
+		/// Closes the database connection.
+		/// </summary>
+		/// <param name="connection">The connection.</param>
+		protected override void CloseConnection(System.Data.Common.DbConnection connection) {
+			try {
+				connection.Close();
+			}
+			catch { } 
+		}
 	}
 
 }

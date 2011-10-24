@@ -13,11 +13,11 @@ namespace ScrewTurn.Wiki.Plugins.SqlServer {
 	/// </summary>
 	public class SqlServerSettingsStorageProvider : SqlSettingsStorageProviderBase {
 
-		private readonly ComponentInformation info = new ComponentInformation("SQL Server Settings Storage Provider", "Threeplicate Srl", "3.0.1.471", "http://www.screwturn.eu", "http://www.screwturn.eu/Version/SQLServerProv/Settings.txt");
+		private readonly ComponentInformation info = new ComponentInformation("SQL Server Settings Storage Provider", "Threeplicate Srl", "4.0.1.71", "http://www.screwturn.eu", null);
 
 		private readonly SqlServerCommandBuilder commandBuilder = new SqlServerCommandBuilder();
 
-		private const int CurrentSchemaVersion = 3000;
+		private const int CurrentSchemaVersion = 4000;
 
 		/// <summary>
 		/// Gets a new command with an open connection.
@@ -136,27 +136,10 @@ namespace ScrewTurn.Wiki.Plugins.SqlServer {
 		protected override void CreateOrUpdateDatabaseIfNecessary() {
 			if(!SchemaExists()) {
 				CreateStandardSchema();
-				isFirstStart = true;
 			}
 			if(SchemaNeedsUpdate()) {
 				// Run minor update batches...
 			}
-		}
-
-		/// <summary>
-		/// Tries to load the configuration from a corresponding v2 provider.
-		/// </summary>
-		/// <returns>The configuration, or an empty string.</returns>
-		protected override string TryLoadV2Configuration() {
-			return "";
-		}
-
-		/// <summary>
-		/// Tries to load the configuration of the corresponding settings storage provider.
-		/// </summary>
-		/// <returns>The configuration, or an empty string.</returns>
-		protected override string TryLoadSettingsStorageProviderConfiguration() {
-			return "";
 		}
 
 		/// <summary>
@@ -174,26 +157,15 @@ namespace ScrewTurn.Wiki.Plugins.SqlServer {
 		}
 
 		/// <summary>
-		/// Gets the default users storage provider, when no value is stored in the database.
+		/// Closes a connection, swallowing all exceptions.
 		/// </summary>
-		protected override string DefaultUsersStorageProvider {
-			get { return typeof(SqlServerUsersStorageProvider).FullName; }
+		/// <param name="connection">The connection to close.</param>
+		protected override void CloseConnection(System.Data.Common.DbConnection connection) {
+			try {
+				connection.Close();
+			}
+			catch { } 
 		}
-
-		/// <summary>
-		/// Gets the default pages storage provider, when no value is stored in the database.
-		/// </summary>
-		protected override string DefaultPagesStorageProvider {
-			get { return typeof(SqlServerPagesStorageProvider).FullName; }
-		}
-
-		/// <summary>
-		/// Gets the default files storage provider, when no value is stored in the database.
-		/// </summary>
-		protected override string DefaultFilesStorageProvider {
-			get { return typeof(SqlServerFilesStorageProvider).FullName; }
-		}
-
 	}
 
 }

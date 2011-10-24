@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ScrewTurn.Wiki.Plugins.SqlCommon</RootNamespace>
     <AssemblyName>ScrewTurn.Wiki.Plugins.SqlCommon</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -31,6 +31,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,7 +46,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
+    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -54,8 +55,12 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DocumentationFile>bin\Release\ScrewTurn.Wiki.Plugins.SqlCommon.xml</DocumentationFile>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Lucene.Net, Version=2.9.2.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\References\Lib\Apache Lucene.Net v2.9.2\Lucene.Net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -68,13 +73,15 @@
     <Compile Include="..\AssemblyVersion.cs">
       <Link>AssemblyVersion.cs</Link>
     </Compile>
-    <Compile Include="IIndexConnector.cs" />
+    <Compile Include="SqlGlobalSettingsStorageProviderBase.cs" />
     <Compile Include="SqlAclManager.cs" />
     <Compile Include="SqlClassBase.cs" />
     <Compile Include="SqlFilesStorageProviderBase.cs" />
-    <Compile Include="SqlIndex.cs" />
-    <Compile Include="IndexConnector.cs" />
+    <Compile Include="SqlIndexInput.cs" />
+    <Compile Include="SqlIndexOutput.cs" />
+    <Compile Include="SqlLock.cs" />
     <Compile Include="SqlPagesStorageProviderBase.cs" />
+    <Compile Include="SqlDirectory.cs" />
     <Compile Include="SqlSettingsStorageProviderBase.cs" />
     <Compile Include="SqlStorageProviderBase.cs" />
     <Compile Include="Hash.cs" />
@@ -82,7 +89,10 @@
     <Compile Include="ICommandBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryBuilder.cs" />
+    <Compile Include="ISqlStorageProviderUtility.cs" />
     <Compile Include="SqlUsersStorageProviderBase.cs" />
+    <Compile Include="StreamInput.cs" />
+    <Compile Include="StreamOutput.cs" />
     <Compile Include="Tools.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -93,10 +103,6 @@
     <ProjectReference Include="..\PluginFramework\PluginFramework.csproj">
       <Project>{531A83D6-76F9-4014-91C5-295818E2D948}</Project>
       <Name>PluginFramework</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SearchEngine\SearchEngine.csproj">
-      <Project>{2DF980A6-4742-49B1-A090-DE79314644D0}</Project>
-      <Name>SearchEngine</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

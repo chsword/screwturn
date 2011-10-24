@@ -20,7 +20,12 @@ namespace ScrewTurn.Wiki.Plugins.SqlCommon {
 		/// <summary>
 		/// The host.
 		/// </summary>
-		protected IHostV30 host;
+		protected IHostV40 host;
+
+		/// <summary>
+		/// The wiki.
+		/// </summary>
+		protected string wiki;
 
 		/// <summary>
 		/// Gets a new command builder object.
@@ -34,10 +39,16 @@ namespace ScrewTurn.Wiki.Plugins.SqlCommon {
 		/// <param name="ex">The exception.</param>
 		protected override void LogException(Exception ex) {
 			try {
-				host.LogEntry(ex.ToString(), LogEntryType.Error, null, this);
+				host.LogEntry(ex.ToString(), LogEntryType.Error, null, this, wiki);
 			}
 			catch { }
 		}
+
+		/// <summary>
+		/// Closes a database connection.
+		/// </summary>
+		/// <param name="connection">The connection to close.</param>
+		protected override void CloseConnection(DbConnection connection) { }
 
 		#region IProvider Members
 
@@ -54,39 +65,42 @@ namespace ScrewTurn.Wiki.Plugins.SqlCommon {
 		protected abstract void CreateOrUpdateDatabaseIfNecessary();
 
 		/// <summary>
-		/// Tries to load the configuration from a corresponding v2 provider.
+		/// Gets the wiki that has been used to initialize the current instance of the provider.
 		/// </summary>
-		/// <returns>The configuration, or an empty string.</returns>
-		protected abstract string TryLoadV2Configuration();
-
-		/// <summary>
-		/// Tries to load the configuration of the corresponding settings storage provider.
-		/// </summary>
-		/// <returns>The configuration, or an empty string.</returns>
-		protected abstract string TryLoadSettingsStorageProviderConfiguration();
+		public string CurrentWiki {
+			get { return wiki; }
+		}
 
 		/// <summary>
 		/// Initializes the Storage Provider.
 		/// </summary>
 		/// <param name="host">The Host of the Component.</param>
 		/// <param name="config">The Configuration data, if any.</param>
+		/// <param name="wiki">The wiki.</param>
 		/// <exception cref="ArgumentNullException">If <b>host</b> or <b>config</b> are <c>null</c>.</exception>
 		/// <exception cref="InvalidConfigurationException">If <b>config</b> is not valid or is incorrect.</exception>
-		public void Init(IHostV30 host, string config) {
+		public void Init(IHostV40 host, string config, string wiki) {
 			if(host == null) throw new ArgumentNullException("host");
 			if(config == null) throw new ArgumentNullException("config");
 
 			this.host = host;
+			this.wiki = string.IsNullOrEmpty(wiki) ? "root" : wiki;
 
-			if(config.Length == 0) {
-				// Try to load v2 provider configuration
-				config = TryLoadV2Configuration();
-			}
-			
-			if(config == null || config.Length == 0) {
-				// Try to load Settings Storage Provider configuration
-				config = TryLoadSettingsStorageProviderConfiguration();
-			}
+			connString = config;
+		}
+
+		/// <summary>
+		/// Sets up the Storage Provider.
+		/// </summary>
+		/// <param name="host">The Host of the Component.</param>
+		/// <param name="config">The Configuration data, if any.</param>
+		/// <exception cref="ArgumentNullException">If <b>host</b> or <b>config</b> are <c>null</c>.</exception>
+		/// <exception cref="InvalidConfigurationException">If <b>config</b> is not valid or is incorrect.</exception>
+		public void SetUp(IHostV40 host, string config) {
+			if(host == null) throw new ArgumentNullException("host");
+			if(config == null) throw new ArgumentNullException("config");
+
+			this.host = host;
 
 			if(config == null) config = "";
 
@@ -98,11 +112,9 @@ namespace ScrewTurn.Wiki.Plugins.SqlCommon {
 		}
 
 		/// <summary>
-		/// Method invoked on shutdown.
+		/// Releases resources
 		/// </summary>
-		/// <remarks>This method might not be invoked in some cases.</remarks>
-		public void Shutdown() {
-		}
+		public void Dispose() { }
 
 		/// <summary>
 		/// Gets the Information about the Provider.
