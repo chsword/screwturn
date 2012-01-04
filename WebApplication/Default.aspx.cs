@@ -151,7 +151,7 @@ namespace ScrewTurn.Wiki {
 			}
 			else lblViewCodeLink.Visible = false;
 
-			lblHistoryLink.Visible = Settings.EnablePageToolbar && !discussMode && !viewCodeMode && canViewDiscussion;
+			lblHistoryLink.Visible = Settings.EnablePageToolbar && !discussMode && !viewCodeMode;
 			if(lblHistoryLink.Visible) {
 				lblHistoryLink.Text = string.Format(@"<a id=""HistoryLink"" title=""{0}"" href=""{1}"">{2}</a>",
 					Properties.Messages.ViewPageHistory,
